@@ -1,0 +1,210 @@
+<svg viewBox="0 0 1320 1820" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>MedBuddy full vision — primary MedCam lane, WhatsApp bridge, AI brain, HIS↔NHCX, CFO and flywheel</title>
+  <desc>End-to-end product vision with MedCam direct upload as the primary clinical lane, WhatsApp as a transitional bridge, the full AI brain, HIS and NHCX bridges, four role dashboards including CFO, the data flywheel, and outcome metrics.</desc>
+
+  <style>
+    .t{fill:#1f1f1f;} .t2{fill:#555;} .t3{fill:#888;}
+    .inv{fill:#fff;}
+    .card{fill:#ffffff;stroke:#d4d4d4;stroke-width:1.2;}
+    .soft{fill:#f6f6f4;stroke:#d4d4d4;stroke-width:1;}
+    .accent{fill:#c96442;}
+    .accentSoft{fill:#f6f6f4;stroke:#c96442;stroke-width:1.6;}
+    .accentFill{fill:#fbeee8;stroke:#c96442;stroke-width:1.4;}
+    .red{fill:#c43d3d;} .redSoft{fill:#fbeaea;stroke:#c43d3d;stroke-width:1.2;}
+    .green{fill:#1f8a4c;} .greenSoft{fill:#e8f5ee;stroke:#1f8a4c;stroke-width:1.2;}
+    .amber{fill:#c98a1f;} .amberSoft{fill:#fbf2dc;stroke:#c98a1f;stroke-width:1.2;}
+    .line{stroke:#888;stroke-width:1.4;fill:none;}
+    .lineA{stroke:#c96442;stroke-width:2.2;fill:none;}
+    .lineAthin{stroke:#c96442;stroke-width:1.6;fill:none;}
+    .lineG{stroke:#1f8a4c;stroke-width:1.8;fill:none;}
+    .lineY{stroke:#c98a1f;stroke-width:1.4;fill:none;}
+    .dash{stroke-dasharray:5 4;}
+    .title{font-size:18px;font-weight:700;}
+    .section{font-size:12px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;}
+    .h{font-size:13px;font-weight:600;}
+    .sub{font-size:11px;}
+    .tag{font-size:10px;}
+    .big{font-size:22px;font-weight:700;}
+    .pill{fill:#f6f6f4;stroke:#d4d4d4;}
+  </style>
+
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c96442"/>
+    </marker>
+    <marker id="arrY" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c98a1f"/>
+    </marker>
+    <marker id="arrG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1f8a4c"/>
+    </marker>
+    <marker id="arrK" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#888"/>
+    </marker>
+  </defs>
+
+  <rect width="1320" height="1820" fill="#ffffff"/>
+
+  <text x="40" y="40" class="title t">MedBuddy × Med-Overwatch — Full Vision (v2)</text>
+  <text x="40" y="60" class="sub t2">Primary lane: MedCam direct capture → server. Bridge lane: WhatsApp absorb-and-nudge. AI brain prevents queries before they're raised. HIS ↔ NHCX bridged. CFO sees the money no one shows them today.</text>
+
+  <g transform="translate(820,28)">
+    <rect class="soft" width="480" height="40" rx="6"/>
+    <rect x="12" y="13" width="14" height="14" class="accentFill"/><text x="30" y="25" class="tag t2">Primary lane</text>
+    <rect x="118" y="13" width="14" height="14" class="amberSoft"/><text x="136" y="25" class="tag t2">Bridge (transitional)</text>
+    <rect x="262" y="13" width="14" height="14" class="redSoft"/><text x="280" y="25" class="tag t2">Today's chaos</text>
+    <rect x="370" y="13" width="14" height="14" class="greenSoft"/><text x="388" y="25" class="tag t2">Outcome</text>
+  </g>
+
+  <text x="40" y="100" class="section t2">1 · Capture lanes — primary vs bridge vs system pull</text>
+
+  <g transform="translate(40,118)">
+    <rect class="accentFill" width="400" height="200" rx="12"/>
+    <rect class="accent" width="78" height="22" rx="11" x="14" y="14"/>
+    <text x="53" y="29" class="tag inv h" text-anchor="middle">PRIMARY</text>
+    <text x="104" y="30" class="h accent">📸 MedCam Android (direct)</text>
+    <text x="14" y="56" class="sub t2">The standard for all clinical capture going forward.</text>
+    <g transform="translate(14,68)"><rect class="card" width="180" height="58" rx="6"/><text x="10" y="20" class="sub h t">QR → MRN at capture</text><text x="10" y="36" class="tag t2">Patient bound before shutter</text><text x="10" y="50" class="tag t2">No ambiguity downstream</text></g>
+    <g transform="translate(206,68)"><rect class="card" width="180" height="58" rx="6"/><text x="10" y="20" class="sub h t">No gallery · encrypted</text><text x="10" y="36" class="tag t2">DPDP-safe · consent logged</text><text x="10" y="50" class="tag t2">Original res + geotag + audit</text></g>
+    <g transform="translate(14,134)"><rect class="card" width="180" height="58" rx="6"/><text x="10" y="20" class="sub h t">✍️ Handwriting capture ✦</text><text x="10" y="36" class="tag t2">Doctor notes → AI case sheet</text><text x="10" y="50" class="tag t2">Dx · ICD · Rx · meds + reasoning</text></g>
+    <g transform="translate(206,134)"><rect class="card" width="180" height="58" rx="6"/><text x="10" y="20" class="sub h t">Session inbox · retry</text><text x="10" y="36" class="tag t2">Encrypted offline queue</text><text x="10" y="50" class="tag t2">AI confidence shown at capture</text></g>
+  </g>
+
+  <g transform="translate(460,118)">
+    <rect class="amberSoft" width="400" height="200" rx="12"/>
+    <rect class="amber" width="160" height="22" rx="11" x="14" y="14"/>
+    <text x="94" y="29" class="tag inv h" text-anchor="middle">BRIDGE · TRANSITIONAL</text>
+    <text x="184" y="30" class="h amber">💬 WhatsApp Bot</text>
+    <text x="14" y="56" class="sub t2">Absorbs the chaos surgeons already have. Nudges them to MedCam over time.</text>
+    <g transform="translate(14,68)"><rect class="card" width="180" height="58" rx="6"/><text x="10" y="20" class="sub h t">Sender → known doctor</text><text x="10" y="36" class="tag t2">Mapped to active session</text><text x="10" y="50" class="tag t2">Bot asks MRN if unknown</text></g>
+    <g transform="translate(206,68)"><rect class="card" width="180" height="58" rx="6"/><text x="10" y="20" class="sub h t">Re-fetch original from API</text><text x="10" y="36" class="tag t2">WhatsApp Business → full quality</text><text x="10" y="50" class="tag t2">Auto-attach to folder</text></g>
+    <g transform="translate(14,134)"><rect class="card" width="180" height="58" rx="6"/><text x="10" y="20" class="sub h t">⚠ DPDP guardrails</text><text x="10" y="36" class="tag t2">Consent prompt + opt-in</text><text x="10" y="50" class="tag t2">Patient-facing data redacted</text></g>
+    <g transform="translate(206,134)"><rect class="card" width="180" height="58" rx="6"/><text x="10" y="20" class="sub h t">📲 Nudge: "use MedCam next time"</text><text x="10" y="36" class="tag t2">App link + QR · 1-tap install</text><text x="10" y="50" class="tag t2">Migration metric tracked</text></g>
+  </g>
+
+  <g transform="translate(880,118)">
+    <rect class="card" width="400" height="200" rx="12"/>
+    <rect class="soft" width="78" height="22" rx="11" x="14" y="14"/>
+    <text x="53" y="29" class="tag h t" text-anchor="middle">SYSTEM</text>
+    <text x="104" y="30" class="h t">🏥 HIS Pull · auto</text>
+    <text x="14" y="56" class="sub t2">Pulls structured records and documents already inside the hospital.</text>
+    <g transform="translate(14,68)"><rect class="soft" width="180" height="58" rx="6"/><text x="10" y="20" class="sub h t">Practo · Insta · eHospital</text><text x="10" y="36" class="tag t2">By MRN · vitals · discharge</text><text x="10" y="50" class="tag t2">Hospital bill + UTR</text></g>
+    <g transform="translate(206,68)"><rect class="soft" width="180" height="58" rx="6"/><text x="10" y="20" class="sub h t">Lab / PACS / Pharmacy</text><text x="10" y="36" class="tag t2">HPE · imaging · drug records</text><text x="10" y="50" class="tag t2">Auto-deduped into folder</text></g>
+    <g transform="translate(14,134)"><rect class="soft" width="180" height="58" rx="6"/><text x="10" y="20" class="sub h t">Scheme portal sync</text><text x="10" y="36" class="tag t2">PMJAY · CGHS · ESI · SHA</text><text x="10" y="50" class="tag t2">Chrome bridge until NHCX live</text></g>
+    <g transform="translate(206,134)"><rect class="soft" width="180" height="58" rx="6"/><text x="10" y="20" class="sub h t">Webhook + custom API</text><text x="10" y="36" class="tag t2">Any HIS · standard contract</text><text x="10" y="50" class="tag t2">White-label SDK for vendors</text></g>
+  </g>
+
+  <text x="450" y="338" class="tag t2" text-anchor="middle">↑ Adoption migrates from WhatsApp to MedCam over ~6 months ↑</text>
+
+  <path class="lineA" d="M240,320 V360" marker-end="url(#arr)"/>
+  <path class="lineY" d="M660,320 V360" marker-end="url(#arrY)"/>
+  <path class="line" d="M1080,320 V360" marker-end="url(#arrK)"/>
+
+  <text x="40" y="380" class="section t2">2 · AI brain — turn raw inputs into a NHCX-ready claim</text>
+  <g transform="translate(40,398)">
+    <rect class="accentSoft" width="1240" height="280" rx="12"/>
+    <text x="16" y="26" class="h accent">🧠 Central AI Server — folder: PatientName_MRN</text>
+    <text x="16" y="44" class="tag t2">Every artefact flows through this brain. Every output becomes training data.</text>
+
+    <text x="16" y="68" class="section t2">A · Extract &amp; normalize</text>
+    <g transform="translate(16,76)"><rect class="card" width="194" height="80" rx="8"/><text x="10" y="20" class="sub h t">✍️ Handwriting → Sheet ✦</text><text x="10" y="36" class="tag t2">Reads doctor's scrawl</text><text x="10" y="50" class="tag t2">Outputs: Dx · ICD · Rx · meds</text><text x="10" y="64" class="tag t2">Shows reasoning + confidence</text></g>
+    <g transform="translate(218,76)"><rect class="card" width="194" height="80" rx="8"/><text x="10" y="20" class="sub h t">🗂️ Rename · OCR</text><text x="10" y="36" class="tag t2">Schema: POSTOP_WOUND_01.jpg</text><text x="10" y="50" class="tag t2">Extracted fields → checklist</text><text x="10" y="64" class="tag t2">Original kept for audit</text></g>
+    <g transform="translate(420,76)"><rect class="card" width="194" height="80" rx="8"/><text x="10" y="20" class="sub h t">🗜️ Quality-preserving compress</text><text x="10" y="36" class="tag t2">Visually lossless</text><text x="10" y="50" class="tag t2">Original vs compressed shown</text><text x="10" y="64" class="tag t2">~70% storage saved</text></g>
+    <g transform="translate(622,76)"><rect class="card" width="194" height="80" rx="8"/><text x="10" y="20" class="sub h t">✅ Doc Checker</text><text x="10" y="36" class="tag t2">Procedure × scheme matrix</text><text x="10" y="50" class="tag t2">Missing / low-confidence flags</text><text x="10" y="64" class="tag t2">Drives "request from ward" action</text></g>
+    <g transform="translate(824,76)"><rect class="card" width="194" height="80" rx="8"/><text x="10" y="20" class="sub h t">🔗 Patient Matcher</text><text x="10" y="36" class="tag t2">MRN · name · DOB fuzzy</text><text x="10" y="50" class="tag t2">Dedupe with suffix</text><text x="10" y="64" class="tag t2">Manual link fallback</text></g>
+    <g transform="translate(1026,76)"><rect class="card" width="198" height="80" rx="8"/><text x="10" y="20" class="sub h t">⚙️ NHCX FHIR Mapper ✦</text><text x="10" y="36" class="tag t2">ICD → HBP → FHIR Claim</text><text x="10" y="50" class="tag t2">DocumentReference bundle</text><text x="10" y="64" class="tag t2">AuditEvent + status webhooks</text></g>
+
+    <text x="16" y="180" class="section t2">B · Prevent &amp; resolve queries</text>
+    <g transform="translate(16,188)"><rect class="card" width="194" height="80" rx="8"/><text x="10" y="20" class="sub h t">🎯 Pre-submission Risk ✦</text><text x="10" y="36" class="tag t2">"67% query probability"</text><text x="10" y="50" class="tag t2">Top reason · suggested fix</text><text x="10" y="64" class="tag t2">Block before submit</text></g>
+    <g transform="translate(218,188)"><rect class="card" width="194" height="80" rx="8"/><text x="10" y="20" class="sub h t">🔍 Query Classifier (10)</text><text x="10" y="36" class="tag t2">missing_doc · code_mismatch</text><text x="10" y="50" class="tag t2">date_inconsist · clubbing</text><text x="10" y="64" class="tag t2">geotag · eligibility · pricing</text></g>
+    <g transform="translate(420,188)"><rect class="card" width="194" height="80" rx="8"/><text x="10" y="20" class="sub h t">📨 Response Drafter</text><text x="10" y="36" class="tag t2">One-click reply per type</text><text x="10" y="50" class="tag t2">Pre-attached document</text><text x="10" y="64" class="tag t2">Doctor-signable template</text></g>
+    <g transform="translate(622,188)"><rect class="card" width="194" height="80" rx="8"/><text x="10" y="20" class="sub h t">💰 Approval Predictor</text><text x="10" y="36" class="tag t2">Expected ₹ vs claimed ₹</text><text x="10" y="50" class="tag t2">Adj-factor anomaly alert</text><text x="10" y="64" class="tag t2">TAT forecast</text></g>
+    <g transform="translate(824,188)"><rect class="card" width="194" height="80" rx="8"/><text x="10" y="20" class="sub h t">🌐 Network Patterns ✦</text><text x="10" y="36" class="tag t2">Scheme behaviour insights</text><text x="10" y="50" class="tag t2">Denial pattern alerts</text><text x="10" y="64" class="tag t2">"Pre-attach chemo charts now"</text></g>
+    <g transform="translate(1026,188)"><rect class="card" width="198" height="80" rx="8"/><text x="10" y="20" class="sub h t">🏆 Benchmarking</text><text x="10" y="36" class="tag t2">Doctor · dept · hospital</text><text x="10" y="50" class="tag t2">Anonymous peer compare</text><text x="10" y="64" class="tag t2">CFO add-on revenue</text></g>
+  </g>
+
+  <text x="40" y="708" class="section t2">3 · Bridges (HIS ↔ NHCX) and four role dashboards</text>
+  <g transform="translate(40,726)">
+    <rect class="soft" width="600" height="170" rx="10"/>
+    <text x="16" y="26" class="h t">🔌 Bridges — the only middleware that sits between hospital &amp; insurer</text>
+    <g transform="translate(16,40)"><rect class="card" width="278" height="118" rx="8"/><text x="10" y="20" class="sub h t">HIS Connector Marketplace</text><text x="10" y="38" class="tag t2">Practo HMS · Insta HMS · eHospital NIC</text><text x="10" y="52" class="tag t2">Custom webhook + white-label SDK</text><text x="10" y="66" class="tag t2">Pulls demographics · clinical · billing</text><text x="10" y="82" class="tag h accent">Revenue: ₹20–30 / claim API license</text><text x="10" y="100" class="tag t2">Switch-cost = months of migration</text></g>
+    <g transform="translate(306,40)"><rect class="accentFill" width="278" height="118" rx="8"/><text x="10" y="20" class="sub h t">NHCX FHIR R4 Middleware ✦</text><text x="10" y="38" class="tag t2">Auto-format Claim resource</text><text x="10" y="52" class="tag t2">CommunicationRequest / Communication</text><text x="10" y="66" class="tag t2">DocumentReference · AuditEvent</text><text x="10" y="82" class="tag h accent">Revenue: ₹50–150 / claim post-mandate</text><text x="10" y="100" class="tag t2">2-year edge case knowledge moat</text></g>
+  </g>
+
+  <g transform="translate(660,726)">
+    <rect class="soft" width="620" height="170" rx="10"/>
+    <text x="16" y="26" class="h t">👥 One folder, four lenses</text>
+    <g transform="translate(16,40)"><rect class="card" width="140" height="118" rx="8"/><text x="10" y="20" class="sub h t">👩‍⚕️ Nurse</text><text x="10" y="38" class="tag t2">Capture · attach</text><text x="10" y="52" class="tag t2">QR scan patient</text><text x="10" y="66" class="tag t2">Session inbox</text><text x="10" y="82" class="tag t2">Flag missing items</text><text x="10" y="98" class="tag t2">Same UI, limited buttons</text></g>
+    <g transform="translate(168,40)"><rect class="card" width="140" height="118" rx="8"/><text x="10" y="20" class="sub h t">🩺 Doctor</text><text x="10" y="38" class="tag t2">Sign drafted notes</text><text x="10" y="52" class="tag t2">Review AI case sheet</text><text x="10" y="66" class="tag t2">Clinical-elab queries</text><text x="10" y="82" class="tag t2">Confirm Dx + Rx</text><text x="10" y="98" class="tag t2">Personal benchmark</text></g>
+    <g transform="translate(320,40)"><rect class="card" width="140" height="118" rx="8"/><text x="10" y="20" class="sub h t">🗂️ TPA Clerk</text><text x="10" y="38" class="tag t2">Smart workbench</text><text x="10" y="52" class="tag t2">Aging alerts (red 15d)</text><text x="10" y="66" class="tag t2">1-click query reply</text><text x="10" y="82" class="tag t2">UTR reconciliation</text><text x="10" y="98" class="tag h green">2 hrs/day given back</text></g>
+    <g transform="translate(472,40)"><rect class="accentFill" width="140" height="118" rx="8"/><text x="10" y="20" class="sub h t">💼 CFO ✦</text><text x="10" y="38" class="tag t2">₹ locked in claims</text><text x="10" y="52" class="tag t2">Query rate ↓ trend</text><text x="10" y="66" class="tag t2">Money saved YTD</text><text x="10" y="82" class="tag t2">Underpayment alerts</text><text x="10" y="98" class="tag t2">Cash-flow forecast</text></g>
+  </g>
+
+  <text x="40" y="918" class="section t2">4 · Before → After — what changes for the people in the loop</text>
+  <g transform="translate(40,936)">
+    <rect class="redSoft" width="620" height="160" rx="10"/>
+    <text x="16" y="26" class="h t">Today's chaos (without MedBuddy)</text>
+    <text x="16" y="50" class="sub t2">📲 Surgeon WhatsApps OT photo → clerk saves, crops, renames, converts JPG→PDF</text>
+    <text x="16" y="68" class="sub t2">📝 Doctor's handwritten note → clerk re-types into 6 different portal UIs</text>
+    <text x="16" y="86" class="sub t2">↩️ "PROVIDE POST OP HPE REPORT" → 25–40 min hunting · 23 days lost · 3–8 rounds</text>
+    <text x="16" y="104" class="sub t2">❓ CFO has no view of ₹ locked, aging buckets, underpayments, TAT vs peers</text>
+    <text x="16" y="122" class="sub t2">🌐 6 government portals, zero APIs, every scheme has its own quirks</text>
+    <text x="16" y="140" class="sub t2">📦 15–40% of hospital revenue locked at any moment</text>
+  </g>
+  <path class="lineG" d="M660,1016 H700" marker-end="url(#arrG)"/>
+  <g transform="translate(700,936)">
+    <rect class="greenSoft" width="580" height="160" rx="10"/>
+    <text x="16" y="26" class="h t">With MedBuddy</text>
+    <text x="16" y="50" class="sub t2">📸 Capture once on MedCam (or WhatsApp bridge) → auto in PatientName_MRN folder</text>
+    <text x="16" y="68" class="sub t2">✍️ Handwriting → AI case sheet with Dx, ICD, Rx, meds and reasoning</text>
+    <text x="16" y="86" class="sub t2">🛡️ Risk scorer blocks high-query claims before submit → fewer queries arrive</text>
+    <text x="16" y="104" class="sub t2">📨 When queries do arrive: classified, drafted, document pre-attached in 45s</text>
+    <text x="16" y="122" class="sub t2">⚙️ NHCX FHIR submission · UTR auto-reconciled · full AuditEvent trail</text>
+    <text x="16" y="140" class="sub t2">💼 CFO sees ₹ unlocked, query-rate trend, ₹ saved YTD in one dashboard</text>
+  </g>
+
+  <text x="40" y="1120" class="section t2">5 · Mindmap — one platform, six branches</text>
+  <g transform="translate(580,1230)">
+    <rect class="accent" width="180" height="64" rx="32"/>
+    <text x="90" y="32" class="h inv" text-anchor="middle">MedBuddy ×</text>
+    <text x="90" y="50" class="sub inv" text-anchor="middle">Med-Overwatch</text>
+  </g>
+
+  <path class="line" d="M580,1262 C480,1262 440,1170 340,1170"/>
+  <path class="line" d="M580,1262 C480,1262 440,1300 340,1300"/>
+  <path class="line" d="M580,1262 C480,1262 440,1430 340,1430"/>
+  <path class="line" d="M760,1262 C860,1262 900,1170 1000,1170"/>
+  <path class="line" d="M760,1262 C860,1262 900,1300 1000,1300"/>
+  <path class="line" d="M760,1262 C860,1262 900,1430 1000,1430"/>
+
+  <g transform="translate(60,1140)"><rect class="card" width="280" height="60" rx="8"/><text x="14" y="22" class="h t">Capture lanes</text><text x="14" y="40" class="sub t2">MedCam (primary) · WhatsApp (bridge)</text><text x="14" y="54" class="sub t2">HIS pull · scan · email drop</text></g>
+  <g transform="translate(60,1270)"><rect class="card" width="280" height="60" rx="8"/><text x="14" y="22" class="h t">AI brain</text><text x="14" y="40" class="sub t2">Handwriting · OCR · classifier · risk</text><text x="14" y="54" class="sub t2">Predictor · network · benchmarking</text></g>
+  <g transform="translate(60,1400)"><rect class="card" width="280" height="60" rx="8"/><text x="14" y="22" class="h t">Bridges</text><text x="14" y="40" class="sub t2">HIS connectors · NHCX FHIR R4</text><text x="14" y="54" class="sub t2">PMJAY · CGHS · ESI · Railway · SHA</text></g>
+  <g transform="translate(1000,1140)"><rect class="card" width="280" height="60" rx="8"/><text x="14" y="22" class="h t">Role surfaces</text><text x="14" y="40" class="sub t2">Nurse · Doctor · TPA · CFO · Admin</text><text x="14" y="54" class="sub t2">Same folder, four lenses</text></g>
+  <g transform="translate(1000,1270)"><rect class="card" width="280" height="60" rx="8"/><text x="14" y="22" class="h t">Outcomes</text><text x="14" y="40" class="sub t2">Queries ↓ · TAT ↓ · ₹ unlocked</text><text x="14" y="54" class="sub t2">Clerk stress ↓ · CFO clarity ↑</text></g>
+  <g transform="translate(1000,1400)"><rect class="card" width="280" height="60" rx="8"/><text x="14" y="22" class="h t">Data flywheel (moat)</text><text x="14" y="40" class="sub t2">61 fields/case · synthetic + real</text><text x="14" y="54" class="sub t2">India's only claims AI corpus</text></g>
+
+  <text x="40" y="1510" class="section t2">6 · Data flywheel — every query becomes training data</text>
+  <g transform="translate(40,1526)">
+    <rect class="soft" width="1240" height="100" rx="10"/>
+    <g class="t">
+      <g transform="translate(20,40)"><circle r="22" class="accent"/><text y="5" class="inv h" text-anchor="middle">1</text><text x="34" y="-4" class="h t">Usage</text><text x="34" y="12" class="tag t2">Clerks resolve queries in app</text></g>
+      <path class="lineAthin" d="M210,40 H290" marker-end="url(#arr)"/>
+      <g transform="translate(310,40)"><circle r="22" class="accent"/><text y="5" class="inv h" text-anchor="middle">2</text><text x="34" y="-4" class="h t">Capture</text><text x="34" y="12" class="tag t2">Query · response · outcome logged</text></g>
+      <path class="lineAthin" d="M520,40 H600" marker-end="url(#arr)"/>
+      <g transform="translate(620,40)"><circle r="22" class="accent"/><text y="5" class="inv h" text-anchor="middle">3</text><text x="34" y="-4" class="h t">Augment</text><text x="34" y="12" class="tag t2">14k synthetic variants generated</text></g>
+      <path class="lineAthin" d="M840,40 H920" marker-end="url(#arr)"/>
+      <g transform="translate(940,40)"><circle r="22" class="accent"/><text y="5" class="inv h" text-anchor="middle">4</text><text x="34" y="-4" class="h t">Retrain</text><text x="34" y="12" class="tag t2">Classifier 75% → 92% accuracy</text></g>
+    </g>
+    <path class="lineAthin dash" d="M1180,40 C1240,40 1240,80 1180,80 H80 C20,80 20,40 80,40" marker-end="url(#arr)"/>
+    <text x="630" y="92" class="tag t2" text-anchor="middle">Better predictions feed back into Usage → moat compounds with every claim</text>
+  </g>
+
+  <text x="40" y="1668" class="section t2">7 · The numbers the CFO sees first</text>
+  <g transform="translate(40,1684)"><rect class="greenSoft" width="240" height="110" rx="10"/><text x="16" y="32" class="big green">−68%</text><text x="16" y="56" class="h t">Queries raised</text><text x="16" y="74" class="tag t2">Pre-submission risk catches them</text><text x="16" y="92" class="tag t2">Compounded by network alerts</text></g>
+  <g transform="translate(296,1684)"><rect class="greenSoft" width="240" height="110" rx="10"/><text x="16" y="32" class="big green">25min → 45s</text><text x="16" y="56" class="h t">Per-query handling</text><text x="16" y="74" class="tag t2">Classify · draft · pre-attach</text><text x="16" y="92" class="tag t2">2 hrs/day back to the clerk</text></g>
+  <g transform="translate(552,1684)"><rect class="greenSoft" width="240" height="110" rx="10"/><text x="16" y="32" class="big green">23d → 14d</text><text x="16" y="56" class="h t">Settlement TAT</text><text x="16" y="74" class="tag t2">Clean first submission</text><text x="16" y="92" class="tag t2">Cash-flow forecast tightens</text></g>
+  <g transform="translate(808,1684)"><rect class="greenSoft" width="240" height="110" rx="10"/><text x="16" y="32" class="big green">₹ X cr</text><text x="16" y="56" class="h t">Revenue unlocked</text><text x="16" y="74" class="tag t2">From the 15–40% locked pool</text><text x="16" y="92" class="tag t2">Underpayment disputes won</text></g>
+  <g transform="translate(1064,1684)"><rect class="greenSoft" width="216" height="110" rx="10"/><text x="16" y="32" class="big green">100k+</text><text x="16" y="56" class="h t">Labelled cases (24m)</text><text x="16" y="74" class="tag t2">India's only claims AI corpus</text><text x="16" y="92" class="tag t2">Moat compounds every claim</text></g>
+
+</svg>

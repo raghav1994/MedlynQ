@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 590 150" width="1180" height="300" role="img">
+  <title>MedLynq — Claims Intelligence Platform</title>
+  <defs>
+    <linearGradient id="navyGrad" x1="0%" y1="30%" x2="100%" y2="70%">
+      <stop offset="0%" stop-color="#142944"/>
+      <stop offset="100%" stop-color="#23456a"/>
+    </linearGradient>
+    <linearGradient id="tealGrad" x1="0%" y1="20%" x2="100%" y2="80%">
+      <stop offset="0%" stop-color="#0a7269"/>
+      <stop offset="100%" stop-color="#14a99e"/>
+    </linearGradient>
+    <filter id="dropShadow" x="-15%" y="-15%" width="135%" height="135%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0a1e35" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <!-- Navy hex (left, behind) — center (55,80), r=44 -->
+  <polygon
+    points="55,36 93,58 93,102 55,124 17,102 17,58"
+    fill="url(#navyGrad)"
+    filter="url(#dropShadow)"/>
+
+  <!-- Teal hex (right, in front) — center (90,80), r=44 -->
+  <polygon
+    points="90,36 128,58 128,102 90,124 52,102 52,58"
+    fill="url(#tealGrad)"
+    filter="url(#dropShadow)"/>
+
+  <!-- Overlap edge highlight -->
+  <line x1="52" y1="58" x2="52" y2="102" stroke="white" stroke-width="0.8" opacity="0.25"/>
+
+  <!-- ECG pulse line -->
+  <polyline
+    points="20,80 34,80 44,57 56,103 68,68 80,80 125,80"
+    fill="none"
+    stroke="white"
+    stroke-width="2.6"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    opacity="0.93"/>
+
+  <!-- Wordmark -->
+  <text
+    font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif"
+    font-size="56"
+    font-weight="800"
+    letter-spacing="-1.5"
+    x="152"
+    y="99">
+    <tspan fill="#0f2a4a">Med</tspan><tspan fill="#0d9488">Lynq</tspan>
+  </text>
+
+  <!-- Tagline -->
+  <text
+    font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif"
+    font-size="11.5"
+    font-weight="500"
+    fill="#9ca3af"
+    letter-spacing="4"
+    x="154"
+    y="121">CLAIMS INTELLIGENCE PLATFORM</text>
+</svg>

@@ -1,0 +1,25 @@
+# Patient data — DPDP compliance: never commit
+PatientLog/
+pmjay_jumper/
+
+# Large local corpora — not needed for build
+Indian Medicine database/
+Paddle_OCR_Local/
+
+# Binaries and archives
+*.rar
+*.zip
+*.docx
+*.xlsx
+
+# App-level ignores (also in app/.gitignore)
+app/node_modules/
+app/.next/
+app/.env*.local
+app/python/__pycache__/
+
+# medlynq-rx
+medlynq-rx/node_modules/
+
+# macOS
+.DS_Store

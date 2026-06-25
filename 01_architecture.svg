@@ -1,0 +1,90 @@
+<svg viewBox="0 0 1320 1280" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>MedLynq full architecture (plain language)</title>
+  <style>
+    .t{fill:#1f1f1f;} .t2{fill:#555;} .inv{fill:#fff;}
+    .card{fill:#fff;stroke:#999;stroke-width:1.2;}
+    .layer{fill:#f6f6f4;stroke:#d4d4d4;stroke-width:1;}
+    .ai{fill:#fbeee8;stroke:#c96442;stroke-width:1.4;}
+    .ext{fill:#eef2fa;stroke:#2566c8;stroke-width:1.2;}
+    .data{fill:#f0f6ee;stroke:#1f8a4c;stroke-width:1.2;}
+    .line{stroke:#666;stroke-width:1.4;fill:none;}
+    .title{font-size:18px;font-weight:700;}
+    .lbl{font-size:12px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;fill:#555;}
+    .h{font-size:13px;font-weight:600;}
+    .sub{font-size:11px;}
+    .tag{font-size:10px;}
+  </style>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#666"/></marker></defs>
+  <rect width="1320" height="1280" fill="#fff"/>
+  <text x="40" y="40" class="title t">MedLynq — Full architecture (plain English)</text>
+  <text x="40" y="60" class="t2 sub">Six layers stacked top to bottom. Arrows = data flow. Nothing fancy — what's where and what talks to what.</text>
+  <text x="40" y="100" class="lbl">1 · Users (who opens which app)</text>
+  <g transform="translate(40,114)"><rect class="layer" width="1240" height="100" rx="8"/>
+    <g transform="translate(14,14)"><rect class="card" width="200" height="72" rx="6"/><text x="10" y="22" class="h t">Doctor / Nurse</text><text x="10" y="40" class="sub t2">MedLynq Go (Android phone)</text><text x="10" y="56" class="sub t2">Captures · signs case sheets</text></g>
+    <g transform="translate(232,14)"><rect class="card" width="200" height="72" rx="6"/><text x="10" y="22" class="h t">TPA clerk · CFO · Admin</text><text x="10" y="40" class="sub t2">MedLynq Pulse (web browser)</text><text x="10" y="56" class="sub t2">Reviews · resolves · reports</text></g>
+    <g transform="translate(450,14)"><rect class="card" width="200" height="72" rx="6"/><text x="10" y="22" class="h t">Insurer / TPA payer</text><text x="10" y="40" class="sub t2">Pulse — mirror view</text><text x="10" y="56" class="sub t2">Read-only · same case</text></g>
+    <g transform="translate(668,14)"><rect class="card" width="200" height="72" rx="6"/><text x="10" y="22" class="h t">Patient</text><text x="10" y="40" class="sub t2">Mini-portal (mobile web)</text><text x="10" y="56" class="sub t2">Status · consent · estimate</text></g>
+    <g transform="translate(886,14)"><rect class="card" width="200" height="72" rx="6"/><text x="10" y="22" class="h t">Auditor (insurer-side)</text><text x="10" y="40" class="sub t2">Watermarked share link</text><text x="10" y="56" class="sub t2">Time-boxed · read-only</text></g>
+    <g transform="translate(1104,14)"><rect class="card" width="120" height="72" rx="6"/><text x="10" y="22" class="h t">HIS vendor</text><text x="10" y="40" class="sub t2">Embeds Lynq</text><text x="10" y="56" class="sub t2">via white-label SDK</text></g>
+  </g>
+  <path class="line" d="M660,214 V250" marker-end="url(#a)"/>
+  <text x="40" y="240" class="lbl">2 · Edge / API gateway (the front door)</text>
+  <g transform="translate(40,254)"><rect class="layer" width="1240" height="76" rx="8"/>
+    <g transform="translate(14,14)"><rect class="card" width="296" height="48" rx="6"/><text x="10" y="20" class="h t">CDN + WAF</text><text x="10" y="36" class="sub t2">Cloudflare · blocks abuse · caches static</text></g>
+    <g transform="translate(326,14)"><rect class="card" width="296" height="48" rx="6"/><text x="10" y="20" class="h t">API gateway · auth</text><text x="10" y="36" class="sub t2">JWT · role check · rate limit</text></g>
+    <g transform="translate(638,14)"><rect class="card" width="296" height="48" rx="6"/><text x="10" y="20" class="h t">Mobile upload endpoint</text><text x="10" y="36" class="sub t2">Resumable · encrypted · queue</text></g>
+    <g transform="translate(950,14)"><rect class="card" width="276" height="48" rx="6"/><text x="10" y="20" class="h t">Webhooks in / out</text><text x="10" y="36" class="sub t2">NHCX · portal · ERP</text></g>
+  </g>
+  <path class="line" d="M660,330 V370" marker-end="url(#a)"/>
+  <text x="40" y="360" class="lbl">3 · Application services (what does what)</text>
+  <g transform="translate(40,374)"><rect class="layer" width="1240" height="270" rx="8"/>
+    <g transform="translate(14,14)"><rect class="card" width="200" height="76" rx="6"/><text x="10" y="22" class="h t">Identity &amp; consent</text><text x="10" y="40" class="sub t2">Users · roles · permissions</text><text x="10" y="54" class="sub t2">e-Consent ledger · DPDP audit</text></g>
+    <g transform="translate(232,14)"><rect class="card" width="200" height="76" rx="6"/><text x="10" y="22" class="h t">Patient folder</text><text x="10" y="40" class="sub t2">Creates / opens folder per MRN</text><text x="10" y="54" class="sub t2">Stores docs · dedupe</text></g>
+    <g transform="translate(450,14)"><rect class="card" width="200" height="76" rx="6"/><text x="10" y="22" class="h t">Pre-auth service</text><text x="10" y="40" class="sub t2">Cashless request packet</text><text x="10" y="54" class="sub t2">Reuse evidence for claim</text></g>
+    <g transform="translate(668,14)"><rect class="card" width="200" height="76" rx="6"/><text x="10" y="22" class="h t">Claims service</text><text x="10" y="40" class="sub t2">Submit · track · payment</text><text x="10" y="54" class="sub t2">UTR reconciliation</text></g>
+    <g transform="translate(886,14)"><rect class="card" width="200" height="76" rx="6"/><text x="10" y="22" class="h t">Query loop service</text><text x="10" y="40" class="sub t2">Classify · locate · draft</text><text x="10" y="54" class="sub t2">Packet builder</text></g>
+    <g transform="translate(1104,14)"><rect class="card" width="120" height="76" rx="6"/><text x="10" y="22" class="h t">Notify</text><text x="10" y="40" class="sub t2">Push · email</text><text x="10" y="54" class="sub t2">CFO digest · SMS</text></g>
+    <g transform="translate(14,104)"><rect class="ai" width="200" height="76" rx="6"/><text x="10" y="22" class="h t">Lynq AI orchestrator</text><text x="10" y="40" class="sub t2">Routes jobs to models</text><text x="10" y="54" class="sub t2">Queues · retries · logs</text></g>
+    <g transform="translate(232,104)"><rect class="card" width="200" height="76" rx="6"/><text x="10" y="22" class="h t">Evidence Index service</text><text x="10" y="40" class="sub t2">Page-OCR · per-doc metadata</text><text x="10" y="54" class="sub t2">Backs Locator + NL search</text></g>
+    <g transform="translate(450,104)"><rect class="card" width="200" height="76" rx="6"/><text x="10" y="22" class="h t">Audit &amp; timeline</text><text x="10" y="40" class="sub t2">FHIR AuditEvent log</text><text x="10" y="54" class="sub t2">Compliance + legal exports</text></g>
+    <g transform="translate(668,104)"><rect class="card" width="200" height="76" rx="6"/><text x="10" y="22" class="h t">Analytics service</text><text x="10" y="40" class="sub t2">CFO dashboard · benchmarks</text><text x="10" y="54" class="sub t2">Network patterns</text></g>
+    <g transform="translate(886,104)"><rect class="card" width="200" height="76" rx="6"/><text x="10" y="22" class="h t">Integrations service</text><text x="10" y="40" class="sub t2">HIS · pharmacy · ERP</text><text x="10" y="54" class="sub t2">FHIR mapper · scheme portal</text></g>
+    <g transform="translate(1104,104)"><rect class="card" width="120" height="76" rx="6"/><text x="10" y="22" class="h t">Billing</text><text x="10" y="40" class="sub t2">SaaS + per</text><text x="10" y="54" class="sub t2">claim invoices</text></g>
+    <g transform="translate(14,194)"><rect class="card" width="1208" height="56" rx="6"/><text x="14" y="22" class="h t">Background workers</text><text x="14" y="40" class="sub t2">OCR · compression · classifier · packet build · HIS pull · portal scrape (Chrome bridge) · UTR fetch · sync to ERP · synthetic data gen · classifier retrain — all run as queued jobs, not in user requests</text></g>
+  </g>
+  <path class="line" d="M660,644 V680" marker-end="url(#a)"/>
+  <text x="40" y="670" class="lbl">4 · Lynq AI models (the brain)</text>
+  <g transform="translate(40,684)"><rect class="ai" width="1240" height="120" rx="8"/>
+    <g transform="translate(14,14)"><rect class="card" width="190" height="92" rx="6"/><text x="10" y="22" class="h t">Handwriting OCR</text><text x="10" y="40" class="sub t2">Vision model reads doctor's notes</text><text x="10" y="56" class="sub t2">Outputs Dx · ICD · Rx fields</text></g>
+    <g transform="translate(216,14)"><rect class="card" width="190" height="92" rx="6"/><text x="10" y="22" class="h t">Voice (STT)</text><text x="10" y="40" class="sub t2">Speech-to-text in Hindi / English</text><text x="10" y="56" class="sub t2">Same fields out as handwriting</text></g>
+    <g transform="translate(418,14)"><rect class="card" width="190" height="92" rx="6"/><text x="10" y="22" class="h t">Document OCR + extractor</text><text x="10" y="40" class="sub t2">PDFs + JPEGs → structured fields</text><text x="10" y="56" class="sub t2">Per-page text → index</text></g>
+    <g transform="translate(620,14)"><rect class="card" width="190" height="92" rx="6"/><text x="10" y="22" class="h t">Query classifier</text><text x="10" y="40" class="sub t2">Reads query text → one of 10 types</text><text x="10" y="56" class="sub t2">Confidence score per type</text></g>
+    <g transform="translate(822,14)"><rect class="card" width="190" height="92" rx="6"/><text x="10" y="22" class="h t">Risk + approval predictor</text><text x="10" y="40" class="sub t2">XGBoost on structured features</text><text x="10" y="56" class="sub t2">Outputs probability + reason</text></g>
+    <g transform="translate(1024,14)"><rect class="card" width="200" height="92" rx="6"/><text x="10" y="22" class="h t">Evidence Locator + NL search</text><text x="10" y="40" class="sub t2">Vector + keyword search</text><text x="10" y="56" class="sub t2">Returns file path + page</text></g>
+  </g>
+  <path class="line" d="M660,804 V840" marker-end="url(#a)"/>
+  <text x="40" y="830" class="lbl">5 · Data stores (where everything lives)</text>
+  <g transform="translate(40,844)"><rect class="data" width="1240" height="120" rx="8"/>
+    <g transform="translate(14,14)"><rect class="card" width="190" height="92" rx="6"/><text x="10" y="22" class="h t">Postgres (primary)</text><text x="10" y="40" class="sub t2">Patients · folders · claims</text><text x="10" y="56" class="sub t2">Queries · audit · billing</text></g>
+    <g transform="translate(216,14)"><rect class="card" width="190" height="92" rx="6"/><text x="10" y="22" class="h t">Object storage (S3)</text><text x="10" y="40" class="sub t2">Original docs + compressed</text><text x="10" y="56" class="sub t2">Encrypted at rest</text></g>
+    <g transform="translate(418,14)"><rect class="card" width="190" height="92" rx="6"/><text x="10" y="22" class="h t">Search index (Elasticsearch)</text><text x="10" y="40" class="sub t2">Page-OCR text · fast lookup</text><text x="10" y="56" class="sub t2">Backs "Ask Lynq"</text></g>
+    <g transform="translate(620,14)"><rect class="card" width="190" height="92" rx="6"/><text x="10" y="22" class="h t">Vector DB (pgvector)</text><text x="10" y="40" class="sub t2">Embeddings of doc chunks</text><text x="10" y="56" class="sub t2">Powers semantic Locator</text></g>
+    <g transform="translate(822,14)"><rect class="card" width="190" height="92" rx="6"/><text x="10" y="22" class="h t">Redis cache + queue</text><text x="10" y="40" class="sub t2">Job queue · session state</text><text x="10" y="56" class="sub t2">Rate-limit counters</text></g>
+    <g transform="translate(1024,14)"><rect class="card" width="200" height="92" rx="6"/><text x="10" y="22" class="h t">Data warehouse</text><text x="10" y="40" class="sub t2">PII-stripped training set</text><text x="10" y="56" class="sub t2">Powers retrain + benchmarks</text></g>
+  </g>
+  <path class="line" d="M660,964 V1000" marker-end="url(#a)"/>
+  <text x="40" y="990" class="lbl">6 · External integrations (what we talk to)</text>
+  <g transform="translate(40,1004)"><rect class="ext" width="1240" height="160" rx="8"/>
+    <g transform="translate(14,14)"><rect class="card" width="190" height="60" rx="6"/><text x="10" y="22" class="h t">HIS connectors</text><text x="10" y="40" class="sub t2">Practo · Insta · eHospital</text></g>
+    <g transform="translate(216,14)"><rect class="card" width="190" height="60" rx="6"/><text x="10" y="22" class="h t">NHCX FHIR R4</text><text x="10" y="40" class="sub t2">National claims exchange</text></g>
+    <g transform="translate(418,14)"><rect class="card" width="190" height="60" rx="6"/><text x="10" y="22" class="h t">Scheme portals</text><text x="10" y="40" class="sub t2">PMJAY · CGHS · ESI · SHA · Railway · ECHS</text></g>
+    <g transform="translate(620,14)"><rect class="card" width="190" height="60" rx="6"/><text x="10" y="22" class="h t">Pharmacy + PACS</text><text x="10" y="40" class="sub t2">Drug barcode · DICOM · HL7 lab</text></g>
+    <g transform="translate(822,14)"><rect class="card" width="190" height="60" rx="6"/><text x="10" y="22" class="h t">ERP / Tally</text><text x="10" y="40" class="sub t2">UTR push · TDS reconcile</text></g>
+    <g transform="translate(1024,14)"><rect class="card" width="200" height="60" rx="6"/><text x="10" y="22" class="h t">Banking · UPI</text><text x="10" y="40" class="sub t2">Payment status · UTR fetch</text></g>
+    <g transform="translate(14,84)"><rect class="card" width="296" height="60" rx="6"/><text x="10" y="22" class="h t">LLM provider (Anthropic / OpenAI)</text><text x="10" y="40" class="sub t2">Classifier + drafter + co-pilot</text></g>
+    <g transform="translate(326,84)"><rect class="card" width="296" height="60" rx="6"/><text x="10" y="22" class="h t">Email + SMS + push</text><text x="10" y="40" class="sub t2">SendGrid · MSG91 · FCM</text></g>
+    <g transform="translate(638,84)"><rect class="card" width="296" height="60" rx="6"/><text x="10" y="22" class="h t">Observability</text><text x="10" y="40" class="sub t2">Datadog / Grafana · Sentry</text></g>
+    <g transform="translate(950,84)"><rect class="card" width="276" height="60" rx="6"/><text x="10" y="22" class="h t">Identity providers</text><text x="10" y="40" class="sub t2">Google Workspace · ABHA</text></g>
+  </g>
+  <g transform="translate(40,1190)"><rect class="card" width="1240" height="70" rx="8"/><text x="14" y="22" class="h t">Reading guide</text><text x="14" y="40" class="sub t2">Users (1) hit the gateway (2). Services (3) handle the work and call Lynq models (4) when AI is needed. Everything is persisted in data stores (5). External systems (6) are reached only through the integrations service.</text><text x="14" y="56" class="sub t2">Background workers do all heavy lifting (OCR, packet build, HIS pull) — user requests stay fast.</text></g>
+</svg>

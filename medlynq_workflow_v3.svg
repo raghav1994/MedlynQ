@@ -1,0 +1,225 @@
+<svg viewBox="0 0 1320 2200" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>MedLynq v3 — end-to-end workflow flowchart</title>
+  <desc>From pre-authorization through capture, Lynq AI brain, Pulse review, NHCX submission, query loop and CFO outcomes. Six swim lanes show who owns each step.</desc>
+  <style>
+    .t{fill:#1f1f1f;} .t2{fill:#555;} .inv{fill:#fff;}
+    .lane{fill:#f6f6f4;stroke:#d4d4d4;stroke-width:1;}
+    .laneLbl{fill:#ececea;stroke:#d4d4d4;stroke-width:1;}
+    .card{fill:#ffffff;stroke:#d4d4d4;stroke-width:1.2;}
+    .start{fill:#1f8a4c;}
+    .end{fill:#c96442;}
+    .ai{fill:#fbeee8;stroke:#c96442;stroke-width:1.4;}
+    .new{fill:#fbeee8;stroke:#c96442;stroke-width:2;}
+    .dec{fill:#fbf2dc;stroke:#c98a1f;stroke-width:1.4;}
+    .out{fill:#e8f5ee;stroke:#1f8a4c;stroke-width:1.2;}
+    .line{stroke:#888;stroke-width:1.6;fill:none;}
+    .lineY{stroke:#1f8a4c;stroke-width:1.8;fill:none;}
+    .lineN{stroke:#c43d3d;stroke-width:1.8;fill:none;}
+    .dash{stroke-dasharray:5 4;}
+    .title{font-size:18px;font-weight:700;}
+    .lblTxt{font-size:11px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;fill:#555;}
+    .h{font-size:13px;font-weight:600;}
+    .sub{font-size:11px;}
+    .tag{font-size:10px;}
+    .yn{font-size:10px;font-weight:700;}
+    .badge{font-size:9px;font-weight:700;fill:#c96442;}
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#888"/></marker>
+    <marker id="arrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f8a4c"/></marker>
+    <marker id="arrR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c43d3d"/></marker>
+  </defs>
+  <rect width="1320" height="2200" fill="#ffffff"/>
+
+  <text x="40" y="40" class="title t">MedLynq v3 — End-to-end workflow</text>
+  <text x="40" y="60" class="sub t2">Pre-auth → capture → Lynq → Pulse → NHCX → CFO. Six swim lanes show ownership. Decision diamonds show prevention &amp; query loops. Numbered for demo narration.</text>
+
+  <g>
+    <rect class="laneLbl" x="20" y="90" width="120" height="160" rx="6"/>
+    <text x="80" y="170" class="lblTxt" text-anchor="middle" transform="rotate(-90 80 170)">Pre-auth (cashless)</text>
+    <rect class="laneLbl" x="20" y="258" width="120" height="280" rx="6"/>
+    <text x="80" y="398" class="lblTxt" text-anchor="middle" transform="rotate(-90 80 398)">MedLynq Go (mobile)</text>
+    <rect class="laneLbl" x="20" y="546" width="120" height="500" rx="6"/>
+    <text x="80" y="796" class="lblTxt" text-anchor="middle" transform="rotate(-90 80 796)">Central server · Lynq AI</text>
+    <rect class="laneLbl" x="20" y="1054" width="120" height="280" rx="6"/>
+    <text x="80" y="1194" class="lblTxt" text-anchor="middle" transform="rotate(-90 80 1194)">MedLynq Pulse (web)</text>
+    <rect class="laneLbl" x="20" y="1342" width="120" height="320" rx="6"/>
+    <text x="80" y="1502" class="lblTxt" text-anchor="middle" transform="rotate(-90 80 1502)">NHCX / scheme portal</text>
+    <rect class="laneLbl" x="20" y="1670" width="120" height="320" rx="6"/>
+    <text x="80" y="1830" class="lblTxt" text-anchor="middle" transform="rotate(-90 80 1830)">CFO · Insurer · Flywheel</text>
+  </g>
+
+  <rect class="lane" x="150" y="90" width="1150" height="160" rx="8" opacity="0.4"/>
+  <rect class="lane" x="150" y="258" width="1150" height="280" rx="8" opacity="0.4"/>
+  <rect class="lane" x="150" y="546" width="1150" height="500" rx="8" opacity="0.4"/>
+  <rect class="lane" x="150" y="1054" width="1150" height="280" rx="8" opacity="0.4"/>
+  <rect class="lane" x="150" y="1342" width="1150" height="320" rx="8" opacity="0.4"/>
+  <rect class="lane" x="150" y="1670" width="1150" height="320" rx="8" opacity="0.4"/>
+
+  <g transform="translate(180,110)"><rect class="start" width="160" height="44" rx="22"/><text x="80" y="28" class="h inv" text-anchor="middle">PATIENT ARRIVES</text></g>
+
+  <g transform="translate(180,176)"><rect class="new" width="180" height="60" rx="8"/><text x="10" y="20" class="h t">P1 · Doctor co-pilot <tspan class="badge">NEW</tspan></text><text x="10" y="38" class="tag t2">Chief complaint → likely Dx</text><text x="10" y="52" class="tag t2">Suggested ICD + procedure</text></g>
+  <g transform="translate(400,176)"><rect class="ai" width="180" height="60" rx="8"/><text x="10" y="20" class="h t">P2 · Pre-auth packet</text><text x="10" y="38" class="tag t2">Cost estimate + ICD + consent</text><text x="10" y="52" class="tag t2">Lynq drafts the bundle</text></g>
+  <g transform="translate(620,176)"><rect class="card" width="180" height="60" rx="8"/><text x="10" y="20" class="h t">P3 · Submit pre-auth</text><text x="10" y="38" class="tag t2">NHCX or scheme portal</text><text x="10" y="52" class="tag t2">Aging clock starts</text></g>
+  <g transform="translate(840,176)"><rect class="dec" width="200" height="60" rx="4"/><text x="100" y="28" class="h t" text-anchor="middle">P4 · Approved or</text><text x="100" y="44" class="h t" text-anchor="middle">enhanced?</text></g>
+  <g transform="translate(1080,176)"><rect class="out" width="200" height="60" rx="8"/><text x="10" y="20" class="h t">P5 · Admit + reuse evidence</text><text x="10" y="38" class="tag t2">Same folder PatientName_MRN</text><text x="10" y="52" class="tag t2">No double-capture downstream</text></g>
+
+  <path class="line" d="M340,132 V146 H260 V176" marker-end="url(#arr)"/>
+  <path class="line" d="M360,206 H400" marker-end="url(#arr)"/>
+  <path class="line" d="M580,206 H620" marker-end="url(#arr)"/>
+  <path class="line" d="M800,206 H840" marker-end="url(#arr)"/>
+  <path class="line" d="M1040,206 H1080" marker-end="url(#arr)"/>
+  <path class="line" d="M1180,236 V278" marker-end="url(#arr)"/>
+
+  <g transform="translate(180,278)"><rect class="card" width="180" height="70" rx="8"/><text x="10" y="22" class="h t">1 · Open MedLynq Go</text><text x="10" y="40" class="tag t2">Login as Doctor / Nurse</text><text x="10" y="54" class="tag t2">Role badge shown</text></g>
+  <g transform="translate(400,278)"><rect class="card" width="180" height="70" rx="8"/><text x="10" y="22" class="h t">2 · Scan QR + consent <tspan class="badge">NEW</tspan></text><text x="10" y="40" class="tag t2">Patient bound · DPDP ledger</text><text x="10" y="54" class="tag t2">Or MRN/name fallback</text></g>
+  <g transform="translate(620,278)"><rect class="card" width="200" height="70" rx="8"/><text x="10" y="22" class="h t">3 · Capture artefact</text><text x="10" y="40" class="tag t2">Photo · handwriting · voice <tspan class="badge">NEW</tspan></text><text x="10" y="54" class="tag t2">Drug barcode · OT geotag</text></g>
+  <g transform="translate(860,278)"><rect class="card" width="200" height="70" rx="8"/><text x="10" y="22" class="h t">4 · Confirm + tag</text><text x="10" y="40" class="tag t2">Document type · description</text><text x="10" y="54" class="tag t2">Lynq confidence preview</text></g>
+  <g transform="translate(1100,278)"><rect class="card" width="180" height="70" rx="8"/><text x="10" y="22" class="h t">5 · Upload</text><text x="10" y="40" class="tag t2">Encrypted · not in gallery</text><text x="10" y="54" class="tag t2">Session inbox + retry</text></g>
+
+  <path class="line" d="M360,313 H400" marker-end="url(#arr)"/>
+  <path class="line" d="M580,313 H620" marker-end="url(#arr)"/>
+  <path class="line" d="M820,313 H860" marker-end="url(#arr)"/>
+  <path class="line" d="M1060,313 H1100" marker-end="url(#arr)"/>
+  <path class="line" d="M260,348 V416" marker-end="url(#arr)"/>
+
+  <g transform="translate(180,374)"><rect class="card" width="880" height="44" rx="8"/><text x="10" y="20" class="h t">Privacy guardrail</text><text x="10" y="36" class="tag t2">No gallery write · encrypted offline queue · session-only thumbs · consent + audit per capture</text></g>
+
+  <g transform="translate(180,442)"><rect class="card" width="280" height="80" rx="8"/><text x="10" y="22" class="h t">5b · HIS · Pharmacy · PACS pull (parallel)</text><text x="10" y="40" class="tag t2">Practo / Insta / eHospital · DICOM</text><text x="10" y="54" class="tag t2">Drug barcode webhook · HL7 labs <tspan class="badge">NEW</tspan></text><text x="10" y="68" class="tag t2">Auto-deduped into folder</text></g>
+  <g transform="translate(480,442)"><rect class="new" width="280" height="80" rx="8"/><text x="10" y="22" class="h t">5c · Empanelment check <tspan class="badge">NEW</tspan></text><text x="10" y="40" class="tag t2">Scheme empanelment · NABH renewal</text><text x="10" y="54" class="tag t2">Block claim if lapsed</text><text x="10" y="68" class="tag t2">Prevents silent rejection</text></g>
+  <g transform="translate(780,442)"><rect class="card" width="280" height="80" rx="8"/><text x="10" y="22" class="h t">5d · Patient consent ledger <tspan class="badge">NEW</tspan></text><text x="10" y="40" class="tag t2">e-Signed at QR scan</text><text x="10" y="54" class="tag t2">DPDP-grade hash + timestamp</text><text x="10" y="68" class="tag t2">Enables network sharing later</text></g>
+
+  <path class="line" d="M1190,348 V568" marker-end="url(#arr)"/>
+
+  <g transform="translate(1080,568)"><rect class="card" width="200" height="60" rx="8"/><text x="10" y="22" class="h t">6 · Receive upload</text><text x="10" y="38" class="tag t2">Verify role · session · MRN</text><text x="10" y="52" class="tag t2">FHIR AuditEvent entry <tspan class="badge">v2</tspan></text></g>
+  <g transform="translate(840,568)"><rect class="card" width="220" height="60" rx="8"/><text x="10" y="22" class="h t">7 · Open / create folder</text><text x="10" y="38" class="tag t2">PatientName_MRN (dedupe)</text><text x="10" y="52" class="tag t2">Reuse pre-auth evidence</text></g>
+  <g transform="translate(600,568)"><rect class="card" width="220" height="60" rx="8"/><text x="10" y="22" class="h t">8 · Index every artefact <tspan class="badge">v2</tspan></text><text x="10" y="38" class="tag t2">Clinical Evidence Index</text><text x="10" y="52" class="tag t2">Type · page-OCR · MRN · date</text></g>
+
+  <g transform="translate(180,650)">
+    <rect class="ai" width="1100" height="100" rx="10"/>
+    <text x="14" y="22" class="h t">9 · Lynq brain — extract &amp; normalize</text>
+    <g transform="translate(14,30)"><rect class="card" width="170" height="56" rx="6"/><text x="8" y="16" class="tag h t">Handwriting → sheet</text><text x="8" y="30" class="tag t2">Dx · ICD · Rx · meds</text><text x="8" y="44" class="tag t2">Reasoning + confidence</text></g>
+    <g transform="translate(196,30)"><rect class="new" width="170" height="56" rx="6"/><text x="8" y="16" class="tag h t">Voice → sheet <tspan class="badge">NEW</tspan></text><text x="8" y="30" class="tag t2">STT Hindi/Eng/regional</text><text x="8" y="44" class="tag t2">Same Dx/ICD output</text></g>
+    <g transform="translate(378,30)"><rect class="card" width="170" height="56" rx="6"/><text x="8" y="16" class="tag h t">Rename + OCR</text><text x="8" y="30" class="tag t2">Schema filenames</text><text x="8" y="44" class="tag t2">Feeds index</text></g>
+    <g transform="translate(560,30)"><rect class="card" width="170" height="56" rx="6"/><text x="8" y="16" class="tag h t">Compress</text><text x="8" y="30" class="tag t2">Quality-preserving</text><text x="8" y="44" class="tag t2">~70% saved</text></g>
+    <g transform="translate(742,30)"><rect class="card" width="170" height="56" rx="6"/><text x="8" y="16" class="tag h t">Doc checker</text><text x="8" y="30" class="tag t2">Procedure × scheme</text><text x="8" y="44" class="tag t2">Missing-doc detection</text></g>
+    <g transform="translate(924,30)"><rect class="card" width="162" height="56" rx="6"/><text x="8" y="16" class="tag h t">Patient match</text><text x="8" y="30" class="tag t2">MRN/name/DOB fuzzy</text><text x="8" y="44" class="tag t2">Dedupe + suffix</text></g>
+  </g>
+
+  <path class="line" d="M1180,628 V650" marker-end="url(#arr)"/>
+  <path class="line" d="M1080,598 H1060" marker-end="url(#arr)"/>
+  <path class="line" d="M840,598 H820" marker-end="url(#arr)"/>
+  <path class="line" d="M730,628 V650" marker-end="url(#arr)"/>
+
+  <g transform="translate(540,790)"><polygon points="100,0 200,52 100,104 0,52" class="dec"/><text x="100" y="48" class="h t" text-anchor="middle">10 · All required</text><text x="100" y="64" class="h t" text-anchor="middle">documents present?</text></g>
+
+  <text x="760" y="836" class="yn" fill="#c43d3d">NO</text>
+  <text x="520" y="836" class="yn" fill="#1f8a4c">YES</text>
+
+  <g transform="translate(840,790)"><rect class="card" width="220" height="104" rx="8"/><text x="10" y="22" class="h t">11a · Flag missing items</text><text x="10" y="40" class="tag t2">Red badge on Pulse · ward push</text><text x="10" y="54" class="tag t2">Doctor co-pilot nudge <tspan class="badge">NEW</tspan></text><text x="10" y="70" class="tag t2">"Capture HPE before submit"</text><text x="10" y="86" class="tag t2">Loops back to step 3</text></g>
+
+  <g transform="translate(180,790)"><rect class="ai" width="320" height="104" rx="8"/><text x="10" y="22" class="h t">11b · Risk + approval predictor</text><text x="10" y="40" class="tag t2">"67% query probability"</text><text x="10" y="54" class="tag t2">Top reason · suggested fix</text><text x="10" y="70" class="tag t2">Expected ₹ vs claimed ₹ · TAT</text><text x="10" y="86" class="tag t2">Block submit if score &gt; threshold</text></g>
+
+  <path class="line" d="M730,750 V790" marker-end="url(#arr)"/>
+  <path class="lineY" d="M540,842 H500" marker-end="url(#arrG)"/>
+  <path class="lineN" d="M740,842 H840" marker-end="url(#arrR)"/>
+  <path class="lineN dash" d="M940,790 V388 H1060 V348" marker-end="url(#arrR)"/>
+  <text x="950" y="384" class="tag" fill="#c43d3d">request more captures</text>
+
+  <g transform="translate(180,918)">
+    <rect class="ai" width="1100" height="96" rx="10"/>
+    <text x="14" y="22" class="h t">12 · Lynq intelligence layer · prevention &amp; auto-prep</text>
+    <g transform="translate(14,30)"><rect class="card" width="200" height="54" rx="6"/><text x="8" y="16" class="tag h t">Network patterns + denial alerts</text><text x="8" y="30" class="tag t2">Cross-hospital scheme behaviour</text><text x="8" y="44" class="tag t2">"Pre-attach chemo charts now"</text></g>
+    <g transform="translate(226,30)"><rect class="card" width="200" height="54" rx="6"/><text x="8" y="16" class="tag h t">Pre-attach evidence</text><text x="8" y="30" class="tag t2">Top-N likely-asked docs</text><text x="8" y="44" class="tag t2">Cuts query rate upstream</text></g>
+    <g transform="translate(438,30)"><rect class="new" width="200" height="54" rx="6"/><text x="8" y="16" class="tag h t">Ask Lynq · NL search <tspan class="badge">NEW</tspan></text><text x="8" y="30" class="tag t2">"What was the OT date?"</text><text x="8" y="44" class="tag t2">Index-powered Q&amp;A</text></g>
+    <g transform="translate(650,30)"><rect class="card" width="200" height="54" rx="6"/><text x="8" y="16" class="tag h t">Benchmarking</text><text x="8" y="30" class="tag t2">Doctor · dept · hospital</text><text x="8" y="44" class="tag t2">Anonymous peer compare</text></g>
+    <g transform="translate(862,30)"><rect class="card" width="224" height="54" rx="6"/><text x="8" y="16" class="tag h t">FHIR AuditEvent log <tspan class="badge">v2</tspan></text><text x="8" y="30" class="tag t2">Every step · timestamp · actor</text><text x="8" y="44" class="tag t2">Compliance + legal exports</text></g>
+  </g>
+
+  <path class="line" d="M340,894 V918" marker-end="url(#arr)"/>
+  <path class="line" d="M340,1014 V1082" marker-end="url(#arr)"/>
+
+  <g transform="translate(180,1082)"><rect class="card" width="220" height="70" rx="8"/><text x="10" y="22" class="h t">13 · TPA clerk reviews</text><text x="10" y="40" class="tag t2">Patient detail · checklist · timeline</text><text x="10" y="54" class="tag t2">Risk · UTR · aging buckets</text></g>
+  <g transform="translate(440,1082)"><rect class="card" width="220" height="70" rx="8"/><text x="10" y="22" class="h t">14 · Doctor signs case sheet</text><text x="10" y="40" class="tag t2">Reviews Lynq Dx/Rx</text><text x="10" y="54" class="tag t2">Confirms or edits codes</text></g>
+  <g transform="translate(700,1082)"><rect class="card" width="220" height="70" rx="8"/><text x="10" y="22" class="h t">15 · Final approval check</text><text x="10" y="40" class="tag t2">Codes · totals · adj factors</text><text x="10" y="54" class="tag t2">"Mark as reviewed"</text></g>
+  <g transform="translate(960,1072)"><polygon points="100,0 200,46 100,92 0,46" class="dec"/><text x="100" y="44" class="h t" text-anchor="middle">16 · Risk low</text><text x="100" y="60" class="h t" text-anchor="middle">enough to submit?</text></g>
+
+  <g transform="translate(180,1186)"><rect class="card" width="240" height="60" rx="8"/><text x="10" y="22" class="h t">13a · Bulk download zip</text><text x="10" y="38" class="tag t2">All docs + audit · upload-ready</text><text x="10" y="52" class="tag t2">Portal-only fallback path</text></g>
+  <g transform="translate(460,1186)"><rect class="card" width="240" height="60" rx="8"/><text x="10" y="22" class="h t">14a · Manual query / escalation</text><text x="10" y="38" class="tag t2">Internal note · route to doctor</text><text x="10" y="52" class="tag t2">Adds to packet builder</text></g>
+  <g transform="translate(740,1186)"><rect class="new" width="240" height="60" rx="8"/><text x="10" y="22" class="h t">15a · Auditor share link <tspan class="badge">NEW</tspan></text><text x="10" y="38" class="tag t2">Watermarked · time-boxed</text><text x="10" y="52" class="tag t2">Read-only folder URL</text></g>
+
+  <path class="line" d="M400,1117 H440" marker-end="url(#arr)"/>
+  <path class="line" d="M660,1117 H700" marker-end="url(#arr)"/>
+  <path class="line" d="M920,1117 H960" marker-end="url(#arr)"/>
+  <path class="line" d="M290,1152 V1186" marker-end="url(#arr)"/>
+  <path class="line" d="M550,1152 V1186" marker-end="url(#arr)"/>
+  <path class="line" d="M850,1152 V1186" marker-end="url(#arr)"/>
+
+  <g transform="translate(180,1362)"><rect class="ai" width="240" height="76" rx="8"/><text x="10" y="22" class="h t">17 · NHCX FHIR mapper</text><text x="10" y="40" class="tag t2">ICD → HBP → FHIR Claim</text><text x="10" y="56" class="tag t2">DocumentReference bundle</text><text x="10" y="70" class="tag t2">AuditEvent + Communication</text></g>
+  <g transform="translate(460,1362)"><rect class="card" width="200" height="76" rx="8"/><text x="10" y="22" class="h t">18 · Submit</text><text x="10" y="40" class="tag t2">NHCX (target) or scheme portal</text><text x="10" y="56" class="tag t2">Status webhook tracked</text><text x="10" y="70" class="tag t2">Per-claim transaction fee</text></g>
+  <g transform="translate(700,1354)"><polygon points="100,0 200,46 100,92 0,46" class="dec"/><text x="100" y="44" class="h t" text-anchor="middle">19 · Query raised</text><text x="100" y="60" class="h t" text-anchor="middle">by insurer?</text></g>
+
+  <g transform="translate(180,1486)">
+    <rect class="ai" width="1100" height="120" rx="10"/>
+    <text x="14" y="22" class="h t">20 · Query loop (5 steps · 45 sec end-to-end target)</text>
+    <g transform="translate(14,30)"><rect class="card" width="200" height="80" rx="6"/><text x="8" y="16" class="tag h t">a · Query arrives</text><text x="8" y="30" class="tag t2">From NHCX / portal</text><text x="8" y="44" class="tag t2">CommunicationRequest</text><text x="8" y="58" class="tag t2">Aging clock starts</text></g>
+    <g transform="translate(226,30)"><rect class="card" width="200" height="80" rx="6"/><text x="8" y="16" class="tag h t">b · Classify (10 types)</text><text x="8" y="30" class="tag t2">missing_doc · code_mismatch</text><text x="8" y="44" class="tag t2">clinical_elab · clubbing</text><text x="8" y="58" class="tag t2">Confidence + routing</text></g>
+    <g transform="translate(438,30)"><rect class="new" width="200" height="80" rx="6"/><text x="8" y="16" class="tag h t">c · Evidence Locator <tspan class="badge">NEW</tspan></text><text x="8" y="30" class="tag t2">Already on file?</text><text x="8" y="44" class="tag t2">File path + page nos</text><text x="8" y="58" class="tag t2">Else → ward request</text></g>
+    <g transform="translate(650,30)"><rect class="card" width="200" height="80" rx="6"/><text x="8" y="16" class="tag h t">d · Draft response</text><text x="8" y="30" class="tag t2">Template per type</text><text x="8" y="44" class="tag t2">Pre-attached evidence</text><text x="8" y="58" class="tag t2">Doctor-signable</text></g>
+    <g transform="translate(862,30)"><rect class="new" width="224" height="80" rx="6"/><text x="8" y="16" class="tag h t">e · Packet Builder + resubmit <tspan class="badge">NEW</tspan></text><text x="8" y="30" class="tag t2">Merge PDFs · cover page</text><text x="8" y="44" class="tag t2">Query_Response_XXXX.pdf</text><text x="8" y="58" class="tag t2">Outcome logged for training</text></g>
+  </g>
+
+  <g transform="translate(460,1626)"><rect class="out" width="200" height="64" rx="8"/><text x="10" y="22" class="h t">21 · Approved + paid</text><text x="10" y="40" class="tag t2">UTR auto-reconciled <tspan class="badge">v2</tspan></text><text x="10" y="56" class="tag t2">ERP / Tally sync <tspan class="badge">NEW</tspan></text></g>
+
+  <text x="900" y="1408" class="yn" fill="#c43d3d">YES</text>
+  <text x="680" y="1636" class="yn" fill="#1f8a4c">NO</text>
+
+  <path class="line" d="M420,1400 H460" marker-end="url(#arr)"/>
+  <path class="line" d="M660,1400 H700" marker-end="url(#arr)"/>
+  <path class="lineN" d="M900,1400 H1100" marker-end="url(#arrR)"/>
+  <path class="lineN" d="M1180,1430 V1486" marker-end="url(#arrR)"/>
+  <path class="lineG" d="M800,1446 V1626" marker-end="url(#arrG)"/>
+  <path class="lineN dash" d="M1090,1606 V1620 H560 V1626" marker-end="url(#arrR)"/>
+  <text x="820" y="1616" class="tag" fill="#c43d3d">resolved → resubmit response</text>
+  <path class="line" d="M1060,1252 V1362" marker-end="url(#arr)"/>
+
+  <g transform="translate(180,1690)"><rect class="out" width="220" height="90" rx="8"/><text x="10" y="22" class="h t">22 · CFO Pulse</text><text x="10" y="40" class="tag t2">₹ locked → ₹ unlocked YTD</text><text x="10" y="56" class="tag t2">Query trend · TAT delta</text><text x="10" y="72" class="tag t2">Underpayment · cash-flow forecast</text></g>
+  <g transform="translate(420,1690)"><rect class="new" width="220" height="90" rx="8"/><text x="10" y="22" class="h t">22a · CFO mobile push <tspan class="badge">NEW</tspan></text><text x="10" y="40" class="tag t2">Daily 7am digest</text><text x="10" y="56" class="tag t2">"₹X unlocked · Y queries · Z aging"</text><text x="10" y="72" class="tag t2">Keeps CFO in product daily</text></g>
+  <g transform="translate(660,1690)"><rect class="new" width="220" height="90" rx="8"/><text x="10" y="22" class="h t">23 · Insurer-side mirror <tspan class="badge">NEW</tspan></text><text x="10" y="40" class="tag t2">Read-only TPA / payer view</text><text x="10" y="56" class="tag t2">Same case · same evidence</text><text x="10" y="72" class="tag t2">Two-sided network play</text></g>
+  <g transform="translate(900,1690)"><rect class="new" width="220" height="90" rx="8"/><text x="10" y="22" class="h t">24 · Patient mini-portal <tspan class="badge">NEW</tspan></text><text x="10" y="40" class="tag t2">Cashless status · pre-auth</text><text x="10" y="56" class="tag t2">Bill estimate · discharge flag</text><text x="10" y="72" class="tag t2">Reduces front-desk queries</text></g>
+
+  <g transform="translate(180,1800)"><rect class="out" width="280" height="80" rx="8"/><text x="10" y="22" class="h t">25 · Network intelligence</text><text x="10" y="40" class="tag t2">Scheme behaviour insights</text><text x="10" y="56" class="tag t2">Denial pattern alerts</text><text x="10" y="72" class="tag t2">Sold as CFO add-on</text></g>
+  <g transform="translate(480,1800)"><rect class="ai" width="280" height="80" rx="8"/><text x="10" y="22" class="h t">26 · Data flywheel</text><text x="10" y="40" class="tag t2">Query · response · outcome logged</text><text x="10" y="56" class="tag t2">PII strip · synthetic augment</text><text x="10" y="72" class="tag t2">Classifier retrains monthly</text></g>
+  <g transform="translate(780,1800)"><rect class="out" width="280" height="80" rx="8"/><text x="10" y="22" class="h t">27 · ERP / Tally sync <tspan class="badge">NEW</tspan></text><text x="10" y="40" class="tag t2">UTR auto-posted to ledger</text><text x="10" y="56" class="tag t2">Bidirectional invoice mapping</text><text x="10" y="72" class="tag t2">TDS reconciliation</text></g>
+  <g transform="translate(1080,1820)"><rect class="end" width="220" height="80" rx="40"/><text x="110" y="38" class="h inv" text-anchor="middle">END</text><text x="110" y="58" class="tag inv" text-anchor="middle">Settled claim · smarter platform</text></g>
+
+  <path class="line" d="M560,1690 V1640" marker-end="url(#arr)"/>
+  <path class="line" d="M400,1735 H420" marker-end="url(#arr)"/>
+  <path class="line" d="M640,1735 H660" marker-end="url(#arr)"/>
+  <path class="line" d="M880,1735 H900" marker-end="url(#arr)"/>
+  <path class="line" d="M290,1780 V1800" marker-end="url(#arr)"/>
+  <path class="line" d="M460,1840 H480" marker-end="url(#arr)"/>
+  <path class="line" d="M760,1840 H780" marker-end="url(#arr)"/>
+  <path class="line" d="M1060,1860 H1080" marker-end="url(#arr)"/>
+
+  <path class="line dash" d="M620,1880 V1920 H40 V680 H180" marker-end="url(#arr)"/>
+  <text x="80" y="1942" class="tag t2">retrained Lynq feeds next case</text>
+
+  <g transform="translate(180,2000)">
+    <rect class="card" width="1100" height="180" rx="8"/>
+    <text x="14" y="22" class="h t">Legend</text>
+    <rect class="card" x="14" y="34" width="16" height="16" rx="3"/><text x="36" y="46" class="tag t2">Process step</text>
+    <rect class="ai" x="130" y="34" width="16" height="16" rx="3"/><text x="152" y="46" class="tag t2">AI / Lynq module</text>
+    <rect class="new" x="240" y="34" width="16" height="16" rx="3"/><text x="262" y="46" class="tag t2">New v2/v3 module (Evidence Locator · Packet Builder · Voice · Co-pilot · Insurer · Patient · ERP · etc.)</text>
+    <rect class="dec" x="14" y="60" width="16" height="16" rx="3"/><text x="36" y="72" class="tag t2">Decision</text>
+    <rect class="out" x="130" y="60" width="16" height="16" rx="3"/><text x="152" y="72" class="tag t2">Outcome / win</text>
+    <line x1="240" y1="68" x2="280" y2="68" class="lineG"/><text x="286" y="72" class="tag t2">YES path</text>
+    <line x1="370" y1="68" x2="410" y2="68" class="lineN"/><text x="416" y="72" class="tag t2">NO path</text>
+    <line x1="500" y1="68" x2="540" y2="68" class="line dash"/><text x="546" y="72" class="tag t2">Loop / feedback</text>
+    <text x="14" y="100" class="tag t2">P1–P5 — Pre-authorization (cashless) lane. Runs before patient admission. Approved evidence is reused in the main claim — no double-capture.</text>
+    <text x="14" y="116" class="tag t2">1–5 — MedLynq Go mobile capture (photo · handwriting · voice). 5b/5c/5d — server-side parallel pulls + empanelment + consent checks.</text>
+    <text x="14" y="132" class="tag t2">6–12 — Central server &amp; Lynq AI brain. Extract → decision → intelligence layer. Missing-doc loop returns to step 3 via ward push.</text>
+    <text x="14" y="148" class="tag t2">13–16 — MedLynq Pulse review (TPA · Doctor · Auditor share link). 17–21 — NHCX submission + 5-step query loop · UTR + Tally sync.</text>
+    <text x="14" y="164" class="tag t2">22–27 — CFO outcomes · insurer mirror · patient portal · network intelligence · data flywheel feeds Lynq back into next case.</text>
+  </g>
+</svg>

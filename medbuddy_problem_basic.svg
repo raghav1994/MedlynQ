@@ -1,0 +1,51 @@
+<svg viewBox="0 0 1100 560" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>Current state — manual query ping-pong</title>
+  <style>
+    .t{fill:#1f1f1f;} .t2{fill:#555;}
+    .card{fill:#fff;stroke:#999;stroke-width:1.4;}
+    .start{fill:#fff;stroke:#1f1f1f;stroke-width:2;}
+    .pain{fill:#fff5f3;stroke:#c43d3d;stroke-width:1.4;}
+    .line{stroke:#666;stroke-width:1.6;fill:none;}
+    .dash{stroke-dasharray:5 4;}
+    .title{font-size:17px;font-weight:700;}
+    .h{font-size:13px;font-weight:600;}
+    .sub{font-size:11px;}
+    .tag{font-size:10px;}
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#666"/></marker>
+  </defs>
+  <rect width="1100" height="560" fill="#ffffff"/>
+  <text x="40" y="34" class="title t">Before MedBuddy — the manual ping-pong</text>
+  <text x="40" y="54" class="sub t2">What happens today when a query arrives. Seven steps, 25–40 min per query, 23 days lost on average.</text>
+  <g transform="translate(40,90)"><rect class="start" width="180" height="60" rx="6"/><text x="14" y="22" class="h t">1 · Query arrives</text><text x="14" y="40" class="tag t2">On government portal</text><text x="14" y="54" class="tag t2">"PROVIDE POST OP HPE REPORT"</text></g>
+  <g transform="translate(260,90)"><rect class="card" width="180" height="60" rx="6"/><text x="14" y="22" class="h t">2 · Clerk reads &amp; interprets</text><text x="14" y="40" class="tag t2">5–10 min</text><text x="14" y="54" class="tag t2">Each scheme uses different language</text></g>
+  <g transform="translate(480,90)"><rect class="card" width="180" height="60" rx="6"/><text x="14" y="22" class="h t">3 · Hunt the document</text><text x="14" y="40" class="tag t2">10–20 min</text><text x="14" y="54" class="tag t2">Paper file or scattered scans</text></g>
+  <g transform="translate(700,90)"><rect class="card" width="180" height="60" rx="6"/><text x="14" y="22" class="h t">4 · Type response</text><text x="14" y="40" class="tag t2">5–10 min</text><text x="14" y="54" class="tag t2">Portal text box · no templates</text></g>
+  <g transform="translate(920,90)"><rect class="card" width="150" height="60" rx="6"/><text x="14" y="22" class="h t">5 · Re-upload</text><text x="14" y="40" class="tag t2">~5 min</text><text x="14" y="54" class="tag t2">Resize · convert · attach</text></g>
+  <g transform="translate(700,200)"><rect class="card" width="180" height="60" rx="6"/><text x="14" y="22" class="h t">6 · Wait for insurer</text><text x="14" y="40" class="tag t2">7–21 days average</text><text x="14" y="54" class="tag t2">No status visibility</text></g>
+  <g transform="translate(480,200)"><rect class="pain" width="180" height="60" rx="6"/><text x="14" y="22" class="h t">7 · Another query?</text><text x="14" y="40" class="tag t2">3–8 rounds typical</text><text x="14" y="54" class="tag t2">Same document, different ask</text></g>
+  <path class="line" d="M220,120 H260" marker-end="url(#a)"/>
+  <path class="line" d="M440,120 H480" marker-end="url(#a)"/>
+  <path class="line" d="M660,120 H700" marker-end="url(#a)"/>
+  <path class="line" d="M880,120 H920" marker-end="url(#a)"/>
+  <path class="line" d="M995,150 V200 H880" marker-end="url(#a)"/>
+  <path class="line" d="M700,230 H660" marker-end="url(#a)"/>
+  <path class="line dash" d="M480,230 H350 V150" marker-end="url(#a)"/>
+  <text x="380" y="222" class="tag t2">loop · same case</text>
+  <g transform="translate(40,300)">
+    <rect class="pain" width="1030" height="220" rx="8"/>
+    <text x="20" y="28" class="h t">The damage this does to the hospital</text>
+    <g transform="translate(20,46)">
+      <text x="0" y="20" class="sub t">• 15–40% of hospital revenue locked in pending claims at any moment</text>
+      <text x="0" y="40" class="sub t">• Average 23 days lost per query raised · 3–8 queries per complex oncology claim</text>
+      <text x="0" y="60" class="sub t">• Clerk spends 25–40 min per query · loses 2+ hours every day to ping-pong</text>
+      <text x="0" y="80" class="sub t">• Insurers often re-request documents that are already on the file (no one can find them)</text>
+      <text x="0" y="100" class="sub t">• 6 different portals (PMJAY · CGHS · ESI · Railway · ECHS · SHA) — no APIs, all manual</text>
+      <text x="0" y="120" class="sub t">• Each scheme phrases queries differently — "HPE", "histopathology", "biopsy" mean the same thing, no system understands</text>
+      <text x="0" y="140" class="sub t">• Clinical evidence is scattered: handwriting in case sheets, photos on phones, PDFs in HIS, paper in files</text>
+      <text x="0" y="160" class="sub t">• CFO has zero visibility — no view of ₹ locked, aging, underpayments, TAT vs peers</text>
+      <text x="0" y="180" class="sub t">• IRDAI: ₹26,000 crore disallowed in health claims (FY2024) — much of it preventable with better document discipline</text>
+    </g>
+  </g>
+</svg>

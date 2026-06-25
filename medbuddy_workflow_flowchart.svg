@@ -1,0 +1,158 @@
+<svg viewBox="0 0 1280 1700" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>MedBuddy end-to-end workflow flowchart</title>
+  <desc>How a clinical capture flows from MedCam through the AI brain, HIS pull, doc checklist, risk scoring, NHCX submission, query loop and CFO visibility.</desc>
+  <style>
+    .t{fill:#1f1f1f;} .t2{fill:#555;} .inv{fill:#fff;}
+    .lane{fill:#f6f6f4;stroke:#d4d4d4;stroke-width:1;}
+    .laneLbl{fill:#ececea;stroke:#d4d4d4;stroke-width:1;}
+    .card{fill:#ffffff;stroke:#d4d4d4;stroke-width:1.2;}
+    .start{fill:#1f8a4c;}
+    .end{fill:#c96442;}
+    .ai{fill:#fbeee8;stroke:#c96442;stroke-width:1.4;}
+    .dec{fill:#fbf2dc;stroke:#c98a1f;stroke-width:1.4;}
+    .out{fill:#e8f5ee;stroke:#1f8a4c;stroke-width:1.2;}
+    .line{stroke:#888;stroke-width:1.6;fill:none;}
+    .lineY{stroke:#1f8a4c;stroke-width:1.8;fill:none;}
+    .lineN{stroke:#c43d3d;stroke-width:1.8;fill:none;}
+    .dash{stroke-dasharray:5 4;}
+    .title{font-size:18px;font-weight:700;}
+    .lblTxt{font-size:11px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;fill:#555;}
+    .h{font-size:13px;font-weight:600;}
+    .sub{font-size:11px;}
+    .tag{font-size:10px;}
+    .yn{font-size:10px;font-weight:700;}
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#888"/></marker>
+    <marker id="arrG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f8a4c"/></marker>
+    <marker id="arrR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c43d3d"/></marker>
+  </defs>
+  <rect width="1280" height="1700" fill="#ffffff"/>
+  <text x="40" y="40" class="title t">MedBuddy — End-to-end workflow</text>
+  <text x="40" y="60" class="sub t2">From shutter press to settled UTR. Five swim lanes show who owns each step. Decision diamonds show the prevention &amp; query loops.</text>
+
+  <g>
+    <rect class="laneLbl" x="20" y="90" width="120" height="280" rx="6"/>
+    <text x="80" y="230" class="lblTxt" text-anchor="middle" transform="rotate(-90 80 230)">MedCam (mobile)</text>
+    <rect class="laneLbl" x="20" y="378" width="120" height="380" rx="6"/>
+    <text x="80" y="568" class="lblTxt" text-anchor="middle" transform="rotate(-90 80 568)">Central server · AI brain</text>
+    <rect class="laneLbl" x="20" y="766" width="120" height="280" rx="6"/>
+    <text x="80" y="906" class="lblTxt" text-anchor="middle" transform="rotate(-90 80 906)">WebApp dashboard</text>
+    <rect class="laneLbl" x="20" y="1054" width="120" height="260" rx="6"/>
+    <text x="80" y="1184" class="lblTxt" text-anchor="middle" transform="rotate(-90 80 1184)">NHCX / scheme portal</text>
+    <rect class="laneLbl" x="20" y="1322" width="120" height="280" rx="6"/>
+    <text x="80" y="1462" class="lblTxt" text-anchor="middle" transform="rotate(-90 80 1462)">CFO &amp; flywheel</text>
+  </g>
+
+  <rect class="lane" x="150" y="90" width="1110" height="280" rx="8" opacity="0.4"/>
+  <rect class="lane" x="150" y="378" width="1110" height="380" rx="8" opacity="0.4"/>
+  <rect class="lane" x="150" y="766" width="1110" height="280" rx="8" opacity="0.4"/>
+  <rect class="lane" x="150" y="1054" width="1110" height="260" rx="8" opacity="0.4"/>
+  <rect class="lane" x="150" y="1322" width="1110" height="280" rx="8" opacity="0.4"/>
+
+  <g transform="translate(180,110)"><rect class="start" width="160" height="44" rx="22"/><text x="80" y="28" class="h inv" text-anchor="middle">START</text></g>
+  <g transform="translate(180,176)"><rect class="card" width="160" height="70" rx="8"/><text x="10" y="22" class="h t">1 · Open MedCam</text><text x="10" y="40" class="tag t2">Login as Doctor / Nurse</text><text x="10" y="54" class="tag t2">Role badge shown</text></g>
+  <g transform="translate(380,176)"><rect class="card" width="180" height="70" rx="8"/><text x="10" y="22" class="h t">2 · Scan patient QR</text><text x="10" y="40" class="tag t2">Or quick lookup by MRN / name</text><text x="10" y="54" class="tag t2">Active patient bound to session</text></g>
+  <g transform="translate(600,176)"><rect class="card" width="200" height="70" rx="8"/><text x="10" y="22" class="h t">3 · Capture artefact</text><text x="10" y="40" class="tag t2">📸 Photo (post-op, wound, specimen)</text><text x="10" y="54" class="tag t2">✍️ Handwritten case sheet</text></g>
+  <g transform="translate(840,176)"><rect class="card" width="200" height="70" rx="8"/><text x="10" y="22" class="h t">4 · Confirm + tag</text><text x="10" y="40" class="tag t2">Document type · description</text><text x="10" y="54" class="tag t2">AI confidence preview</text></g>
+  <g transform="translate(1080,176)"><rect class="card" width="160" height="70" rx="8"/><text x="10" y="22" class="h t">5 · Upload</text><text x="10" y="40" class="tag t2">Encrypted · not in gallery</text><text x="10" y="54" class="tag t2">Session inbox + retry</text></g>
+
+  <path class="line" d="M340,210 H380" marker-end="url(#arr)"/>
+  <path class="line" d="M560,210 H600" marker-end="url(#arr)"/>
+  <path class="line" d="M800,210 H840" marker-end="url(#arr)"/>
+  <path class="line" d="M1040,210 H1080" marker-end="url(#arr)"/>
+  <path class="line" d="M260,154 V176" marker-end="url(#arr)"/>
+
+  <g transform="translate(380,272)"><rect class="card" width="660" height="56" rx="8"/><text x="10" y="22" class="h t">Privacy guardrail</text><text x="10" y="40" class="tag t2">Image never written to Android gallery · encrypted offline queue if no signal · session-only thumbnails</text></g>
+
+  <path class="line" d="M1160,246 V398" marker-end="url(#arr)"/>
+
+  <g transform="translate(1080,400)"><rect class="card" width="160" height="60" rx="8"/><text x="10" y="22" class="h t">6 · Receive upload</text><text x="10" y="38" class="tag t2">Verify role · session · MRN</text><text x="10" y="52" class="tag t2">Audit log entry</text></g>
+  <g transform="translate(840,400)"><rect class="card" width="200" height="60" rx="8"/><text x="10" y="22" class="h t">7 · Open / create folder</text><text x="10" y="38" class="tag t2">PatientName_MRN</text><text x="10" y="52" class="tag t2">Dedupe with suffix if needed</text></g>
+  <g transform="translate(600,400)"><rect class="card" width="200" height="60" rx="8"/><text x="10" y="22" class="h t">8 · HIS pull by MRN (parallel)</text><text x="10" y="38" class="tag t2">Practo / Insta / eHospital</text><text x="10" y="52" class="tag t2">Vitals · discharge · bill · UTR</text></g>
+
+  <g transform="translate(180,486)">
+    <rect class="ai" width="1060" height="76" rx="10"/>
+    <text x="14" y="22" class="h t">9 · AI brain — process artefact</text>
+    <g transform="translate(14,30)"><rect class="card" width="170" height="40" rx="6"/><text x="8" y="16" class="tag h t">✍️ Handwriting → sheet</text><text x="8" y="30" class="tag t2">Dx · ICD · Rx · meds</text></g>
+    <g transform="translate(196,30)"><rect class="card" width="170" height="40" rx="6"/><text x="8" y="16" class="tag h t">🗂️ Rename + OCR</text><text x="8" y="30" class="tag t2">Extract fields → checklist</text></g>
+    <g transform="translate(378,30)"><rect class="card" width="170" height="40" rx="6"/><text x="8" y="16" class="tag h t">🗜️ Compress</text><text x="8" y="30" class="tag t2">Quality-preserving</text></g>
+    <g transform="translate(560,30)"><rect class="card" width="170" height="40" rx="6"/><text x="8" y="16" class="tag h t">🔗 Patient match</text><text x="8" y="30" class="tag t2">MRN · name · DOB fuzzy</text></g>
+    <g transform="translate(742,30)"><rect class="card" width="170" height="40" rx="6"/><text x="8" y="16" class="tag h t">✅ Doc checker</text><text x="8" y="30" class="tag t2">Procedure × scheme matrix</text></g>
+    <g transform="translate(924,30)"><rect class="card" width="122" height="40" rx="6"/><text x="8" y="16" class="tag h t">📑 Audit log</text><text x="8" y="30" class="tag t2">Every step</text></g>
+  </g>
+
+  <g transform="translate(540,594)"><polygon points="100,0 200,52 100,104 0,52" class="dec"/><text x="100" y="48" class="h t" text-anchor="middle">10 · All required</text><text x="100" y="64" class="h t" text-anchor="middle">documents present?</text></g>
+
+  <text x="760" y="640" class="yn" fill="#c43d3d">NO</text>
+  <text x="520" y="640" class="yn" fill="#1f8a4c">YES</text>
+
+  <g transform="translate(840,594)"><rect class="card" width="200" height="104" rx="8"/><text x="10" y="22" class="h t">11a · Flag missing items</text><text x="10" y="40" class="tag t2">Red badge on patient row</text><text x="10" y="54" class="tag t2">Notification to ward staff</text><text x="10" y="70" class="tag t2">"Request MedCam capture"</text><text x="10" y="86" class="tag t2">Loop back to step 3</text></g>
+  <g transform="translate(180,594)"><rect class="ai" width="320" height="104" rx="8"/><text x="10" y="22" class="h t">11b · Pre-submission risk score</text><text x="10" y="40" class="tag t2">"67% query probability"</text><text x="10" y="54" class="tag t2">Top reason · suggested fix</text><text x="10" y="70" class="tag t2">Expected approval ₹ vs claimed ₹</text><text x="10" y="86" class="tag t2">Block submit if score &gt; threshold</text></g>
+
+  <path class="line" d="M1160,460 V486" marker-end="url(#arr)"/>
+  <path class="line" d="M1080,430 H1040" marker-end="url(#arr)"/>
+  <path class="line" d="M840,430 H800" marker-end="url(#arr)"/>
+  <path class="line" d="M700,460 V486" marker-end="url(#arr)"/>
+  <path class="line" d="M710,562 V594" marker-end="url(#arr)"/>
+  <path class="lineG" d="M540,646 H500" marker-end="url(#arrG)"/>
+  <path class="lineN" d="M740,646 H840" marker-end="url(#arrR)"/>
+  <path class="lineN dash" d="M940,594 V286 H1040 V246" marker-end="url(#arrR)"/>
+  <text x="950" y="282" class="tag" fill="#c43d3d">request more captures</text>
+
+  <path class="line" d="M340,698 V780" marker-end="url(#arr)"/>
+
+  <g transform="translate(180,786)"><rect class="card" width="220" height="70" rx="8"/><text x="10" y="22" class="h t">12 · TPA clerk reviews case</text><text x="10" y="40" class="tag t2">Patient detail · checklist green</text><text x="10" y="54" class="tag t2">Risk score · timeline · UTR</text></g>
+  <g transform="translate(440,786)"><rect class="card" width="220" height="70" rx="8"/><text x="10" y="22" class="h t">13 · Doctor signs case sheet</text><text x="10" y="40" class="tag t2">Reviews AI-elaborated Dx/Rx</text><text x="10" y="54" class="tag t2">Confirms or edits</text></g>
+  <g transform="translate(700,786)"><rect class="card" width="220" height="70" rx="8"/><text x="10" y="22" class="h t">14 · Final approval check</text><text x="10" y="40" class="tag t2">Codes · totals · adj factors</text><text x="10" y="54" class="tag t2">"Mark as reviewed"</text></g>
+  <g transform="translate(960,776)"><polygon points="100,0 200,46 100,92 0,46" class="dec"/><text x="100" y="44" class="h t" text-anchor="middle">15 · Risk low</text><text x="100" y="60" class="h t" text-anchor="middle">enough to submit?</text></g>
+  <g transform="translate(180,890)"><rect class="card" width="240" height="60" rx="8"/><text x="10" y="22" class="h t">12a · Bulk download zip</text><text x="10" y="38" class="tag t2">All docs + audit · ready to upload</text><text x="10" y="52" class="tag t2">Used during portal-only fallback</text></g>
+  <g transform="translate(460,890)"><rect class="card" width="240" height="60" rx="8"/><text x="10" y="22" class="h t">13a · Manual query creation</text><text x="10" y="38" class="tag t2">Add internal note · escalate</text><text x="10" y="52" class="tag t2">Routed to billing / doctor</text></g>
+
+  <path class="line" d="M400,820 H440" marker-end="url(#arr)"/>
+  <path class="line" d="M660,820 H700" marker-end="url(#arr)"/>
+  <path class="line" d="M920,820 H960" marker-end="url(#arr)"/>
+  <path class="line" d="M290,856 V890" marker-end="url(#arr)"/>
+  <path class="line" d="M550,856 V890" marker-end="url(#arr)"/>
+
+  <g transform="translate(180,1074)"><rect class="ai" width="240" height="76" rx="8"/><text x="10" y="22" class="h t">16 · NHCX FHIR mapper</text><text x="10" y="40" class="tag t2">ICD → HBP → FHIR Claim resource</text><text x="10" y="56" class="tag t2">DocumentReference bundle</text><text x="10" y="70" class="tag t2">AuditEvent + Communication</text></g>
+  <g transform="translate(460,1074)"><rect class="card" width="200" height="76" rx="8"/><text x="10" y="22" class="h t">17 · Submit to NHCX</text><text x="10" y="40" class="tag t2">PMJAY · CGHS · ESI · SHA</text><text x="10" y="56" class="tag t2">Status webhook tracked</text><text x="10" y="70" class="tag t2">Per-claim transaction fee</text></g>
+  <g transform="translate(700,1066)"><polygon points="100,0 200,46 100,92 0,46" class="dec"/><text x="100" y="44" class="h t" text-anchor="middle">18 · Query raised</text><text x="100" y="60" class="h t" text-anchor="middle">by insurer?</text></g>
+  <g transform="translate(940,1074)"><rect class="ai" width="300" height="76" rx="8"/><text x="10" y="22" class="h t">19 · Query classifier (10 types)</text><text x="10" y="40" class="tag t2">missing_doc · code_mismatch · clinical_elab</text><text x="10" y="56" class="tag t2">Response drafted · doc pre-attached</text><text x="10" y="70" class="tag t2">Doctor / clerk one-click send · 45 sec</text></g>
+  <text x="900" y="1116" class="yn" fill="#c43d3d">YES</text>
+  <text x="680" y="1244" class="yn" fill="#1f8a4c">NO</text>
+  <g transform="translate(460,1230)"><rect class="out" width="200" height="64" rx="8"/><text x="10" y="22" class="h t">20 · Approved + paid</text><text x="10" y="40" class="tag t2">UTR auto-reconciled</text><text x="10" y="56" class="tag t2">TAT closed in audit</text></g>
+
+  <path class="line" d="M420,1112 H460" marker-end="url(#arr)"/>
+  <path class="line" d="M660,1112 H700" marker-end="url(#arr)"/>
+  <path class="lineN" d="M900,1112 H940" marker-end="url(#arrR)"/>
+  <path class="lineG" d="M800,1158 V1230" marker-end="url(#arrG)"/>
+  <path class="lineN dash" d="M1090,1150 V1200 H560 V1230" marker-end="url(#arrR)"/>
+  <text x="820" y="1196" class="tag" fill="#c43d3d">resolved → resubmit response</text>
+  <path class="line" d="M1060,868 V1074" marker-end="url(#arr)"/>
+
+  <g transform="translate(180,1346)"><rect class="out" width="240" height="80" rx="8"/><text x="10" y="22" class="h t">21 · CFO dashboard</text><text x="10" y="40" class="tag t2">₹ locked → ₹ unlocked YTD</text><text x="10" y="56" class="tag t2">Query-rate trend · TAT delta</text><text x="10" y="72" class="tag t2">Underpayment alerts</text></g>
+  <g transform="translate(460,1346)"><rect class="out" width="240" height="80" rx="8"/><text x="10" y="22" class="h t">22 · Network intelligence</text><text x="10" y="40" class="tag t2">Scheme behaviour insights</text><text x="10" y="56" class="tag t2">Denial pattern alerts</text><text x="10" y="72" class="tag t2">Doctor / dept benchmarking</text></g>
+  <g transform="translate(740,1346)"><rect class="ai" width="240" height="80" rx="8"/><text x="10" y="22" class="h t">23 · Data flywheel</text><text x="10" y="40" class="tag t2">Query · response · outcome logged</text><text x="10" y="56" class="tag t2">Synthetic augmentation</text><text x="10" y="72" class="tag t2">Classifier retrains monthly</text></g>
+  <g transform="translate(1020,1346)"><rect class="end" width="220" height="80" rx="40"/><text x="110" y="38" class="h inv" text-anchor="middle">END</text><text x="110" y="58" class="tag inv" text-anchor="middle">Settled claim · smarter platform</text></g>
+
+  <path class="line" d="M560,1294 V1346" marker-end="url(#arr)"/>
+  <path class="line" d="M420,1386 H460" marker-end="url(#arr)"/>
+  <path class="line" d="M700,1386 H740" marker-end="url(#arr)"/>
+  <path class="line" d="M980,1386 H1020" marker-end="url(#arr)"/>
+  <path class="line dash" d="M860,1346 V1450 H40 V524 H180" marker-end="url(#arr)"/>
+  <text x="100" y="1470" class="tag t2">retrained classifier feeds next case</text>
+
+  <g transform="translate(180,1520)">
+    <rect class="card" width="1060" height="76" rx="8"/>
+    <text x="14" y="22" class="h t">Legend</text>
+    <rect class="card" x="14" y="34" width="16" height="16" rx="3"/><text x="36" y="46" class="tag t2">Process step</text>
+    <rect class="ai" x="130" y="34" width="16" height="16" rx="3"/><text x="152" y="46" class="tag t2">AI module</text>
+    <rect class="dec" x="230" y="34" width="16" height="16" rx="3"/><text x="252" y="46" class="tag t2">Decision</text>
+    <rect class="out" x="320" y="34" width="16" height="16" rx="3"/><text x="342" y="46" class="tag t2">Outcome / win</text>
+    <line x1="430" y1="42" x2="470" y2="42" class="lineG"/><text x="476" y="46" class="tag t2">YES path</text>
+    <line x1="540" y1="42" x2="580" y2="42" class="lineN"/><text x="586" y="46" class="tag t2">NO path</text>
+    <line x1="640" y1="42" x2="680" y2="42" class="line dash"/><text x="686" y="46" class="tag t2">Loop / feedback</text>
+    <text x="14" y="68" class="tag t2">Read top-to-bottom. Five swim lanes = who owns each step. Numbered for narration in demos.</text>
+  </g>
+</svg>

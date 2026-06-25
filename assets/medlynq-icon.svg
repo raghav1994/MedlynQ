@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 140" width="512" height="512" role="img">
+  <title>MedLynq Icon</title>
+  <defs>
+    <linearGradient id="tealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a7a70"/>
+      <stop offset="100%" stop-color="#18b0a6"/>
+    </linearGradient>
+    <filter id="dropShadow" x="-10%" y="-10%" width="125%" height="125%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#061524" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Rounded square background -->
+  <rect width="140" height="140" rx="28" fill="#0f2a4a"/>
+
+  <!-- Navy hex (left, behind) -->
+  <polygon
+    points="52,24 88,46 88,90 52,112 16,90 16,46"
+    fill="rgba(255,255,255,0.14)"
+    stroke="rgba(255,255,255,0.28)"
+    stroke-width="1.5"
+    filter="url(#dropShadow)"/>
+
+  <!-- Teal hex (right, in front) -->
+  <polygon
+    points="88,24 124,46 124,90 88,112 52,90 52,46"
+    fill="url(#tealGrad)"
+    filter="url(#dropShadow)"/>
+
+  <!-- Overlap edge highlight -->
+  <line x1="52" y1="46" x2="52" y2="90" stroke="white" stroke-width="1" opacity="0.2"/>
+
+  <!-- ECG pulse line -->
+  <polyline
+    points="19,68 33,68 42,46 55,90 67,55 79,68 121,68"
+    fill="none"
+    stroke="white"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"/>
+</svg>

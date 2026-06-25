@@ -1,0 +1,158 @@
+<svg viewBox="0 0 1320 2100" xmlns="http://www.w3.org/2000/svg" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title>MedBuddy + Med-Overwatch — full solution flowchart (no phases, no WhatsApp)</title>
+  <desc>Every module of the unified platform laid out in order: inputs, patient folder, AI brain extract, AI brain intelligence, submission, query loop, analytics and role surfaces, data flywheel.</desc>
+  <style>
+    .t{fill:#1f1f1f;} .t2{fill:#555;} .t3{fill:#888;} .inv{fill:#fff;}
+    .card{fill:#fff;stroke:#999;stroke-width:1.2;}
+    .ai{fill:#fbeee8;stroke:#c96442;stroke-width:1.3;}
+    .new{fill:#fbeee8;stroke:#c96442;stroke-width:2;}
+    .out{fill:#fff;stroke:#1f8a4c;stroke-width:1.4;}
+    .lane{fill:#fafafa;stroke:#d4d4d4;stroke-width:1;}
+    .laneAi{fill:#fdf6f2;stroke:#c96442;stroke-width:1;}
+    .line{stroke:#666;stroke-width:1.6;fill:none;}
+    .lineA{stroke:#c96442;stroke-width:1.8;fill:none;}
+    .lineG{stroke:#1f8a4c;stroke-width:1.8;fill:none;}
+    .dash{stroke-dasharray:5 4;}
+    .title{font-size:18px;font-weight:700;}
+    .lbl{font-size:11px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;fill:#555;}
+    .h{font-size:13px;font-weight:600;}
+    .sub{font-size:11px;}
+    .tag{font-size:10px;}
+    .badge{font-size:9px;font-weight:700;fill:#c96442;}
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#666"/></marker>
+    <marker id="aA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#c96442"/></marker>
+    <marker id="aG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1f8a4c"/></marker>
+  </defs>
+  <rect width="1320" height="2100" fill="#ffffff"/>
+
+  <text x="40" y="34" class="title t">MedBuddy + Med-Overwatch — full solution (every module, no phases)</text>
+  <text x="40" y="54" class="sub t2">Read top to bottom. Light boxes = product modules. Outlined boxes = AI modules. Bold-outlined = the two new wedges from Blueprint v2 (Evidence Locator + Packet Builder).</text>
+
+  <text x="40" y="92" class="lbl">A · Inputs</text>
+  <g transform="translate(40,104)">
+    <rect class="lane" width="1240" height="100" rx="6"/>
+    <g transform="translate(16,16)"><rect class="card" width="290" height="68" rx="6"/><text x="12" y="22" class="h t">MedCam mobile (Android)</text><text x="12" y="40" class="tag t2">Doctor/Nurse · QR-bound to patient at capture</text><text x="12" y="54" class="tag t2">Photos · handwritten case sheets · no gallery save</text></g>
+    <g transform="translate(322,16)"><rect class="card" width="290" height="68" rx="6"/><text x="12" y="22" class="h t">HIS connectors</text><text x="12" y="40" class="tag t2">Practo · Insta · eHospital · custom webhook</text><text x="12" y="54" class="tag t2">Pulls vitals · discharge · bill · UTR by MRN</text></g>
+    <g transform="translate(628,16)"><rect class="card" width="290" height="68" rx="6"/><text x="12" y="22" class="h t">WebApp upload</text><text x="12" y="40" class="tag t2">TPA clerk drag-drop · scanned files</text><text x="12" y="54" class="tag t2">Bulk import for backlog</text></g>
+    <g transform="translate(934,16)"><rect class="card" width="290" height="68" rx="6"/><text x="12" y="22" class="h t">Scheme-portal sync</text><text x="12" y="40" class="tag t2">Chrome bridge until NHCX live</text><text x="12" y="54" class="tag t2">Pulls claim status · query text · payment</text></g>
+  </g>
+
+  <path class="line" d="M660,204 V232" marker-end="url(#a)"/>
+
+  <text x="40" y="220" class="lbl">B · Patient folder &amp; document repository</text>
+  <g transform="translate(40,232)">
+    <rect class="lane" width="1240" height="120" rx="6"/>
+    <g transform="translate(16,16)"><rect class="card" width="380" height="88" rx="6"/><text x="12" y="22" class="h t">Patient folder = PatientName_MRN</text><text x="12" y="40" class="tag t2">Single source of truth · server-side dedupe with suffix</text><text x="12" y="54" class="tag t2">Encrypted at rest · role-scoped access</text><text x="12" y="68" class="tag t2">Always shown by primary PatientName_MRN string</text><text x="12" y="82" class="tag t2">Audit log entry per artefact</text></g>
+    <g transform="translate(412,16)"><rect class="card" width="380" height="88" rx="6"/><text x="12" y="22" class="h t">Document repository</text><text x="12" y="40" class="tag t2">HPE reports · OT notes · post-op photos · discharge</text><text x="12" y="54" class="tag t2">Bills · referral · consent · prior imaging · lab reports</text><text x="12" y="68" class="tag t2">Registration copy · query-response docs · clinical vitals</text><text x="12" y="82" class="tag t2">Stores original + compressed + AI-renamed</text></g>
+    <g transform="translate(808,16)"><rect class="new" width="416" height="88" rx="6"/><text x="12" y="22" class="h t">Clinical evidence index <tspan class="badge">NEW</tspan></text><text x="12" y="40" class="tag t2">Per-document: type · MRN · procedure · date · page-level OCR</text><text x="12" y="54" class="tag t2">"Where is the HPE report?" → file path + page numbers</text><text x="12" y="68" class="tag t2">Powers the Evidence Locator below</text><text x="12" y="82" class="tag t2">Reusable across queries (no double-asking)</text></g>
+  </g>
+
+  <path class="line" d="M660,352 V380" marker-end="url(#a)"/>
+
+  <text x="40" y="368" class="lbl">C · AI brain — extract &amp; normalize</text>
+  <g transform="translate(40,380)">
+    <rect class="laneAi" width="1240" height="120" rx="6"/>
+    <g transform="translate(16,16)"><rect class="ai" width="190" height="88" rx="6"/><text x="10" y="22" class="h t">Handwriting → case sheet</text><text x="10" y="38" class="tag t2">Reads doctor's notes</text><text x="10" y="52" class="tag t2">Outputs Dx · ICD · Rx · meds</text><text x="10" y="66" class="tag t2">Shows reasoning + sources</text><text x="10" y="80" class="tag t2">Confidence score per field</text></g>
+    <g transform="translate(216,16)"><rect class="ai" width="190" height="88" rx="6"/><text x="10" y="22" class="h t">File renamer</text><text x="10" y="38" class="tag t2">e.g. POSTOP_WOUND_01.jpg</text><text x="10" y="52" class="tag t2">Records original filename</text><text x="10" y="66" class="tag t2">Consistent schema across</text><text x="10" y="80" class="tag t2">scheme requirements</text></g>
+    <g transform="translate(416,16)"><rect class="ai" width="190" height="88" rx="6"/><text x="10" y="22" class="h t">OCR &amp; clinical structuring</text><text x="10" y="38" class="tag t2">PDFs + JPEGs → text</text><text x="10" y="52" class="tag t2">Extracts patient/clinical fields</text><text x="10" y="66" class="tag t2">Feeds checklist + index</text><text x="10" y="80" class="tag t2">Page-level granularity</text></g>
+    <g transform="translate(616,16)"><rect class="ai" width="190" height="88" rx="6"/><text x="10" y="22" class="h t">Quality-preserving compress</text><text x="10" y="38" class="tag t2">Visually lossless</text><text x="10" y="52" class="tag t2">Original vs compressed sizes</text><text x="10" y="66" class="tag t2">~70% storage saved</text><text x="10" y="80" class="tag t2">Both versions retained</text></g>
+    <g transform="translate(816,16)"><rect class="ai" width="190" height="88" rx="6"/><text x="10" y="22" class="h t">Patient matcher</text><text x="10" y="38" class="tag t2">MRN · name · DOB fuzzy</text><text x="10" y="52" class="tag t2">Dedupe with suffix</text><text x="10" y="66" class="tag t2">Manual link fallback</text><text x="10" y="80" class="tag t2">Handles HIS-vs-MedCam diff</text></g>
+    <g transform="translate(1016,16)"><rect class="ai" width="208" height="88" rx="6"/><text x="10" y="22" class="h t">Document checker</text><text x="10" y="38" class="tag t2">Procedure × scheme matrix</text><text x="10" y="52" class="tag t2">Missing / low-confidence flags</text><text x="10" y="66" class="tag t2">Drives "request from ward"</text><text x="10" y="80" class="tag t2">Per case + per portfolio</text></g>
+  </g>
+
+  <path class="line" d="M660,500 V528" marker-end="url(#a)"/>
+
+  <text x="40" y="516" class="lbl">D · AI brain — prevent &amp; resolve queries</text>
+  <g transform="translate(40,528)">
+    <rect class="laneAi" width="1240" height="220" rx="6"/>
+    <g transform="translate(16,16)"><rect class="ai" width="190" height="92" rx="6"/><text x="10" y="22" class="h t">Pre-submission risk scorer</text><text x="10" y="38" class="tag t2">"67% query probability"</text><text x="10" y="52" class="tag t2">Top likely reason · suggested fix</text><text x="10" y="66" class="tag t2">Block submit if score &gt; threshold</text><text x="10" y="80" class="tag t2">Trained on 1k → 100k cases</text></g>
+    <g transform="translate(216,16)"><rect class="ai" width="190" height="92" rx="6"/><text x="10" y="22" class="h t">Missing-document detection</text><text x="10" y="38" class="tag t2">Predicts what insurer will ask</text><text x="10" y="52" class="tag t2">"HPE report #1 missing for this proc"</text><text x="10" y="66" class="tag t2">Pre-attach before submit</text><text x="10" y="80" class="tag t2">Cuts ping-pong at the source</text></g>
+    <g transform="translate(416,16)"><rect class="ai" width="190" height="92" rx="6"/><text x="10" y="22" class="h t">Approval probability predictor</text><text x="10" y="38" class="tag t2">Expected ₹ vs claimed ₹</text><text x="10" y="52" class="tag t2">Adj-factor anomaly alert</text><text x="10" y="66" class="tag t2">TAT forecast (days to settle)</text><text x="10" y="80" class="tag t2">Non-binding indicator</text></g>
+    <g transform="translate(616,16)"><rect class="ai" width="190" height="92" rx="6"/><text x="10" y="22" class="h t">Query classifier (10 types)</text><text x="10" y="38" class="tag t2">missing_doc · code_mismatch</text><text x="10" y="52" class="tag t2">clinical_elab · date_inconsist</text><text x="10" y="66" class="tag t2">clubbing · geotag · eligibility</text><text x="10" y="80" class="tag t2">pricing · duplicate · quality</text></g>
+    <g transform="translate(816,16)"><rect class="new" width="190" height="92" rx="6"/><text x="10" y="22" class="h t">Document evidence locator <tspan class="badge">NEW</tspan></text><text x="10" y="38" class="tag t2">"Is the requested doc on file?"</text><text x="10" y="52" class="tag t2">Returns file path + page nos</text><text x="10" y="66" class="tag t2">Solves re-asked-docs problem</text><text x="10" y="80" class="tag t2">The retrieval wedge</text></g>
+    <g transform="translate(1016,16)"><rect class="ai" width="208" height="92" rx="6"/><text x="10" y="22" class="h t">Suggested-response generator</text><text x="10" y="38" class="tag t2">Drafted reply per query type</text><text x="10" y="52" class="tag t2">Doctor-signable template</text><text x="10" y="66" class="tag t2">Pre-attached evidence</text><text x="10" y="80" class="tag t2">25 min → 45 sec target</text></g>
+    <g transform="translate(16,118)"><rect class="new" width="394" height="92" rx="6"/><text x="10" y="22" class="h t">Query packet builder <tspan class="badge">NEW</tspan></text><text x="10" y="38" class="tag t2">Locates docs · merges PDFs · generates cover page</text><text x="10" y="52" class="tag t2">Produces Query_Response_XXXX.pdf · upload-ready packet</text><text x="10" y="66" class="tag t2">Includes original query text · attached evidence index · doctor's note</text><text x="10" y="80" class="tag t2">Reusable for portal upload or NHCX submission</text></g>
+    <g transform="translate(420,118)"><rect class="ai" width="190" height="92" rx="6"/><text x="10" y="22" class="h t">Network intelligence</text><text x="10" y="38" class="tag t2">Cross-hospital scheme patterns</text><text x="10" y="52" class="tag t2">"SHA UP applies 50% adj on</text><text x="10" y="66" class="tag t2">SG075B in 78% of cases"</text><text x="10" y="80" class="tag t2">Visible only at network scale</text></g>
+    <g transform="translate(620,118)"><rect class="ai" width="190" height="92" rx="6"/><text x="10" y="22" class="h t">Denial pattern alerts</text><text x="10" y="38" class="tag t2">"CPD-Trust: 12 chemo queries</text><text x="10" y="52" class="tag t2">in 7d across 4 hospitals"</text><text x="10" y="66" class="tag t2">Pre-attach action triggered</text><text x="10" y="80" class="tag t2">Anomaly detection</text></g>
+    <g transform="translate(820,118)"><rect class="ai" width="190" height="92" rx="6"/><text x="10" y="22" class="h t">Benchmarking</text><text x="10" y="38" class="tag t2">Doctor · dept · hospital</text><text x="10" y="52" class="tag t2">Anonymous peer compare</text><text x="10" y="66" class="tag t2">Rejection rate · TAT · ₹</text><text x="10" y="80" class="tag t2">CFO add-on revenue</text></g>
+    <g transform="translate(1020,118)"><rect class="ai" width="204" height="92" rx="6"/><text x="10" y="22" class="h t">NHCX FHIR R4 mapper</text><text x="10" y="38" class="tag t2">ICD → HBP → FHIR Claim resource</text><text x="10" y="52" class="tag t2">DocumentReference bundle</text><text x="10" y="66" class="tag t2">CommunicationRequest / Comm</text><text x="10" y="80" class="tag t2">AuditEvent timeline</text></g>
+  </g>
+
+  <path class="line" d="M660,748 V776" marker-end="url(#a)"/>
+
+  <text x="40" y="764" class="lbl">E · Submission &amp; status tracking</text>
+  <g transform="translate(40,776)">
+    <rect class="lane" width="1240" height="100" rx="6"/>
+    <g transform="translate(16,16)"><rect class="card" width="290" height="68" rx="6"/><text x="12" y="22" class="h t">NHCX submission (target state)</text><text x="12" y="40" class="tag t2">FHIR-formatted claim bundle</text><text x="12" y="54" class="tag t2">Per-claim transaction fee ₹50–150</text></g>
+    <g transform="translate(322,16)"><rect class="card" width="290" height="68" rx="6"/><text x="12" y="22" class="h t">Scheme-portal submission (now)</text><text x="12" y="40" class="tag t2">PMJAY · CGHS · ESI · Railway · ECHS · SHA</text><text x="12" y="54" class="tag t2">Auto-prep upload zip + cover sheet</text></g>
+    <g transform="translate(628,16)"><rect class="card" width="290" height="68" rx="6"/><text x="12" y="22" class="h t">Status webhook / poll</text><text x="12" y="40" class="tag t2">Submitted · pending · query · approved · paid</text><text x="12" y="54" class="tag t2">Updates timeline + dashboards</text></g>
+    <g transform="translate(934,16)"><rect class="card" width="290" height="68" rx="6"/><text x="12" y="22" class="h t">UTR reconciliation</text><text x="12" y="40" class="tag t2">Payment status · UTR · date · amount</text><text x="12" y="54" class="tag t2">Mapped to hospital ledger</text></g>
+  </g>
+
+  <text x="40" y="908" class="lbl">F · Query loop — when an insurer raises a query</text>
+  <g transform="translate(40,920)">
+    <rect class="laneAi" width="1240" height="120" rx="6"/>
+    <g transform="translate(16,16)"><rect class="card" width="220" height="88" rx="6"/><text x="12" y="22" class="h t">1 · Query arrives</text><text x="12" y="40" class="tag t2">Pulled from portal · or NHCX</text><text x="12" y="54" class="tag t2">"CommunicationRequest" event</text><text x="12" y="70" class="tag t2">Raw query text captured</text></g>
+    <g transform="translate(248,16)"><rect class="ai" width="220" height="88" rx="6"/><text x="12" y="22" class="h t">2 · Classify (10 types)</text><text x="12" y="40" class="tag t2">missing_doc · code_mismatch ·</text><text x="12" y="54" class="tag t2">clinical_elab · clubbing · etc.</text><text x="12" y="70" class="tag t2">Confidence + routing rule</text></g>
+    <g transform="translate(480,16)"><rect class="new" width="220" height="88" rx="6"/><text x="12" y="22" class="h t">3 · Evidence locator</text><text x="12" y="40" class="tag t2">Already on file?</text><text x="12" y="54" class="tag t2">Returns file path + pages</text><text x="12" y="70" class="tag t2">If missing → request workflow</text></g>
+    <g transform="translate(712,16)"><rect class="ai" width="220" height="88" rx="6"/><text x="12" y="22" class="h t">4 · Draft response</text><text x="12" y="40" class="tag t2">Template per query type</text><text x="12" y="54" class="tag t2">Doctor-signable letter</text><text x="12" y="70" class="tag t2">Editable in dashboard</text></g>
+    <g transform="translate(944,16)"><rect class="new" width="280" height="88" rx="6"/><text x="12" y="22" class="h t">5 · Packet builder &amp; resubmit</text><text x="12" y="40" class="tag t2">Merge PDFs · cover page · Query_Response_XXXX.pdf</text><text x="12" y="54" class="tag t2">Submit packet · update timeline</text><text x="12" y="70" class="tag t2">Outcome logged for training</text></g>
+  </g>
+
+  <path class="lineA dash" d="M1084,1040 V1080 H660 V876" marker-end="url(#aA)"/>
+  <text x="900" y="1076" class="tag t2">resubmit → status tracker</text>
+  <path class="lineA dash" d="M126,920 V880" marker-end="url(#aA)"/>
+  <text x="135" y="906" class="tag t2">query arrives ← status webhook</text>
+
+  <text x="40" y="1108" class="lbl">G · Analytics &amp; role surfaces — one folder, four lenses</text>
+  <g transform="translate(40,1120)">
+    <rect class="lane" width="1240" height="320" rx="6"/>
+    <g transform="translate(16,16)"><rect class="card" width="290" height="140" rx="6"/><text x="12" y="22" class="h t">Doctor</text><text x="12" y="40" class="tag t2">Review AI case sheet (Dx · ICD · Rx)</text><text x="12" y="54" class="tag t2">Sign drafted clinical-elab responses</text><text x="12" y="68" class="tag t2">Confirm or edit codes</text><text x="12" y="82" class="tag t2">Personal benchmark vs peers</text><text x="12" y="96" class="tag t2">Audit of own cases</text><text x="12" y="114" class="h t">Nurse</text><text x="12" y="128" class="tag t2">MedCam capture · attach · flag missing items</text></g>
+    <g transform="translate(322,16)"><rect class="card" width="290" height="140" rx="6"/><text x="12" y="22" class="h t">TPA clerk · smart workbench</text><text x="12" y="40" class="tag t2">Claim dashboard (all schemes, one view)</text><text x="12" y="54" class="tag t2">Query tracker · aging buckets (red &gt;15d)</text><text x="12" y="68" class="tag t2">One-click query response</text><text x="12" y="82" class="tag t2">Bulk download / zip per case</text><text x="12" y="96" class="tag t2">Manual query creation + escalation</text><text x="12" y="110" class="tag t2">Settlement tracker (claimed vs approved)</text><text x="12" y="124" class="tag t2">2 hours/day given back</text></g>
+    <g transform="translate(628,16)"><rect class="card" width="290" height="140" rx="6"/><text x="12" y="22" class="h t">CFO · financial intelligence</text><text x="12" y="40" class="tag t2">Revenue at risk (₹ locked in pending)</text><text x="12" y="54" class="tag t2">Approval gap analysis (claimed vs approved)</text><text x="12" y="68" class="tag t2">Underpayment alerts (low adj factor)</text><text x="12" y="82" class="tag t2">Monthly settlement projections · cash-flow</text><text x="12" y="96" class="tag t2">TDS reconciliation</text><text x="12" y="110" class="tag t2">Query-rate trend (down %) · money saved YTD</text><text x="12" y="124" class="tag t2">TAT delta vs network peers</text></g>
+    <g transform="translate(934,16)"><rect class="card" width="290" height="140" rx="6"/><text x="12" y="22" class="h t">Admin · integrations</text><text x="12" y="40" class="tag t2">HIS connector health (Practo/Insta/eHospital)</text><text x="12" y="54" class="tag t2">NHCX FHIR endpoint status</text><text x="12" y="68" class="tag t2">Scheme-portal sync logs (last 100)</text><text x="12" y="82" class="tag t2">ICD → HBP → FHIR mapping config</text><text x="12" y="96" class="tag t2">Role &amp; permission management</text><text x="12" y="110" class="tag t2">PII strip rules · DPDP audit</text><text x="12" y="124" class="tag t2">Data-sharing agreement registry</text></g>
+    <g transform="translate(16,168)"><rect class="card" width="394" height="136" rx="6"/><text x="12" y="22" class="h t">Network intelligence (shared, opt-in)</text><text x="12" y="40" class="tag t2">Scheme behaviour patterns across hospitals</text><text x="12" y="54" class="tag t2">Denial pattern alerts · weekly anomalies</text><text x="12" y="68" class="tag t2">Benchmarking — doctor / dept / hospital, anonymous</text><text x="12" y="82" class="tag t2">"Pre-attach chemo charts on all PMJAY claims this week"</text><text x="12" y="96" class="tag t2">Visible only with ≥25 hospitals on the network</text><text x="12" y="110" class="tag t2">Sold as CFO add-on</text><text x="12" y="124" class="tag t2">Sources from the data flywheel</text></g>
+    <g transform="translate(426,168)"><rect class="card" width="394" height="136" rx="6"/><text x="12" y="22" class="h t">Audit trail &amp; timeline (per case)</text><text x="12" y="40" class="tag t2">Every upload · AI step · HIS pull · query · response</text><text x="12" y="54" class="tag t2">Actor (MedCam · HIS · User · System) + timestamp</text><text x="12" y="68" class="tag t2">TAT calculation between stages</text><text x="12" y="82" class="tag t2">Maps to FHIR AuditEvent for NHCX</text><text x="12" y="96" class="tag t2">Powers compliance reports</text><text x="12" y="110" class="tag t2">Mini-visual timeline on patient detail</text><text x="12" y="124" class="tag t2">Exportable for legal / audit</text></g>
+    <g transform="translate(836,168)"><rect class="card" width="388" height="136" rx="6"/><text x="12" y="22" class="h t">Document viewer (modal)</text><text x="12" y="40" class="tag t2">Image / PDF preview · OCR text panel</text><text x="12" y="54" class="tag t2">AI metadata: filename · confidence · source</text><text x="12" y="68" class="tag t2">Original vs compressed sizes shown</text><text x="12" y="82" class="tag t2">Actions: download · flag · request re-upload</text><text x="12" y="96" class="tag t2">Page-level jump (from Evidence Locator)</text><text x="12" y="110" class="tag t2">Quick filters in documents tab</text><text x="12" y="124" class="tag t2">Reused across role surfaces</text></g>
+  </g>
+
+  <path class="line" d="M660,1440 V1480" marker-end="url(#a)"/>
+
+  <text x="40" y="1468" class="lbl">H · Data flywheel — every query becomes training data</text>
+  <g transform="translate(40,1480)">
+    <rect class="laneAi" width="1240" height="160" rx="6"/>
+    <g transform="translate(16,16)"><rect class="ai" width="232" height="128" rx="6"/><text x="12" y="22" class="h t">1 · Logged usage</text><text x="12" y="40" class="tag t2">Every query · response · outcome</text><text x="12" y="54" class="tag t2">61 fields per case (mapped from HAR)</text><text x="12" y="68" class="tag t2">Submitted vs approved amounts</text><text x="12" y="82" class="tag t2">Doc gaps · TAT · UTR</text><text x="12" y="96" class="tag t2">Per scheme · per insurer</text><text x="12" y="112" class="tag t2">Acts as label set</text></g>
+    <g transform="translate(264,16)"><rect class="ai" width="232" height="128" rx="6"/><text x="12" y="22" class="h t">2 · PII strip + tag</text><text x="12" y="40" class="tag t2">Names replaced · Aadhaar hashed</text><text x="12" y="54" class="tag t2">Phone numbers removed</text><text x="12" y="68" class="tag t2">Query taxonomy labels (10 types)</text><text x="12" y="82" class="tag t2">Schema-validated CSV</text><text x="12" y="96" class="tag t2">DPDP-compliant pipeline</text><text x="12" y="112" class="tag t2">Per-hospital data agreement</text></g>
+    <g transform="translate(512,16)"><rect class="ai" width="232" height="128" rx="6"/><text x="12" y="22" class="h t">3 · Synthetic augmentation</text><text x="12" y="40" class="tag t2">20–30 variants per real case</text><text x="12" y="54" class="tag t2">Coverage of rare procedures</text><text x="12" y="68" class="tag t2">14k synthetic + real combined</text><text x="12" y="82" class="tag t2">Clerk validates 10% sample</text><text x="12" y="96" class="tag t2">&lt;20% rejection target</text><text x="12" y="112" class="tag t2">Bridges thin disease categories</text></g>
+    <g transform="translate(760,16)"><rect class="ai" width="232" height="128" rx="6"/><text x="12" y="22" class="h t">4 · Retrain classifier &amp; predictors</text><text x="12" y="40" class="tag t2">Prompt-based → rule-augmented</text><text x="12" y="54" class="tag t2">→ fine-tuned small model</text><text x="12" y="68" class="tag t2">→ custom India health claims model</text><text x="12" y="82" class="tag t2">Accuracy 75% → 92% → 96%</text><text x="12" y="96" class="tag t2">Monthly retrain cadence</text><text x="12" y="112" class="tag t2">Versioned + A/B tested</text></g>
+    <g transform="translate(1008,16)"><rect class="ai" width="216" height="128" rx="6"/><text x="12" y="22" class="h t">5 · Network intelligence feed</text><text x="12" y="40" class="tag t2">Patterns no single hospital sees</text><text x="12" y="54" class="tag t2">Powers denial alerts</text><text x="12" y="68" class="tag t2">Powers benchmarking</text><text x="12" y="82" class="tag t2">Sold as anonymous data licence</text><text x="12" y="96" class="tag t2">to researchers</text><text x="12" y="112" class="tag t2">Strongest part of moat</text></g>
+  </g>
+
+  <path class="lineA dash" d="M132,1480 V1460 H30 V522 H40" marker-end="url(#aA)"/>
+  <text x="40" y="1454" class="tag t2">Retrained models feed every next case</text>
+
+  <text x="40" y="1680" class="lbl">I · Outcomes (the case for building this)</text>
+  <g transform="translate(40,1692)">
+    <rect class="lane" width="1240" height="180" rx="6"/>
+    <g transform="translate(16,16)"><rect class="out" width="232" height="148" rx="6"/><text x="12" y="22" class="h t">Query rate ↓</text><text x="12" y="40" class="tag t2">Pre-submission risk + missing-doc</text><text x="12" y="54" class="tag t2">detection catch queries before</text><text x="12" y="68" class="tag t2">they're raised</text><text x="12" y="86" class="tag t2">Network alerts compound effect</text><text x="12" y="100" class="tag t2">across hospitals</text><text x="12" y="118" class="tag t2">Target: −60 to −70% in 12 mo</text><text x="12" y="134" class="tag t2">Direct ₹ impact via fewer rounds</text></g>
+    <g transform="translate(264,16)"><rect class="out" width="232" height="148" rx="6"/><text x="12" y="22" class="h t">Per-query time ↓</text><text x="12" y="40" class="tag t2">25–40 min → 45 sec</text><text x="12" y="58" class="tag t2">Driven by:</text><text x="12" y="72" class="tag t2">• Evidence Locator (find it)</text><text x="12" y="86" class="tag t2">• Response Drafter (write it)</text><text x="12" y="100" class="tag t2">• Packet Builder (assemble it)</text><text x="12" y="118" class="tag t2">2+ hours/day back to clerk</text><text x="12" y="134" class="tag t2">Lower headcount per claim volume</text></g>
+    <g transform="translate(512,16)"><rect class="out" width="232" height="148" rx="6"/><text x="12" y="22" class="h t">Settlement TAT ↓</text><text x="12" y="40" class="tag t2">Clean first submission</text><text x="12" y="54" class="tag t2">→ fewer rounds</text><text x="12" y="68" class="tag t2">→ faster pay-out</text><text x="12" y="86" class="tag t2">23d → 14d target</text><text x="12" y="100" class="tag t2">Cash-flow forecast tightens</text><text x="12" y="118" class="tag t2">CFO can plan working capital</text><text x="12" y="134" class="tag t2">Bank lines unlock</text></g>
+    <g transform="translate(760,16)"><rect class="out" width="232" height="148" rx="6"/><text x="12" y="22" class="h t">Revenue unlocked</text><text x="12" y="40" class="tag t2">From the 15–40% locked pool</text><text x="12" y="58" class="tag t2">Approval gap closed via</text><text x="12" y="72" class="tag t2">underpayment dispute workflow</text><text x="12" y="90" class="tag t2">UTR auto-reconciled · zero leakage</text><text x="12" y="108" class="tag t2">CFO sees ₹ saved YTD</text><text x="12" y="124" class="tag t2">Recovered claims = pure margin</text><text x="12" y="140" class="tag t2">"Investor headline" metric</text></g>
+    <g transform="translate(1008,16)"><rect class="out" width="216" height="148" rx="6"/><text x="12" y="22" class="h t">Moat compounds</text><text x="12" y="40" class="tag t2">India's only labelled corpus of</text><text x="12" y="54" class="tag t2">government health-claims queries</text><text x="12" y="72" class="tag t2">100k+ cases in 24 months</text><text x="12" y="90" class="tag t2">Classifier improves with usage</text><text x="12" y="108" class="tag t2">Switching cost = months for any</text><text x="12" y="122" class="tag t2">competitor to replicate</text><text x="12" y="140" class="tag t2">Replaceable only by NHA itself</text></g>
+  </g>
+
+  <g transform="translate(40,1900)">
+    <rect class="card" width="1240" height="180" rx="6"/>
+    <text x="16" y="24" class="h t">Reading guide</text>
+    <text x="16" y="46" class="sub t2">A · Inputs — three channels (mobile, HIS, web upload, scheme-portal sync). Everything lands in one Patient Folder named PatientName_MRN.</text>
+    <text x="16" y="64" class="sub t2">B · Patient folder &amp; repository — stores every artefact + the Clinical Evidence Index (new). The index is what makes retrieval possible later.</text>
+    <text x="16" y="82" class="sub t2">C · AI brain · extract — turns raw inputs into structured fields: handwriting → case sheet, rename, OCR, compress, match, check.</text>
+    <text x="16" y="100" class="sub t2">D · AI brain · intelligence — uses the structured data to prevent and resolve queries (risk scorer, missing-doc, predictor, classifier, Evidence Locator, drafter, Packet Builder, network).</text>
+    <text x="16" y="118" class="sub t2">E · Submission — into NHCX (target) or scheme portals (today), with status webhook + UTR reconciliation.</text>
+    <text x="16" y="136" class="sub t2">F · Query loop — when a query arrives: classify → locate evidence → draft response → build packet → resubmit. The five-step loop replaces the manual ping-pong from the "Before" chart.</text>
+    <text x="16" y="154" class="sub t2">G · Role surfaces — same folder, four lenses: Doctor · Nurse · TPA clerk · CFO. Plus Admin, network intelligence, audit trail, viewer.</text>
+    <text x="16" y="172" class="sub t2">H · Data flywheel — every query/response logged → PII-stripped → augmented → retrains the AI brain. Outcomes (I) are the case for building it.</text>
+  </g>
+</svg>
