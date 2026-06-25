@@ -39,7 +39,11 @@ jobs:
           cp -r app/.next/static app/.next/standalone/.next/static
           mkdir -p app/.next/standalone/public
           [ -d app/public ] && cp -r app/public/. app/.next/standalone/public/ || true
-          printf '[config]\nSCM_DO_BUILD_DURING_DEPLOYMENT=false\n' > app/.next/standalone/.deployment
+          # Override package.json so Oryx's "npm run build" is a no-op (not a real Next.js build)
+          echo '{"name":"medlynq","version":"1.0.0","scripts":{"build":"echo pre-built","start":"node server.js"}}' \
+            > app/.next/standalone/package.json
+          # Belt-and-suspenders: tell Kudu to skip build entirely
+          printf '[config]\ncommand = echo pre-built\n' > app/.next/standalone/.deployment
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
