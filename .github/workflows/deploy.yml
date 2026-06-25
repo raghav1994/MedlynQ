@@ -31,10 +31,9 @@ jobs:
           NEXT_TELEMETRY_DISABLED: 1
 
       - name: Assemble standalone package
-        working-directory: app
         run: |
-          cp -r .next/static .next/standalone/.next/static
-          cp -r public .next/standalone/public
+          cp -r app/.next/static app/.next/standalone/.next/static
+          cp -r app/public app/.next/standalone/public
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
