@@ -18,6 +18,10 @@ app/.next/
 app/.env*.local
 app/python/__pycache__/
 
+# Processed patient documents — DPDP: never commit
+app/public/_compressed/
+app/public/redacted/
+
 # medlynq-rx
 medlynq-rx/node_modules/
 
