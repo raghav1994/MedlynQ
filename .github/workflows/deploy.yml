@@ -33,7 +33,8 @@ jobs:
       - name: Assemble standalone package
         run: |
           cp -r app/.next/static app/.next/standalone/.next/static
-          cp -r app/public app/.next/standalone/public
+          mkdir -p app/.next/standalone/public
+          [ -d app/public ] && cp -r app/public/. app/.next/standalone/public/ || true
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
