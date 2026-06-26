@@ -1,6 +1,10 @@
 // Mock documents per case. Doc types align with the new stage-aware checklist
 // (Pre-auth / Mid-way / Discharge) from the handwritten flow.
 
+import fs from "fs";
+import path from "path";
+import { cases, patients } from "./mockData";
+
 export type CaseDocument = {
   id: string;
   case_id: string;
@@ -88,6 +92,82 @@ export const DOCUMENTS_BY_CASE: Record<string, CaseDocument[]> = {
   ],
 };
 
+export function loadDiskDocuments(caseId: string) {
+  try {
+    const targetCase = cases.find(c => c.id === caseId);
+    if (!targetCase) return;
+    const targetPatient = patients.find(p => p.id === targetCase.patient_id);
+    if (!targetPatient) return;
+    
+    // Sanitize MRN for directory name
+    const safeMrn = targetPatient.mrn.replace(/[^A-Za-z0-9_-]/g, "_");
+    const originalsDir = path.join(process.cwd(), "..", "PatientLog", safeMrn, "originals");
+    const extractedDir = path.join(process.cwd(), "..", "PatientLog", safeMrn, "extracted");
+    
+    if (fs.existsSync(originalsDir)) {
+      const files = fs.readdirSync(originalsDir);
+      
+      // Clean up cached documents that are no longer on disk
+      if (DOCUMENTS_BY_CASE[caseId]) {
+        DOCUMENTS_BY_CASE[caseId] = DOCUMENTS_BY_CASE[caseId].filter(d => {
+          if (d.source !== "MedCam") return true;
+          return files.includes(d.filename);
+        });
+      }
+
+      for (const file of files) {
+        const ext = path.extname(file).toLowerCase();
+        if (![".pdf", ".jpg", ".jpeg", ".png"].includes(ext)) continue;
+        
+        let docType = "Consent Form";
+        let confidence = 1.0;
+        let uploadedAt = "23 Jun 2026";
+        
+        const jsonPath = path.join(extractedDir, `${file}.json`);
+        if (fs.existsSync(jsonPath)) {
+          try {
+            const raw = fs.readFileSync(jsonPath, "utf8");
+            const manifest = JSON.parse(raw);
+            docType = manifest.doc_type || docType;
+            confidence = manifest.confidence !== undefined ? manifest.confidence : confidence;
+            if (manifest.processed_at) {
+              const dt = new Date(manifest.processed_at);
+              uploadedAt = dt.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+            }
+          } catch {}
+        } else {
+          if (file.toLowerCase().includes("consent")) docType = "Consent Form";
+          else if (file.toLowerCase().includes("referral")) docType = "Referral";
+          else if (file.toLowerCase().includes("id")) docType = "Patient ID";
+        }
+        
+        if (!DOCUMENTS_BY_CASE[caseId]) {
+          DOCUMENTS_BY_CASE[caseId] = [];
+        }
+        
+        const exists = DOCUMENTS_BY_CASE[caseId].some(d => d.filename === file);
+        if (!exists) {
+          DOCUMENTS_BY_CASE[caseId].push({
+            id: `${caseId}_${file}`.replace(/\W+/g, "_"),
+            case_id: caseId,
+            doc_type: docType,
+            filename: file,
+            original_filename: file,
+            ext: ext.replace(".", "") as any,
+            source: "MedCam",
+            size_bytes: fs.statSync(path.join(originalsDir, file)).size,
+            uploaded_at: uploadedAt,
+            confidence: confidence
+          });
+        }
+      }
+    }
+  } catch (e) {
+    console.error("Failed to load documents from disk:", e);
+  }
+}
+
 export function docsForCase(case_id: string): CaseDocument[] {
+  loadDiskDocuments(case_id);
   return DOCUMENTS_BY_CASE[case_id] ?? [];
 }

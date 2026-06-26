@@ -3,7 +3,7 @@
 // In production: parameterised SQL against patients + claims + evidence_index.
 
 import { NextRequest, NextResponse } from "next/server";
-import { patients, cases } from "@/lib/mockData";
+import { patients, cases, loadDynamicData } from "@/lib/mockData";
 
 export const runtime = "nodejs";
 
@@ -18,6 +18,7 @@ type Hit = {
 };
 
 export async function GET(req: NextRequest) {
+  loadDynamicData();
   const q = (req.nextUrl.searchParams.get("q") ?? "").trim().toLowerCase();
   if (!q || q.length < 2) {
     return NextResponse.json({ ok: true, hits: [] });

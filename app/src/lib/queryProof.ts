@@ -27,8 +27,8 @@ export function scoreCase(c: Case, docs: CaseDocument[]): QueryProofScore {
   const issues: QueryProofIssue[] = [];
   let passed = 0;
 
-  // 1. All required docs present (stage + treatment + scheme + TPA aware)
-  const checklist = buildChecklist(docs, c.treatment_type, c.scheme, c.tpa, c.is_emergency);
+  // 1. All required docs present (stage + treatment aware)
+  const checklist = buildChecklist(docs, c.treatment_type);
   const missingRequired = checklist.filter((r) => r.status === "missing");
   if (missingRequired.length === 0) {
     passed++;

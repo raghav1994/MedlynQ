@@ -1,146 +1,102 @@
-// Stage-aware + treatment-aware + scheme-aware + TPA-aware document checklist engine.
-// D-4: oncology docs (TBC, BIS, PET-CT, Chemo Chart, Discharge Photo)
-// D-7: scheme identity docs, emergency waiver, Appex form (from field notes)
-// D-7b: TPA type, "Private" scheme, per-TPA additional rules
+// Stage-aware + treatment-aware document checklist engine.
+// Updated D-4: added oncology-specific docs (TBC, BIS, Discharge Photo, PET-CT, Chemo Chart).
 
 import type { CaseDocument } from "./mockDocuments";
-import type { Treatment, Stage, Scheme, TPA } from "./types";
+import type { Treatment, Stage, Specialty } from "./types";
 
 export type ChecklistRule = {
   doc_type: string;
   stage: Stage;
   for_treatments?: Treatment[];
-  for_schemes?: Scheme[];
-  for_tpas?: TPA[];        // only shown when case.tpa matches one of these
-  emergency_waivable?: boolean; // waived when case.is_emergency = true (CGHS/ECHS referral rule)
+  for_specialties?: Specialty[]; // omitted = applies to all (universal docs)
 };
 
-// PSU insurers need NEFT form + insist on original bills (not photocopies)
-const PSU_INSURERS: TPA[] = ["New India", "United India", "Oriental", "National Insurance", "SBI General"];
-
 export const RULES: ChecklistRule[] = [
+  // ============ PRE-AUTH ============
+  { doc_type: "Patient ID",          stage: "pre_auth" },
+  { doc_type: "Consent Form",        stage: "pre_auth" },
+  { doc_type: "Referral",            stage: "pre_auth" },
+  { doc_type: "Registration Copy",   stage: "pre_auth" },
+  { doc_type: "Beneficiary Verification Slip", stage: "pre_auth" }, // NEW · BIS · govt portal verification
+  { doc_type: "Latest Pathology (HPE)", stage: "pre_auth", for_specialties: ["oncology"] },
+  { doc_type: "PET-CT Report",       stage: "pre_auth", for_specialties: ["oncology"] },
+  { doc_type: "Tumor Board Certificate", stage: "pre_auth", for_specialties: ["oncology"] },
+  { doc_type: "Prescription / Protocol", stage: "pre_auth" },
+  { doc_type: "OPD Slip",            stage: "pre_auth" },
+  { doc_type: "CBC / LFT / KFT Profile", stage: "pre_auth", for_treatments: ["chemo"], for_specialties: ["oncology"] },
+  { doc_type: "IPD File (admission)",    stage: "pre_auth", for_treatments: ["chemo", "surgery"] },
+  { doc_type: "Prior Imaging (CT/MRI/X-ray)", stage: "pre_auth", for_treatments: ["surgery", "radiation"], for_specialties: ["oncology"] },
 
-  // ─────────────────────────────────────────────
-  // PRE-AUTH — Universal (all schemes + private)
-  // ─────────────────────────────────────────────
-  { doc_type: "Prescription / Protocol",       stage: "pre_auth" },
-  { doc_type: "Latest Pathology (HPE)",        stage: "pre_auth" },
-  { doc_type: "OPD Slip",                      stage: "pre_auth" },
-  { doc_type: "Consent Form",                  stage: "pre_auth" },
-  { doc_type: "Registration Copy",             stage: "pre_auth" },
-  { doc_type: "PET-CT Report",                 stage: "pre_auth" },
-  { doc_type: "Tumor Board Certificate",       stage: "pre_auth" },
-  { doc_type: "CBC / LFT / KFT Profile",       stage: "pre_auth", for_treatments: ["chemo"] },
-  { doc_type: "IPD File (admission)",          stage: "pre_auth", for_treatments: ["chemo", "surgery"] },
-  { doc_type: "Prior Imaging (CT/MRI/X-ray)", stage: "pre_auth", for_treatments: ["surgery", "radiation"] },
+  // ===== Cardiac =====
+  { doc_type: "ECHO Report",         stage: "pre_auth", for_specialties: ["cardiac"] },
+  { doc_type: "ECG Report",          stage: "pre_auth", for_specialties: ["cardiac"] },
+  { doc_type: "Coronary Angiography Report", stage: "pre_auth", for_specialties: ["cardiac"] },
+  { doc_type: "Cardiac Pre-Op Workup", stage: "pre_auth", for_specialties: ["cardiac"] },
 
-  // ─────────────────────────────────────────────
-  // PRE-AUTH — Government schemes (public TPA)
-  // ─────────────────────────────────────────────
+  // ===== Ortho =====
+  { doc_type: "Pre-Op X-Ray",        stage: "pre_auth", for_specialties: ["ortho"] },
+  { doc_type: "MRI / CT Joint Report", stage: "pre_auth", for_specialties: ["ortho"] },
+  { doc_type: "Ortho Surgeon Note",  stage: "pre_auth", for_specialties: ["ortho"] },
 
-  // PMJAY / SHA
-  { doc_type: "Beneficiary Verification Slip", stage: "pre_auth", for_schemes: ["PMJAY", "SHA"] },
-  { doc_type: "Ayushman Card",                 stage: "pre_auth", for_schemes: ["PMJAY", "SHA"] },
-  { doc_type: "Aadhaar Card",                  stage: "pre_auth", for_schemes: ["PMJAY", "SHA"] },
-  { doc_type: "Ration Card",                   stage: "pre_auth", for_schemes: ["PMJAY", "SHA"] }, // UP + several SHA states require it
+  // ===== Dialysis =====
+  { doc_type: "Renal Function Panel", stage: "pre_auth", for_specialties: ["dialysis"] },
+  { doc_type: "AV Fistula / Access Note", stage: "pre_auth", for_specialties: ["dialysis"] },
 
-  // CGHS / ECHS (referral-first; waived in emergency)
-  { doc_type: "Referral Letter",               stage: "pre_auth", for_schemes: ["CGHS", "ECHS"], emergency_waivable: true },
-  { doc_type: "Scheme Card",                   stage: "pre_auth", for_schemes: ["CGHS", "ECHS"] }, // CGHS/CAPF/ECHS card
-  { doc_type: "Aadhaar Card",                  stage: "pre_auth", for_schemes: ["CGHS", "ECHS"] },
-  { doc_type: "Geo-tag Photo",                 stage: "pre_auth", for_schemes: ["CGHS", "ECHS"] }, // required at intake for these schemes
-  { doc_type: "Patient ID",                    stage: "pre_auth", for_schemes: ["CGHS", "ECHS"] },
+  // ===== ICU =====
+  { doc_type: "ICU Admission Note",  stage: "pre_auth", for_specialties: ["icu"] },
+  { doc_type: "APACHE / SOFA Score Sheet", stage: "pre_auth", for_specialties: ["icu"] },
 
-  // Railway UMID
-  { doc_type: "Aadhaar Card",                  stage: "pre_auth", for_schemes: ["Railway"] },
-  { doc_type: "UMID Card",                     stage: "pre_auth", for_schemes: ["Railway"] },
+  // ===== Maternity =====
+  { doc_type: "Antenatal Card",      stage: "pre_auth", for_specialties: ["maternity"] },
+  { doc_type: "USG Reports",         stage: "pre_auth", for_specialties: ["maternity"] },
+  { doc_type: "Maternal Blood Group / VDRL / HIV", stage: "pre_auth", for_specialties: ["maternity"] },
 
-  // ESI
-  { doc_type: "Aadhaar Card",                  stage: "pre_auth", for_schemes: ["ESI"] },
-  { doc_type: "ESI Card",                      stage: "pre_auth", for_schemes: ["ESI"] },
-  { doc_type: "Employer IP Declaration",       stage: "pre_auth", for_schemes: ["ESI"] }, // wage/contribution verification
+  // ============ MID-WAY ============
+  // Chemo
+  { doc_type: "Drug Pouch / Wrapper Photo", stage: "mid_way", for_treatments: ["chemo"] },
+  { doc_type: "Chemo Chart",                stage: "mid_way", for_treatments: ["chemo"] },
+  { doc_type: "IPD File (day care)",        stage: "mid_way", for_treatments: ["chemo"] },
+  // Surgery
+  { doc_type: "OT Notes",            stage: "mid_way", for_treatments: ["surgery"] },
+  { doc_type: "OT Files",            stage: "mid_way", for_treatments: ["surgery"] },
+  { doc_type: "Anaesthesia Note",    stage: "mid_way", for_treatments: ["surgery"] },
+  { doc_type: "Post Surgery Photo",  stage: "mid_way", for_treatments: ["surgery"] },
+  // Radiation
+  { doc_type: "Radiation Files",     stage: "mid_way", for_treatments: ["radiation"] },
+  { doc_type: "Radiation Chart",     stage: "mid_way", for_treatments: ["radiation"] },
 
-  // ─────────────────────────────────────────────
-  // PRE-AUTH — Private insurance (scheme = "Private")
-  // ─────────────────────────────────────────────
+  // ===== Cardiac mid-way =====
+  { doc_type: "Stent / Implant Invoice", stage: "mid_way", for_specialties: ["cardiac"] },
+  { doc_type: "Cath Lab Note",       stage: "mid_way", for_specialties: ["cardiac"] },
+  { doc_type: "Cardiac OT Notes",    stage: "mid_way", for_specialties: ["cardiac"], for_treatments: ["surgery"] },
 
-  { doc_type: "Aadhaar Card",                  stage: "pre_auth", for_schemes: ["Private"] },
-  { doc_type: "PAN Card",                      stage: "pre_auth", for_schemes: ["Private"] },
-  { doc_type: "Insurance Card",                stage: "pre_auth", for_schemes: ["Private"] },
-  { doc_type: "Pre-auth Form",                 stage: "pre_auth", for_schemes: ["Private"] },
-  { doc_type: "KYC Form",                      stage: "pre_auth", for_schemes: ["Private"] },
-  { doc_type: "Passport Photo",                stage: "pre_auth", for_schemes: ["Private"] }, // main member
+  // ===== Ortho mid-way =====
+  { doc_type: "Implant Sticker / Barcode", stage: "mid_way", for_specialties: ["ortho"] },
+  { doc_type: "Ortho OT Notes",      stage: "mid_way", for_specialties: ["ortho"] },
+  { doc_type: "Post-Op X-Ray",       stage: "mid_way", for_specialties: ["ortho"] },
 
-  // TPA-specific pre-auth additions
-  { doc_type: "Treating Doctor Certificate",   stage: "pre_auth", for_schemes: ["Private"],
-    for_tpas: ["Star Health", "ICICI Lombard", "Niva Bupa", "Manipal Cigna"] },
+  // ===== Dialysis mid-way =====
+  { doc_type: "Dialysis Frequency Log", stage: "mid_way", for_specialties: ["dialysis"] },
+  { doc_type: "KT/V or URR Note",    stage: "mid_way", for_specialties: ["dialysis"] },
 
-  { doc_type: "NEFT Mandate Form",             stage: "pre_auth", for_schemes: ["Private"],
-    for_tpas: PSU_INSURERS },
+  // ===== ICU mid-way =====
+  { doc_type: "Ventilator / Vitals Chart", stage: "mid_way", for_specialties: ["icu"] },
+  { doc_type: "Daily Progress Notes", stage: "mid_way", for_specialties: ["icu"] },
 
-  { doc_type: "Cashless Authorization Letter", stage: "pre_auth", for_schemes: ["Private"],
-    for_tpas: ["HDFC ERGO"] },
+  // ===== Maternity mid-way =====
+  { doc_type: "Delivery Note",       stage: "mid_way", for_specialties: ["maternity"] },
+  { doc_type: "NICU Chart",          stage: "mid_way", for_specialties: ["maternity"] },
+  { doc_type: "Partograph",          stage: "mid_way", for_specialties: ["maternity"] },
 
-  { doc_type: "TPA Claim Form",               stage: "pre_auth", for_schemes: ["Private"],
-    for_tpas: ["ICICI Lombard", "Bajaj Allianz", "Tata AIG"] },
-
-  { doc_type: "Case Summary Form",             stage: "pre_auth", for_schemes: ["Private"],
-    for_tpas: ["Aditya Birla"] },
-
-  // ─────────────────────────────────────────────
-  // MID-WAY — Chemo
-  // ─────────────────────────────────────────────
-  { doc_type: "Drug Pouch / Wrapper Photo",    stage: "mid_way", for_treatments: ["chemo"] },
-  { doc_type: "Chemo Chart",                   stage: "mid_way", for_treatments: ["chemo"] },
-  { doc_type: "IPD File (day care)",           stage: "mid_way", for_treatments: ["chemo"] },
-
-  // CGHS/ECHS need an Approval Form (Appex) at mid-way for chemo drug names + SEMO sign
-  // Also covers unlisted procedures and implants
-  { doc_type: "Approval Form (Appex)",         stage: "mid_way",
-    for_schemes: ["CGHS", "ECHS"], for_treatments: ["chemo", "surgery"] },
-  // Referral copy required again at mid-way for CGHS/ECHS
-  { doc_type: "Referral Letter",               stage: "mid_way",
-    for_schemes: ["CGHS", "ECHS"], emergency_waivable: true },
-
-  // ─────────────────────────────────────────────
-  // MID-WAY — Surgery
-  // ─────────────────────────────────────────────
-  { doc_type: "OT Notes",                      stage: "mid_way", for_treatments: ["surgery"] },
-  { doc_type: "OT Files",                      stage: "mid_way", for_treatments: ["surgery"] },
-  { doc_type: "Anaesthesia Note",              stage: "mid_way", for_treatments: ["surgery"] },
-  { doc_type: "Post Surgery Photo",            stage: "mid_way", for_treatments: ["surgery"] },
-
-  // ─────────────────────────────────────────────
-  // MID-WAY — Radiation
-  // ─────────────────────────────────────────────
-  { doc_type: "Radiation Files",               stage: "mid_way", for_treatments: ["radiation"] },
-  { doc_type: "Radiation Chart",               stage: "mid_way", for_treatments: ["radiation"] },
-
-  // ─────────────────────────────────────────────
-  // DISCHARGE — Universal
-  // ─────────────────────────────────────────────
-  { doc_type: "Discharge Summary",             stage: "discharge" },
-  { doc_type: "Hospital Bill",                 stage: "discharge" },
-  { doc_type: "Feedback Form",                 stage: "discharge" },
-  { doc_type: "Clinical Vitals Log",           stage: "discharge" },
-  { doc_type: "Discharge Photo",               stage: "discharge", for_treatments: ["chemo", "surgery"] },
-  { doc_type: "Post-op Notes",                 stage: "discharge", for_treatments: ["surgery"] },
-
-  // Geo-tag at discharge for govt schemes + private
-  { doc_type: "Geo-tag Photo",                 stage: "discharge", for_treatments: ["chemo", "surgery"] },
-
-  // CGHS/ECHS — Aadhaar again at discharge + emergency certificate (if emergency admission)
-  { doc_type: "Aadhaar Card",                  stage: "discharge", for_schemes: ["CGHS", "ECHS"] },
-  { doc_type: "Emergency Certificate",         stage: "discharge", for_schemes: ["CGHS", "ECHS"] },
-
-  // Private — original bills required for PSU reimbursement
-  { doc_type: "Original Bills (attested)",     stage: "discharge",
-    for_schemes: ["Private"], for_tpas: PSU_INSURERS },
+  // ============ DISCHARGE ============
+  { doc_type: "Feedback Form",       stage: "discharge" },
+  { doc_type: "Discharge Summary",   stage: "discharge" },
+  { doc_type: "Discharge Photo",     stage: "discharge", for_treatments: ["chemo", "surgery"] }, // NEW · DSP
+  { doc_type: "Hospital Bill",       stage: "discharge" },
+  { doc_type: "Geotag Photo",        stage: "discharge", for_treatments: ["chemo", "surgery"] },
+  { doc_type: "Post-op Notes",       stage: "discharge", for_treatments: ["surgery"] },
+  { doc_type: "Clinical Vitals Log", stage: "discharge" },
 ];
-
-// ─────────────────────────────────────────────
-// Types
-// ─────────────────────────────────────────────
 
 export type ChecklistEntry = {
   doc_type: string;
@@ -150,46 +106,19 @@ export type ChecklistEntry = {
   updated?: string;
 };
 
-// ─────────────────────────────────────────────
-// Aliases — alternate names a clerk might use
-// ─────────────────────────────────────────────
-
 const DOC_TYPE_ALIASES: Record<string, string[]> = {
-  "Prescription / Protocol":       ["Prescription", "Protocol", "Chemo Protocol", "Doctor Prescription"],
-  "CBC / LFT / KFT Profile":       ["CBC Report", "LFT Report", "KFT Report"],
-  "IPD File (admission)":          ["IPD File"],
-  "IPD File (day care)":           ["IPD File"],
-  "Latest Pathology (HPE)":        ["HPE", "Histopath", "Cancer Confirming Report", "Biopsy Report"],
-  "Drug Pouch / Wrapper Photo":    ["Drug Pouch Barcode", "Pouch Photo"],
+  "Prescription / Protocol": ["Prescription", "Protocol", "Chemo Protocol"],
+  "CBC / LFT / KFT Profile": ["CBC Report", "LFT Report", "KFT Report"],
+  "IPD File (admission)":    ["IPD File"],
+  "IPD File (day care)":     ["IPD File"],
+  "Latest Pathology (HPE)":  ["HPE", "Histopath"],
+  "Drug Pouch / Wrapper Photo": ["Drug Pouch Barcode", "Pouch Photo"],
   "Prior Imaging (CT/MRI/X-ray)": ["Prior Imaging"],
-  "Discharge Photo":               ["DSP", "Dis Pic"],
-  "Beneficiary Verification Slip": ["BIS", "Approval Letter"],
-  "Tumor Board Certificate":       ["TBC"],
-  "PET-CT Report":                 ["PET CT", "PETCT"],
-  "Referral Letter":               ["Referral", "Ref Letter"],
-  "Aadhaar Card":                  ["Aadhar Card", "Aadhar", "Aadhaar"],
-  "Scheme Card":                   ["CGHS Card", "CAPF Card", "ECHS Card", "Health Card"],
-  "Ayushman Card":                 ["Ayushman Bharat Card", "AB Card", "PMJAY Card"],
-  "UMID Card":                     ["Railway Card", "UMID"],
-  "ESI Card":                      ["ESIC Card", "ESI"],
-  "Ration Card":                   ["Ration"],
-  "Geo-tag Photo":                 ["Geotag Photo", "Geotag", "Geo Tag"],
-  "Approval Form (Appex)":         ["Appex Form", "Approval Form", "Appex", "SEMO Form"],
-  "Emergency Certificate":         ["Emergency Cert"],
-  "Passport Photo":                ["Passport Size Photo", "Photo (member)"],
-  "Insurance Card":                ["TPA Card", "Insurance", "Policy Card"],
-  "NEFT Mandate Form":             ["NEFT Form", "Bank Mandate"],
-  "Cashless Authorization Letter": ["Cashless Auth", "Auth Letter"],
-  "TPA Claim Form":                ["Claim Form", "TPA Form"],
-  "Case Summary Form":             ["Case Summary"],
-  "Treating Doctor Certificate":   ["Doctor Certificate", "Treating Doctor Cert"],
-  "Original Bills (attested)":     ["Original Bills", "Attested Bills"],
-  "Employer IP Declaration":       ["IP Declaration", "Employer Declaration"],
+  "Discharge Photo":         ["DSP", "Dis Pic"],
+  "Beneficiary Verification Slip": ["BIS"],
+  "Tumor Board Certificate": ["TBC"],
+  "PET-CT Report":           ["PET CT", "PETCT"],
 };
-
-// ─────────────────────────────────────────────
-// Core matching
-// ─────────────────────────────────────────────
 
 function matchDocument(uploaded: CaseDocument[], targetType: string): CaseDocument | undefined {
   const aliases = [targetType, ...(DOC_TYPE_ALIASES[targetType] ?? [])];
@@ -200,46 +129,30 @@ function matchDocument(uploaded: CaseDocument[], targetType: string): CaseDocume
   return undefined;
 }
 
-function ruleApplies(
-  r: ChecklistRule,
-  treatment: Treatment,
-  scheme?: Scheme,
-  tpa?: TPA,
-  isEmergency?: boolean,
-): boolean {
-  if (r.for_treatments && !r.for_treatments.includes(treatment)) return false;
-  if (r.for_schemes && !r.for_schemes.includes(scheme as Scheme)) return false;
-  if (r.for_tpas && (!tpa || !r.for_tpas.includes(tpa))) return false;
-  if (isEmergency && r.emergency_waivable) return false;
-  return true;
-}
-
-// ─────────────────────────────────────────────
-// Public API
-// ─────────────────────────────────────────────
-
 export function buildChecklist(
   uploaded: CaseDocument[],
   treatment: Treatment,
-  scheme?: Scheme,
-  tpa?: TPA,
-  isEmergency = false,
+  specialty: Specialty = "oncology",
 ): ChecklistEntry[] {
-  return RULES
-    .filter((r) => ruleApplies(r, treatment, scheme, tpa, isEmergency))
-    .map((rule) => {
-      const found = matchDocument(uploaded, rule.doc_type);
-      if (!found) return { doc_type: rule.doc_type, stage: rule.stage, status: "missing" as const };
-      return {
-        doc_type: rule.doc_type,
-        stage: rule.stage,
-        status: (found.confidence !== undefined && found.confidence < 0.7
-          ? "low_confidence"
-          : "present") as "present" | "low_confidence",
-        source: found.source,
-        updated: found.uploaded_at,
-      };
-    });
+  const applicable = RULES.filter((r) => {
+    const treatOk = !r.for_treatments || r.for_treatments.includes(treatment);
+    const specOk = !r.for_specialties || r.for_specialties.includes(specialty);
+    return treatOk && specOk;
+  });
+
+  return applicable.map((rule) => {
+    const found = matchDocument(uploaded, rule.doc_type);
+    if (!found) {
+      return { doc_type: rule.doc_type, stage: rule.stage, status: "missing" };
+    }
+    return {
+      doc_type: rule.doc_type,
+      stage: rule.stage,
+      status: found.confidence !== undefined && found.confidence < 0.7 ? "low_confidence" : "present",
+      source: found.source,
+      updated: found.uploaded_at,
+    };
+  });
 }
 
 export function summaryByStage(entries: ChecklistEntry[]) {
@@ -256,14 +169,16 @@ export function summaryByStage(entries: ChecklistEntry[]) {
   });
 }
 
-export function requiredDocsByStage(
+export function requiredDocsByTreatment(
   treatment: Treatment,
-  scheme?: Scheme,
-  tpa?: TPA,
-): Record<Stage, string[]> {
+  specialty: Specialty = "oncology",
+) {
+  const applicable = RULES.filter((r) => {
+    const treatOk = !r.for_treatments || r.for_treatments.includes(treatment);
+    const specOk = !r.for_specialties || r.for_specialties.includes(specialty);
+    return treatOk && specOk;
+  });
   const grouped: Record<Stage, string[]> = { pre_auth: [], mid_way: [], discharge: [] };
-  RULES
-    .filter((r) => ruleApplies(r, treatment, scheme, tpa))
-    .forEach((r) => grouped[r.stage].push(r.doc_type));
+  for (const r of applicable) grouped[r.stage].push(r.doc_type);
   return grouped;
 }

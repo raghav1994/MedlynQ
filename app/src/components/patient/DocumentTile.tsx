@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import clsx from "clsx";
 import type { CaseDocument } from "@/lib/mockDocuments";
 
@@ -55,21 +56,83 @@ export default function DocumentTile({
 
       <span className={clsx("absolute top-2 right-2 w-2.5 h-2.5 rounded-full", dot.color)} title={dot.label} />
 
-      <div className="aspect-[4/3] bg-bone-200 rounded mb-2 grid place-items-center overflow-hidden">
-        {isImage ? (
-          <div className="w-full h-full bg-gradient-to-br from-bone-300 to-bone-200 grid place-items-center">
-            <span className={clsx("text-2xl font-bold tracking-wide", glyph.color)}>{glyph.label}</span>
-          </div>
-        ) : (
-          <span className={clsx("text-2xl font-bold tracking-wide", glyph.color)}>{glyph.label}</span>
-        )}
-      </div>
+      <PdfPreview d={d} isImage={isImage} glyph={glyph} />
 
-      <div className="text-xs font-semibold text-ink-100 truncate" title={d.filename}>{d.filename}</div>
+      <div className="text-xs font-semibold text-ink-100 truncate mt-2" title={d.filename}>{d.filename}</div>
       <div className="text-[10px] text-ink-300 truncate">Orig: {d.original_filename}</div>
       <div className="flex items-center justify-between mt-1.5">
         <span className="text-[10px] text-ink-300">{d.uploaded_at}</span>
         <span className={clsx("text-[10px] font-semibold px-1.5 py-0.5 rounded", sourceTint[d.source])}>{d.source}</span>
+      </div>
+    </div>
+  );
+}
+
+// Renders the document preview: a real page-1 thumbnail when available,
+// otherwise falls back to the original /api/document image (for true images)
+// or the static PDF/PNG/JPG glyph.
+function PdfPreview({
+  d, isImage, glyph,
+}: {
+  d: CaseDocument;
+  isImage: boolean;
+  glyph: { label: string; color: string };
+}) {
+  const [thumbFailed, setThumbFailed] = useState(false);
+  const thumbUrl = `/api/thumb?file=${encodeURIComponent(d.filename)}`;
+  const showThumb = !thumbFailed;
+
+  return (
+    <div className="aspect-[4/3] bg-bone-200 rounded grid place-items-center overflow-hidden relative group">
+      {showThumb ? (
+        <img
+          src={thumbUrl}
+          alt={d.doc_type}
+          onError={() => setThumbFailed(true)}
+          className="w-full h-full object-cover object-top transition-transform duration-200 group-hover:scale-105"
+          loading="lazy"
+        />
+      ) : isImage ? (
+        <img
+          src={`/api/document?caseId=${d.case_id}&filename=${encodeURIComponent(d.filename)}`}
+          alt={d.doc_type}
+          className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+          loading="lazy"
+        />
+      ) : (
+        <span className={clsx("text-2xl font-bold tracking-wide", glyph.color)}>{glyph.label}</span>
+      )}
+
+      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 pointer-events-none group-hover:pointer-events-auto">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            window.open(`/api/document?caseId=${d.case_id}&filename=${encodeURIComponent(d.filename)}`, "_blank");
+          }}
+          className="bg-white hover:bg-bone-100 text-ink-100 text-[10px] font-bold px-2.5 py-1.5 rounded shadow-md flex items-center gap-1 transition-transform scale-90 group-hover:scale-100 duration-150"
+        >
+          👁️ View {isImage ? "Image" : "PDF"}
+        </button>
+
+        {d.source === "MedCam" && (
+          <button
+            type="button"
+            onClick={async (e) => {
+              e.stopPropagation();
+              if (confirm(`Are you sure you want to delete ${d.filename}?`)) {
+                try {
+                  const res = await fetch(`/api/document?caseId=${d.case_id}&filename=${encodeURIComponent(d.filename)}`, { method: "DELETE" });
+                  if (res.ok) window.location.reload();
+                  else alert("Failed to delete document.");
+                } catch (err) { alert("Error deleting document: " + err); }
+              }
+            }}
+            className="bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold px-2.5 py-1.5 rounded shadow-md flex items-center gap-1 transition-transform scale-90 group-hover:scale-100 duration-150"
+          >
+            🗑️ Delete
+          </button>
+        )}
       </div>
     </div>
   );

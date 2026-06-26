@@ -166,6 +166,115 @@ CLASSIFIER_RULES = [
     {"label": "Pre-merged Packet",
      "filename_keywords": ["MERGED", "MERGED_PACKET", "BUNDLE", "COMBINED"],
      "text_keywords": []},
+
+    # ===== Cardiac =====
+    {"label": "ECHO Report",
+     "filename_keywords": ["ECHO", "ECHOCARDIO", "TTE", "TEE"],
+     "text_keywords": ["echocardiogram", "transthoracic echo", "lvef", "ejection fraction"]},
+
+    {"label": "ECG Report",
+     "filename_keywords": ["ECG", "EKG"],
+     "text_keywords": ["electrocardiogram", "ecg report", "sinus rhythm", "12-lead ecg"]},
+
+    {"label": "Coronary Angiography Report",
+     "filename_keywords": ["CAG", "CORANGIO", "CORONARY_ANGIO", "ANGIOGRAM", "CORONARY"],
+     "text_keywords": ["coronary angiography", "coronary angiogram", "lad stenosis", "rca", "lcx"]},
+
+    {"label": "Cath Lab Note",
+     "filename_keywords": ["CATH", "CATHLAB", "CATH_LAB", "PCI_NOTE"],
+     "text_keywords": ["cath lab", "catheterisation lab", "pci procedure", "balloon angioplasty"]},
+
+    {"label": "Stent / Implant Invoice",
+     "filename_keywords": ["STENT_INVOICE", "STENT", "IMPLANT_INVOICE", "STENT_BILL"],
+     "text_keywords": ["stent invoice", "drug eluting stent", "des invoice", "implant invoice"]},
+
+    {"label": "Cardiac Pre-Op Workup",
+     "filename_keywords": ["CARDIAC_WORKUP", "PREOP_CARDIAC", "CARDIAC_PREOP"],
+     "text_keywords": ["cardiac workup", "pre-operative cardiac evaluation"]},
+
+    # ===== Ortho =====
+    {"label": "Pre-Op X-Ray",
+     "filename_keywords": ["PREOP_XRAY", "PRE_OP_XRAY", "PRE_XRAY"],
+     "text_keywords": ["pre-operative x-ray", "pre-op radiograph"]},
+
+    {"label": "Post-Op X-Ray",
+     "filename_keywords": ["POSTOP_XRAY", "POST_OP_XRAY", "POST_XRAY"],
+     "text_keywords": ["post-operative x-ray", "post-op radiograph"]},
+
+    {"label": "MRI / CT Joint Report",
+     "filename_keywords": ["MRI_JOINT", "CT_JOINT", "JOINT_MRI", "JOINT_CT"],
+     "text_keywords": ["mri knee", "mri shoulder", "mri spine", "ct joint", "meniscal tear"]},
+
+    {"label": "Implant Sticker / Barcode",
+     "filename_keywords": ["IMPLANT_STICKER", "IMPLANT_BARCODE", "IMPLANT_LABEL"],
+     "text_keywords": ["implant sticker", "implant barcode", "lot no", "batch no"]},
+
+    {"label": "Ortho OT Notes",
+     "filename_keywords": ["ORTHO_OT", "ORTHO_NOTES"],
+     "text_keywords": ["ortho ot notes", "orthopaedic procedure"]},
+
+    {"label": "Ortho Surgeon Note",
+     "filename_keywords": ["ORTHO_NOTE", "ORTHO_SURGEON"],
+     "text_keywords": ["orthopaedic surgeon", "ortho consultation"]},
+
+    # ===== Dialysis =====
+    {"label": "Dialysis Frequency Log",
+     "filename_keywords": ["DIALYSIS_LOG", "HD_LOG", "DIALYSIS_FREQ"],
+     "text_keywords": ["dialysis frequency", "hd session", "haemodialysis log"]},
+
+    {"label": "KT/V or URR Note",
+     "filename_keywords": ["KTV", "URR", "KT_V"],
+     "text_keywords": ["kt/v", "urea reduction ratio"]},
+
+    {"label": "AV Fistula / Access Note",
+     "filename_keywords": ["AVF", "FISTULA", "VASCULAR_ACCESS"],
+     "text_keywords": ["av fistula", "vascular access", "av graft"]},
+
+    {"label": "Renal Function Panel",
+     "filename_keywords": ["RFT", "RENAL_PANEL", "KFT"],
+     "text_keywords": ["renal function", "egfr", "serum creatinine"]},
+
+    # ===== ICU =====
+    {"label": "Ventilator / Vitals Chart",
+     "filename_keywords": ["VENT_CHART", "VENTILATOR", "ICU_CHART", "VITALS_ICU"],
+     "text_keywords": ["ventilator settings", "fio2", "peep", "tidal volume", "icu vitals"]},
+
+    {"label": "ICU Admission Note",
+     "filename_keywords": ["ICU_ADMISSION", "ICU_ADMIT"],
+     "text_keywords": ["icu admission", "intensive care admission"]},
+
+    {"label": "APACHE / SOFA Score Sheet",
+     "filename_keywords": ["APACHE", "SOFA", "ICU_SCORE"],
+     "text_keywords": ["apache ii", "apache score", "sofa score"]},
+
+    {"label": "Daily Progress Notes",
+     "filename_keywords": ["PROGRESS_NOTES", "DAILY_PROGRESS"],
+     "text_keywords": ["daily progress note", "progress note"]},
+
+    # ===== Maternity =====
+    {"label": "Antenatal Card",
+     "filename_keywords": ["ANC", "ANTENATAL", "ANC_CARD"],
+     "text_keywords": ["antenatal card", "anc visits", "gestational age"]},
+
+    {"label": "USG Reports",
+     "filename_keywords": ["USG", "ULTRASOUND", "OBS_USG"],
+     "text_keywords": ["ultrasound report", "obstetric ultrasound", "fetal ultrasound"]},
+
+    {"label": "Delivery Note",
+     "filename_keywords": ["DELIVERY_NOTE", "DELIVERY", "LSCS_NOTE", "VAGINAL_DEL"],
+     "text_keywords": ["delivery note", "lscs", "lower segment caesarean", "vaginal delivery"]},
+
+    {"label": "NICU Chart",
+     "filename_keywords": ["NICU_CHART", "NICU"],
+     "text_keywords": ["nicu chart", "neonatal icu"]},
+
+    {"label": "Partograph",
+     "filename_keywords": ["PARTOGRAPH"],
+     "text_keywords": ["partograph"]},
+
+    {"label": "Maternal Blood Group / VDRL / HIV",
+     "filename_keywords": ["BLOOD_GROUP", "VDRL", "HIV_TEST", "MATERNAL_LABS"],
+     "text_keywords": ["blood group", "vdrl", "hiv test", "rh typing"]},
 ]
 
 
@@ -259,6 +368,13 @@ FIELD_PATTERNS = {
     "diagnosis": [
         r"(?:diagnosis|diag)\s*[:\-]\s*([A-Za-z0-9\s,\-]{4,80})",
     ],
+    "age": [
+        r"\bage\s*[:\-]?\s*(\d{1,3})\s*(?:yrs?|years?|y)?",
+        r"\b(\d{1,3})\s*(?:yrs?|years?)\s*(?:old)?",
+    ],
+    "gender": [
+        r"\b(?:sex|gender)\s*[:\-]?\s*(male|female|m|f)\b",
+    ],
 }
 
 
@@ -287,6 +403,19 @@ def extract_pdf_text(input_path, max_chars=8000):
     except Exception:
         pass
     return "\n".join(text_parts), page_count
+
+
+def detect_extractability(input_path):
+    """Returns 'text' if PDF has selectable text, 'scanned' otherwise.
+    Images are always 'scanned'. PDFs need ~50+ chars per page of real text."""
+    ext = os.path.splitext(input_path)[1].lower()
+    if ext in (".jpg", ".jpeg", ".png"):
+        return "scanned"
+    if ext != ".pdf":
+        return "scanned"
+    text, pages = extract_pdf_text(input_path, max_chars=4000)
+    pages = max(1, pages)
+    return "text" if len(text.strip()) / pages >= 50 else "scanned"
 
 
 def _snake(label):

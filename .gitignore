@@ -20,7 +20,16 @@ app/python/__pycache__/
 
 # Processed patient documents — DPDP: never commit
 app/public/_compressed/
+app/public/_merged/
+app/public/_thumbs/
 app/public/redacted/
+!app/public/_compressed/.gitkeep
+!app/public/_merged/.gitkeep
+!app/public/_thumbs/.gitkeep
+
+# Runtime patient/state JSON — DPDP: never commit
+app/db/dynamic_patients.json
+app/db/mobile_connection.json
 
 # medlynq-rx
 medlynq-rx/node_modules/

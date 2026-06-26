@@ -4,16 +4,16 @@ import type { Patient, Case, KpiTile, ActivityEvent, WorkQueueGroup, ActionTile 
 import { openPostOpHPEQueries } from "./mockQueries";
 
 export const patients: Patient[] = [
-  { id: "P0001", mrn: "PYZBP2Z4P", name: "Chinta Devi",   age: 62, gender: "F", state: "Delhi", district: "West Delhi" },
-  { id: "P0002", mrn: "MU29120HU", name: "Rajkumari",     age: 65, gender: "F", state: "Delhi", district: "West Delhi" },
-  { id: "P0003", mrn: "MH9VWGX49", name: "Mohan Lal",     age: 71, gender: "M", state: "UP",    district: "Meerut" },
-  { id: "P0004", mrn: "PSR85W9EF", name: "Priya Varma",   age: 48, gender: "F", state: "Delhi", district: "South Delhi" },
-  { id: "P0005", mrn: "MRX37VL82", name: "Krishan Verma", age: 47, gender: "M", state: "Haryana", district: "Gurgaon" },
-  { id: "P0006", mrn: "MFT6BQT0Q", name: "Rajeev Saini",  age: 54, gender: "M", state: "Delhi", district: "North Delhi" },
-  { id: "P0007", mrn: "MFXW0R1M1", name: "Anita Desai",   age: 59, gender: "F", state: "Delhi", district: "East Delhi" },
-  { id: "P0008", mrn: "MK70A6O8G", name: "Vikram Singh",  age: 68, gender: "M", state: "UP",    district: "Noida" },
-  { id: "P0009", mrn: "PNW72KQ19", name: "Sushila Gupta", age: 55, gender: "F", state: "Delhi", district: "West Delhi" },
-  { id: "P0010", mrn: "PTBQ4UU03", name: "Ramesh Kohli",  age: 60, gender: "M", state: "Delhi", district: "Central Delhi" },
+  { id: "P0001", mrn: "PYZBP2Z4P", name: "Chinta Devi",   age: 62, gender: "F", state: "Delhi", district: "West Delhi", department: "Oncology" },
+  { id: "P0002", mrn: "MU29120HU", name: "Rajkumari",     age: 65, gender: "F", state: "Delhi", district: "West Delhi", department: "Oncology" },
+  { id: "P0003", mrn: "MH9VWGX49", name: "Mohan Lal",     age: 71, gender: "M", state: "UP",    district: "Meerut", department: "Cardiology" },
+  { id: "P0004", mrn: "PSR85W9EF", name: "Priya Varma",   age: 48, gender: "F", state: "Delhi", district: "South Delhi", department: "Oncology" },
+  { id: "P0005", mrn: "MRX37VL82", name: "Krishan Verma", age: 47, gender: "M", state: "Haryana", district: "Gurgaon", department: "Oncology" },
+  { id: "P0006", mrn: "MFT6BQT0Q", name: "Rajeev Saini",  age: 54, gender: "M", state: "Delhi", district: "North Delhi", department: "Oncology" },
+  { id: "P0007", mrn: "MFXW0R1M1", name: "Anita Desai",   age: 59, gender: "F", state: "Delhi", district: "East Delhi", department: "Gastroenterology" },
+  { id: "P0008", mrn: "MK70A6O8G", name: "Vikram Singh",  age: 68, gender: "M", state: "UP",    district: "Noida", department: "Cardiology" },
+  { id: "P0009", mrn: "PNW72KQ19", name: "Sushila Gupta", age: 55, gender: "F", state: "Delhi", district: "West Delhi", department: "Dermatology" },
+  { id: "P0010", mrn: "PTBQ4UU03", name: "Ramesh Kohli",  age: 60, gender: "M", state: "Delhi", district: "Central Delhi", department: "Gastroenterology" },
 ];
 
 export const cases: Case[] = [
@@ -209,6 +209,35 @@ export const cases: Case[] = [
     tat_days: 6, age_days: 9, missing_docs: 0, open_queries: 0,
   },
 ];
+
+export function loadDynamicData() {
+  if (typeof window === "undefined") {
+    try {
+      const fs = require("fs");
+      const path = require("path");
+      const dbPath = path.join(process.cwd(), "db", "dynamic_patients.json");
+      if (fs.existsSync(dbPath)) {
+        const raw = fs.readFileSync(dbPath, "utf8");
+        const { patients: dynamicPatients, cases: dynamicCases } = JSON.parse(raw);
+        for (const dp of dynamicPatients) {
+          if (!patients.some((x) => x.mrn.toLowerCase() === dp.mrn.toLowerCase())) {
+            patients.push(dp);
+          }
+        }
+        for (const dc of dynamicCases) {
+          if (!cases.some((x) => x.id === dc.id)) {
+            cases.push(dc);
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load dynamic patients:", e);
+    }
+  }
+}
+
+// Load dynamic patients on server startup
+loadDynamicData();
 
 export const kpis: KpiTile[] = [
   { label: "Total cases",     value: String(cases.length), delta: "+2 today" },

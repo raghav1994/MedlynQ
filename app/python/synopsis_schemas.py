@@ -67,6 +67,91 @@ SCHEMAS: dict[str, dict[str, Any]] = {
         "fields": [],  # everything sensitive — minimal extraction
         "suggests": [],
     },
+    # ===== Cardiac =====
+    "echo_report": {
+        "label": "ECHO Report",
+        "fields": ["lvef_pct", "wall_motion", "valvular_lesions", "chamber_dimensions", "report_date"],
+        "suggests": ["systolic_dysfunction", "valve_replacement_indicated"],
+    },
+    "ecg_report": {
+        "label": "ECG Report",
+        "fields": ["rate_bpm", "rhythm", "axis", "ischemic_changes", "report_date"],
+        "suggests": ["ischemia_suspected", "arrhythmia_present"],
+    },
+    "coronary_angio": {
+        "label": "Coronary Angiography",
+        "fields": ["vessels_involved", "stenosis_pct", "procedure_recommendation", "report_date"],
+        "suggests": ["pci_indicated", "cabg_indicated"],
+    },
+    "stent_invoice": {
+        "label": "Stent / Implant Invoice",
+        "fields": ["brand", "model", "batch_no", "gst_no", "amount", "invoice_date"],
+        "suggests": ["batch_traceable", "missing_gst"],
+    },
+    "cath_lab_note": {
+        "label": "Cath Lab Note",
+        "fields": ["procedure", "stents_placed", "contrast_used_ml", "complications", "procedure_date"],
+        "suggests": [],
+    },
+
+    # ===== Ortho =====
+    "preop_xray": {
+        "label": "Pre-Op X-Ray",
+        "fields": ["region", "findings", "fracture_pattern", "study_date"],
+        "suggests": [],
+    },
+    "implant_sticker": {
+        "label": "Implant Sticker / Barcode",
+        "fields": ["implant_type", "brand", "size", "batch_no", "lot_no"],
+        "suggests": ["batch_traceable", "missing_lot"],
+    },
+    "ortho_ot_notes": {
+        "label": "Ortho OT Notes",
+        "fields": ["procedure", "implant_used", "duration_min", "blood_loss_ml", "surgery_date"],
+        "suggests": [],
+    },
+
+    # ===== Dialysis =====
+    "dialysis_frequency_log": {
+        "label": "Dialysis Frequency Log",
+        "fields": ["sessions_per_week", "duration_hours", "vascular_access", "log_period"],
+        "suggests": ["under_dialysed"],
+    },
+    "renal_panel": {
+        "label": "Renal Function Panel",
+        "fields": ["creatinine", "urea", "egfr", "potassium", "report_date"],
+        "suggests": ["dialysis_indicated"],
+    },
+
+    # ===== ICU =====
+    "ventilator_chart": {
+        "label": "Ventilator / Vitals Chart",
+        "fields": ["mode", "fio2", "peep", "tidal_volume", "spo2", "chart_date"],
+        "suggests": ["weaning_ready", "high_fio2_dependence"],
+    },
+    "icu_admission_note": {
+        "label": "ICU Admission Note",
+        "fields": ["diagnosis", "apache_ii", "sofa_score", "admission_date"],
+        "suggests": [],
+    },
+
+    # ===== Maternity =====
+    "delivery_note": {
+        "label": "Delivery Note",
+        "fields": ["mode_of_delivery", "gestational_age", "baby_weight_g", "apgar_1min", "apgar_5min", "delivery_date"],
+        "suggests": ["nicu_admission_indicated"],
+    },
+    "nicu_chart": {
+        "label": "NICU Chart",
+        "fields": ["admission_reason", "ventilation", "feeds", "stay_days", "discharge_date"],
+        "suggests": [],
+    },
+    "antenatal_card": {
+        "label": "Antenatal Card",
+        "fields": ["lmp", "edd", "visits", "blood_group", "hiv_status", "vdrl_status"],
+        "suggests": [],
+    },
+
     "generic": {
         "label": "Document",
         "fields": ["doc_title", "doc_date", "key_phrases"],

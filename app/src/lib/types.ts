@@ -1,21 +1,4 @@
-export type Scheme = "PMJAY" | "CGHS" | "ESI" | "SHA" | "Railway" | "ECHS" | "Private";
-
-// Private health insurance companies (TPA/direct)
-export type TPA =
-  | "Star Health"
-  | "New India"
-  | "United India"
-  | "Oriental"
-  | "National Insurance"
-  | "HDFC ERGO"
-  | "ICICI Lombard"
-  | "Bajaj Allianz"
-  | "Niva Bupa"
-  | "Care Health"
-  | "Aditya Birla"
-  | "Tata AIG"
-  | "SBI General"
-  | "Manipal Cigna";
+export type Scheme = "PMJAY" | "CGHS" | "ESI" | "SHA" | "Railway" | "ECHS";
 
 export type ClaimStatus =
   | "preauth_pending"
@@ -32,6 +15,24 @@ export type ClaimStatus =
 
 export type Treatment = "chemo" | "surgery" | "radiation" | "medicine";
 
+// New: hospital specialty / department. Lets MedLynq go beyond oncology.
+export type Specialty =
+  | "oncology"
+  | "cardiac"
+  | "ortho"
+  | "dialysis"
+  | "icu"
+  | "maternity";
+
+export const SPECIALTY_META: Record<Specialty, { label: string; icon: string; treatments: Treatment[] }> = {
+  oncology:  { label: "Oncology",  icon: "🎗️", treatments: ["chemo", "surgery", "radiation", "medicine"] },
+  cardiac:   { label: "Cardiac",   icon: "❤️",  treatments: ["surgery", "medicine"] },
+  ortho:     { label: "Orthopaedic", icon: "🦴", treatments: ["surgery", "medicine"] },
+  dialysis:  { label: "Dialysis",  icon: "🩺",  treatments: ["medicine"] },
+  icu:       { label: "ICU",       icon: "🏥",  treatments: ["medicine", "surgery"] },
+  maternity: { label: "Maternity", icon: "👶",  treatments: ["surgery", "medicine"] },
+};
+
 export type Stage = "pre_auth" | "mid_way" | "discharge";
 
 export type Patient = {
@@ -42,6 +43,7 @@ export type Patient = {
   gender: "M" | "F";
   state: string;
   district: string;
+  department?: string;
 };
 
 export type Case = {
@@ -49,13 +51,12 @@ export type Case = {
   patient_id: string;
   registration_id: string;
   scheme: Scheme;
-  tpa?: TPA;           // set when scheme = "Private"; identifies the insurer
-  is_emergency?: boolean; // waives referral requirement for CGHS / ECHS
   payer: string;
   procedure_code: string;
   procedure_name: string;
   diagnosis: string;
   treatment_type: Treatment;
+  specialty?: Specialty;
   cycle?: { current: number; total: number };
   admission_date: string;
   discharge_date: string | null;

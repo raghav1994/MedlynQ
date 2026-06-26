@@ -45,7 +45,10 @@ def _get_paddle():
     global _paddle
     if _paddle is None:
         from paddleocr import PaddleOCR
-        _paddle = PaddleOCR(use_angle_cls=True, lang="en", show_log=False)
+        import logging
+        from paddleocr import logger
+        logger.setLevel(logging.ERROR)
+        _paddle = PaddleOCR(use_angle_cls=True, lang="en", enable_mkldnn=True)
     return _paddle
 
 
@@ -87,11 +90,26 @@ def redact_image(in_path: str, out_path: str, keep_signature: bool = True) -> di
     img_h, img_w = img.shape[:2]
 
     paddle = _get_paddle()
-    result = paddle.ocr(in_path, cls=True)
+    result = paddle.ocr(in_path)
+
+    # Adapt to both new PaddleX (dict-like OCRResult) and old formats
+    lines = []
+    if result and len(result) > 0:
+        page = result[0]
+        if isinstance(page, dict) and 'rec_polys' in page and 'rec_texts' in page:
+            polys = page['rec_polys']
+            texts = page['rec_texts']
+            scores = page.get('rec_scores', [1.0] * len(texts))
+            for poly, text, score in zip(polys, texts, scores):
+                quad = poly.tolist() if hasattr(poly, 'tolist') else list(poly)
+                lines.append([quad, (text, score)])
+        else:
+            lines = page
+
     burned: list[dict[str, Any]] = []
 
-    if result and result[0]:
-        for line in result[0]:
+    if lines:
+        for line in lines:
             quad, (text, conf) = line
             box = _quad_to_xywh(quad)
             reason = _classify_text(text)
@@ -99,7 +117,7 @@ def redact_image(in_path: str, out_path: str, keep_signature: bool = True) -> di
                 burned.append({"box": list(box), "reason": reason, "text_hash": _hash(text)})
 
         # Address: burn the bbox AND a few lines below it
-        for i, line in enumerate(result[0]):
+        for i, line in enumerate(lines):
             quad, (text, conf) = line
             if ADDR_CONTEXT.search(text):
                 box = _quad_to_xywh(quad)

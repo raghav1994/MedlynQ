@@ -8,6 +8,8 @@ type NavItem = { label: string; href: string; soon?: boolean };
 
 const NAV: NavItem[] = [
   { label: "Dashboard",       href: "/" },
+  { label: "Backend Panel",   href: "/backend" },
+  { label: "OPD Registration", href: "/opd" },
   { label: "Patient List",    href: "/patients" },
   { label: "Document Intake", href: "/intake" },
   { label: "Active Queries",  href: "/queries", soon: true },

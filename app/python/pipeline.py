@@ -83,11 +83,12 @@ def run(
     raw_path: str,
     mrn: str,
     patientlog_root: str,
-    use_sarvam: bool = True,
+    use_sarvam: bool = False,
+    run_ocr: bool = False,
 ) -> dict[str, Any]:
     """Run the full pipeline on one document. Returns a manifest dict."""
     from compressor import compress_pdf_safe, compress_standalone_image  # local sidecar
-    from extractor import classify_doc, extract_pdf_text  # uses the existing 95.2% classifier
+    from extractor import classify_doc, extract_pdf_text, extract_fields, detect_extractability
 
     raw = Path(raw_path)
     base = Path(patientlog_root) / mrn
@@ -104,50 +105,63 @@ def run(
     else:
         compress_standalone_image(str(raw), str(compressed_path))
 
-    # ---- 2. Classify doc_type ----
+    # ---- 2. Classify doc_type + detect extractability ----
     text_for_class = ""
     if _is_pdf(str(compressed_path)):
         try:
-            text_for_class = extract_pdf_text(str(compressed_path))
+            t, _ = extract_pdf_text(str(compressed_path))
+            text_for_class = t or ""
         except Exception:
             text_for_class = ""
     label, conf, src = classify_doc(compressed_path.name, text_for_class)
     classification = {"doc_type": label, "confidence": conf, "source": src}
     doc_type_label = label
     doc_type_slug = _snake(doc_type_label)
+    extractability = detect_extractability(str(compressed_path))
+    patient_identity = extract_fields(text_for_class) if text_for_class else {}
 
-    # ---- 3. Rasterize page 1 (for OCR) ----
     raster_png = redacted_dir / f"{raw.stem}_p1.png"
-    if _is_pdf(str(compressed_path)):
-        _rasterize_page1(str(compressed_path), str(raster_png))
-    else:
-        # already an image — just copy
-        import shutil
-        shutil.copy(str(compressed_path), str(raster_png))
-
-    # ---- 4. Redaction (Paddle + OpenCV) ----
-    burn_log: dict[str, Any] = {}
     redacted_png = redacted_dir / f"{raw.stem}_redacted.png"
-    try:
-        from redact import redact_image
-        burn_log = redact_image(str(raster_png), str(redacted_png))
-    except Exception as e:
-        burn_log = {"error": str(e), "burned_count": 0}
-
-    # ---- 5. Sarvam Vision (only on redacted) ----
+    burn_log: dict[str, Any] = {}
     sarvam_json: dict[str, Any] = {}
-    flags: list[str] = []
-    if doc_type_label in LOCAL_ONLY_DOC_TYPES:
-        flags.append("local_only_no_cloud")
-    elif use_sarvam and burn_log.get("burned_count", 0) >= 0 and redacted_png.exists():
-        try:
-            from sarvam_vision import extract as sarvam_extract
-            sarvam_json = sarvam_extract(str(redacted_png), doc_type=doc_type_slug)
-            if sarvam_json.get("error"):
-                flags.append("sarvam_failed")
-        except Exception as e:
-            sarvam_json = {"error": str(e)}
-            flags.append("sarvam_exception")
+    flags: list[str] = [f"extractability:{extractability}"]
+
+    if run_ocr:
+        # ---- 3. Rasterize page 1 (for OCR) ----
+        if _is_pdf(str(compressed_path)):
+            _rasterize_page1(str(compressed_path), str(raster_png))
+        else:
+            import shutil
+            shutil.copy(str(compressed_path), str(raster_png))
+
+        # ---- 4. Redaction (Paddle + OpenCV) — always runs for scanned docs ----
+        if extractability == "scanned":
+            try:
+                from redact import redact_image
+                burn_log = redact_image(str(raster_png), str(redacted_png))
+            except Exception as e:
+                burn_log = {"error": str(e), "burned_count": 0}
+
+        # ---- 5. Routing ----
+        if doc_type_label in LOCAL_ONLY_DOC_TYPES:
+            flags.append("local_only_no_cloud")
+        elif extractability == "text":
+            # Stay local — PDF text is enough
+            flags.append("local_text_only_no_sarvam")
+            sarvam_json = {
+                "text": text_for_class,
+                "extracted": patient_identity,
+                "doc_type_predicted": doc_type_slug,
+            }
+        elif use_sarvam and redacted_png.exists():
+            try:
+                from sarvam_vision import extract as sarvam_extract
+                sarvam_json = sarvam_extract(str(redacted_png), doc_type=doc_type_slug)
+                if sarvam_json.get("error"):
+                    flags.append("sarvam_failed")
+            except Exception as e:
+                sarvam_json = {"error": str(e)}
+                flags.append("sarvam_exception")
 
     # ---- 6. Normalize synopsis ----
     synopsis = normalize(doc_type_slug, sarvam_json) if sarvam_json else {
@@ -183,6 +197,8 @@ def run(
         "mrn": mrn,
         "doc_type": doc_type_label,
         "doc_type_slug": doc_type_slug,
+        "extractability": extractability,
+        "patient_identity": patient_identity,
         "rename": rename,
         "paths": {
             "original": str(final_path),

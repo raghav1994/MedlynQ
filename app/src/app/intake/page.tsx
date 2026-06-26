@@ -1,11 +1,14 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import AppShell from "@/components/AppShell";
-import { patients } from "@/lib/mockData";
+import AddPatientModal from "@/components/AddPatientModal";
 import { scoreRisk } from "@/lib/risk";
-import { requiredDocsByStage } from "@/lib/checklist";
-import type { Treatment } from "@/lib/types";
+import { requiredDocsByTreatment } from "@/lib/checklist";
+import { matchPatient } from "@/lib/patientMatch";
+import type { PatientMatchResult } from "@/lib/patientMatch";
+import type { Treatment, Specialty } from "@/lib/types";
+import { SPECIALTY_META } from "@/lib/types";
 
 type Job = {
   id: string;
@@ -25,13 +28,55 @@ type Job = {
     doc_type_source?: string;
     page_count?: number;
     fields?: Record<string, string>;
+    extracted_text?: string;
   };
   error?: string;
 };
 
+type Lane = "text" | "scanned";
+
+// Decide if a finished job is text-readable PDF or an image/scanned PDF.
+function laneOf(j: Job): Lane {
+  const ext = (j.name.split(".").pop() || "").toLowerCase();
+  if (["jpg", "jpeg", "png"].includes(ext)) return "scanned";
+  const text = (j.result?.extracted_text ?? "").trim();
+  const pages = Math.max(1, j.result?.page_count ?? 1);
+  // ~50+ chars per page of real text → readable PDF
+  return text.length / pages >= 50 ? "text" : "scanned";
+}
+
+async function downloadZip(jobs: Job[], filename: string) {
+  const files = jobs
+    .filter((j) => j.status === "done" && j.result)
+    .map((j) => ({
+      url: j.result!.download_url,
+      name: j.result!.ai_filename || j.name,
+    }));
+  if (files.length === 0) return;
+  const res = await fetch("/api/zip-batch", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ files }),
+  });
+  if (!res.ok) {
+    alert("Zip failed: " + (await res.text()));
+    return;
+  }
+  const blob = await res.blob();
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
 type Session = {
   patient_name?: string;
   patient_mrn?: string;
+  patient_age?: string;
+  patient_gender?: string;
+  patient_dob?: string;
+  specialty: Specialty;
   treatment: Treatment;
   collected_doc_types: string[];
   low_confidence_doc_types: string[];
@@ -54,6 +99,7 @@ export default function IntakePage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [busy, setBusy] = useState(false);
   const [session, setSession] = useState<Session>({
+    specialty: "oncology",
     treatment: "chemo",
     collected_doc_types: [],
     low_confidence_doc_types: [],
@@ -90,6 +136,9 @@ export default function IntakePage() {
             const f = json.fields ?? {};
             if (!next.patient_name && f.patient_name) next.patient_name = f.patient_name;
             if (!next.patient_mrn  && f.mrn)          next.patient_mrn  = f.mrn;
+            if (!next.patient_age  && f.age)          next.patient_age  = f.age;
+            if (!next.patient_gender && f.gender)     next.patient_gender = f.gender;
+            if (!next.patient_dob  && f.dob)          next.patient_dob  = f.dob;
             if (json.doc_type && json.doc_type !== "Unclassified") {
               if (!next.collected_doc_types.includes(json.doc_type)) {
                 next.collected_doc_types = [...next.collected_doc_types, json.doc_type];
@@ -118,7 +167,7 @@ export default function IntakePage() {
 
   function resetSession() {
     setJobs([]);
-    setSession({ treatment: "chemo", collected_doc_types: [], low_confidence_doc_types: [] });
+    setSession({ specialty: "oncology", treatment: "chemo", collected_doc_types: [], low_confidence_doc_types: [] });
   }
 
   const totalSaved = jobs.reduce((sum, j) => {
@@ -127,14 +176,21 @@ export default function IntakePage() {
   }, 0);
   const doneCount = jobs.filter((j) => j.status === "done").length;
 
-  const matchedPatient = session.patient_mrn
-    ? patients.find((p) => p.mrn.toLowerCase() === session.patient_mrn!.toLowerCase())
-    : session.patient_name
-    ? patients.find((p) => p.name.toLowerCase() === session.patient_name!.toLowerCase())
-    : undefined;
+  const matchResult: PatientMatchResult = useMemo(() => matchPatient({
+    mrn: session.patient_mrn,
+    name: session.patient_name,
+    age: session.patient_age,
+    gender: session.patient_gender,
+    dob: session.patient_dob,
+  }), [session.patient_mrn, session.patient_name, session.patient_age, session.patient_gender, session.patient_dob]);
+  const matchedPatient = matchResult.match ?? undefined;
+
+  const [showAddPatient, setShowAddPatient] = useState(false);
+  const [createdPatient, setCreatedPatient] = useState<{ name: string; mrn: string } | null>(null);
 
   const risk = scoreRisk({
     treatment: session.treatment,
+    specialty: session.specialty,
     present_doc_types: session.collected_doc_types,
     low_confidence_types: session.low_confidence_doc_types,
   });
@@ -157,25 +213,48 @@ export default function IntakePage() {
           )}
         </div>
 
-        {/* Treatment dropdown — clarifies it's one type per session */}
-        <div className="bg-bone-0 border border-bone-300 rounded-lg p-4 flex items-center gap-4 flex-wrap">
-          <label htmlFor="treatment-select" className="text-sm font-semibold text-ink-100 shrink-0">
-            Patient came for:
-          </label>
-          <select
-            id="treatment-select"
-            value={session.treatment}
-            onChange={(e) => setSession((p) => ({ ...p, treatment: e.target.value as Treatment }))}
-            className="text-sm font-semibold px-3 py-2 bg-bone-100 border border-bone-300 rounded focus:outline-none focus:border-accent min-w-[260px]"
-          >
-            {(["chemo", "surgery", "radiation", "medicine"] as Treatment[]).map((t) => (
-              <option key={t} value={t}>
-                {treatmentMeta[t].icon} {treatmentMeta[t].label}
-              </option>
-            ))}
-          </select>
-          <p className="text-xs text-ink-300 flex-1 min-w-[260px]">
-            The required-doc checklist below is computed from this. Change it and the list updates immediately.
+        {/* Specialty + Treatment dropdowns — one type per session */}
+        <div className="bg-bone-0 border border-bone-300 rounded-lg p-4 grid md:grid-cols-2 gap-4 items-center">
+          <div className="flex items-center gap-3 flex-wrap">
+            <label htmlFor="specialty-select" className="text-sm font-semibold text-ink-100 shrink-0">
+              Specialty:
+            </label>
+            <select
+              id="specialty-select"
+              value={session.specialty}
+              onChange={(e) => {
+                const sp = e.target.value as Specialty;
+                const firstTreat = SPECIALTY_META[sp].treatments[0];
+                setSession((p) => ({ ...p, specialty: sp, treatment: firstTreat }));
+              }}
+              className="text-sm font-semibold px-3 py-2 bg-bone-100 border border-bone-300 rounded focus:outline-none focus:border-accent flex-1 min-w-[200px]"
+            >
+              {(Object.keys(SPECIALTY_META) as Specialty[]).map((s) => (
+                <option key={s} value={s}>
+                  {SPECIALTY_META[s].icon} {SPECIALTY_META[s].label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center gap-3 flex-wrap">
+            <label htmlFor="treatment-select" className="text-sm font-semibold text-ink-100 shrink-0">
+              Patient came for:
+            </label>
+            <select
+              id="treatment-select"
+              value={session.treatment}
+              onChange={(e) => setSession((p) => ({ ...p, treatment: e.target.value as Treatment }))}
+              className="text-sm font-semibold px-3 py-2 bg-bone-100 border border-bone-300 rounded focus:outline-none focus:border-accent flex-1 min-w-[200px]"
+            >
+              {SPECIALTY_META[session.specialty].treatments.map((t) => (
+                <option key={t} value={t}>
+                  {treatmentMeta[t].icon} {treatmentMeta[t].label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <p className="text-xs text-ink-300 md:col-span-2">
+            Specialty drives the required-doc checklist. Change either dropdown and the list below updates instantly.
           </p>
         </div>
 
@@ -215,18 +294,36 @@ export default function IntakePage() {
             />
           </div>
 
-          <LynqPanel
-            session={session}
-            matchedPatient={matchedPatient}
-            risk={risk}
-          />
+          <div className="space-y-3">
+            <button
+              onClick={() => setShowAddPatient(true)}
+              className="w-full bg-accent text-white text-sm font-semibold px-4 py-2.5 rounded-lg hover:opacity-90 flex items-center justify-center gap-2 shadow-sm"
+            >
+              <span className="text-lg leading-none">＋</span>
+              <span>Add Patient</span>
+              {(session.patient_name || session.patient_mrn) && !matchedPatient && (
+                <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded">prefilled</span>
+              )}
+            </button>
+            {createdPatient && (
+              <div className="text-[11px] bg-good-soft border border-good/40 text-good rounded px-3 py-2">
+                ✓ Created <strong>{createdPatient.name}</strong> · MRN {createdPatient.mrn}
+              </div>
+            )}
+            <LynqPanel
+              session={session}
+              matchedPatient={matchedPatient}
+              matchConfidence={matchResult.confidence}
+              risk={risk}
+            />
+          </div>
         </div>
 
-        {/* Job list */}
+        {/* Two-segment job list */}
         {jobs.length > 0 && (
-          <div className="bg-bone-0 border border-bone-300 rounded-lg overflow-hidden">
-            <div className="px-4 py-3 border-b border-bone-300 flex items-center justify-between">
-              <h2 className="text-sm font-bold text-ink-100">Intake queue</h2>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-bold text-ink-100">Intake queue · {jobs.length} file{jobs.length === 1 ? "" : "s"}</h2>
               <button
                 onClick={clearDone}
                 disabled={busy || doneCount === 0}
@@ -235,71 +332,24 @@ export default function IntakePage() {
                 Clear completed
               </button>
             </div>
-            <ul className="divide-y divide-bone-300">
-              {jobs.map((j) => (
-                <li key={j.id} className="px-4 py-3 text-sm">
-                  <div className="flex items-center gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="font-mono text-xs text-ink-200 truncate">
-                        {j.result?.ai_filename ?? j.name}
-                      </div>
-                      {j.result?.ai_filename && (
-                        <div className="text-[10px] text-ink-300 mt-0.5 truncate">
-                          ↻ renamed from <span className="font-mono">{j.name}</span>
-                        </div>
-                      )}
-                      <div className="text-[10px] text-ink-300 mt-0.5">
-                        {fmtBytes(j.size)}
-                        {j.result && (
-                          <> · → <span className="text-good font-semibold">{fmtBytes(j.result.compressed_size)}</span> · saved <span className="text-good font-semibold">{j.result.reduction_pct}%</span></>
-                        )}
-                        {j.error && <> · <span className="text-bad">{j.error}</span></>}
-                      </div>
-                    </div>
-                    <StatusPill status={j.status} />
-                    {j.status === "done" && j.result && (
-                      <a href={j.result.download_url} download className="text-xs px-3 py-1 bg-accent text-white rounded hover:opacity-90">
-                        Download
-                      </a>
-                    )}
-                  </div>
 
-                  {j.status === "done" && j.result && (j.result.doc_type || (j.result.fields && Object.keys(j.result.fields).length > 0)) && (
-                    <div className="mt-2 bg-bone-100 border border-bone-300 rounded p-3 space-y-2">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[10px] uppercase tracking-wide text-ink-300 font-semibold">Lynq detected</span>
-                        {j.result.doc_type && j.result.doc_type !== "Unclassified" ? (
-                          <>
-                            <span className="bg-accent text-white text-[11px] font-semibold px-2 py-0.5 rounded">{j.result.doc_type}</span>
-                            {j.result.doc_type_confidence !== undefined && (
-                              <span className="text-[10px] text-ink-300">{Math.round(j.result.doc_type_confidence * 100)}% confidence</span>
-                            )}
-                            {j.result.doc_type_source && (
-                              <span className="text-[10px] text-ink-300">· matched via {j.result.doc_type_source}</span>
-                            )}
-                          </>
-                        ) : (
-                          <span className="bg-bone-200 text-ink-300 text-[11px] font-semibold px-2 py-0.5 rounded">Unclassified — kept original name</span>
-                        )}
-                        {typeof j.result.page_count === "number" && j.result.page_count > 0 && (
-                          <span className="text-[10px] text-ink-300">· {j.result.page_count} page{j.result.page_count === 1 ? "" : "s"}</span>
-                        )}
-                      </div>
-                      {j.result.fields && Object.keys(j.result.fields).length > 0 && (
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
-                          {Object.entries(j.result.fields).map(([k, v]) => (
-                            <div key={k}>
-                              <div className="text-[10px] uppercase tracking-wide text-ink-300 font-semibold">{k.replace(/_/g, " ")}</div>
-                              <div className="text-ink-100 truncate" title={v}>{v}</div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul>
+            <SegmentCard
+              lane="text"
+              title="Text-readable PDFs"
+              hint="Routed to PaddleOCR locally · auto-classified + auto-renamed"
+              jobs={jobs.filter((j) => j.status === "done" && j.result && laneOf(j) === "text")}
+              pendingJobs={jobs.filter((j) => j.status !== "done" && laneOf(j) === "text")}
+              busy={busy}
+            />
+
+            <SegmentCard
+              lane="scanned"
+              title="Images & scanned PDFs"
+              hint="PII burned locally · then routed to Sarvam Vision for text extraction"
+              jobs={jobs.filter((j) => j.status === "done" && j.result && laneOf(j) === "scanned")}
+              pendingJobs={jobs.filter((j) => j.status !== "done" && laneOf(j) === "scanned")}
+              busy={busy}
+            />
           </div>
         )}
 
@@ -308,15 +358,30 @@ export default function IntakePage() {
           <code className="bg-bone-200 px-1 rounded">pip install pymupdf pillow</code>
         </p>
       </div>
+
+      <AddPatientModal
+        open={showAddPatient}
+        onClose={() => setShowAddPatient(false)}
+        prefill={{
+          mrn: session.patient_mrn,
+          name: session.patient_name,
+          age: session.patient_age,
+          gender: session.patient_gender,
+          dob: session.patient_dob,
+        }}
+        matchResult={matchResult}
+        onSaved={(s) => setCreatedPatient({ name: s.name, mrn: s.mrn })}
+      />
     </AppShell>
   );
 }
 
 function LynqPanel({
-  session, matchedPatient, risk,
+  session, matchedPatient, matchConfidence, risk,
 }: {
   session: Session;
   matchedPatient: ReturnType<typeof Array.prototype.find>;
+  matchConfidence?: number;
   risk: ReturnType<typeof scoreRisk>;
 }) {
   const bandColor =
@@ -326,7 +391,7 @@ function LynqPanel({
     risk.band === "high" ? "bg-bad-soft border-bad/40" :
     risk.band === "medium" ? "bg-warn-soft border-warn/40" : "bg-good-soft border-good/40";
 
-  const required = requiredDocsByStage(session.treatment);
+  const required = requiredDocsByTreatment(session.treatment, session.specialty);
   const totalRequired = required.pre_auth.length + required.mid_way.length + required.discharge.length;
 
   return (
@@ -346,18 +411,22 @@ function LynqPanel({
           <div className="text-xs text-ink-300 italic">Waiting for first file with patient details…</div>
         ) : matchedPatient ? (
           <div className="bg-good-soft border border-good/40 rounded p-2">
-            <div className="text-xs font-semibold text-good">Matched existing</div>
+            <div className="text-xs font-semibold text-good flex items-center gap-1">
+              Matched existing
+              {matchConfidence !== undefined && matchConfidence < 1 && (
+                <span className="text-[10px] font-mono">· {Math.round(matchConfidence * 100)}% fuzzy</span>
+              )}
+            </div>
             <div className="text-sm font-bold text-ink-100">{matchedPatient.name}</div>
             <div className="text-[11px] text-ink-300 font-mono">MRN {matchedPatient.mrn} · {matchedPatient.id}</div>
+            <div className="text-[10px] text-ink-300 mt-1 italic">Docs will be attached to this patient.</div>
           </div>
         ) : (
           <div className="bg-warn-soft border border-warn/40 rounded p-2">
-            <div className="text-xs font-semibold text-warn">New patient · would auto-create</div>
+            <div className="text-xs font-semibold text-warn">No existing patient found</div>
             <div className="text-sm font-bold text-ink-100">{session.patient_name ?? "(name not yet detected)"}</div>
             <div className="text-[11px] text-ink-300 font-mono">MRN {session.patient_mrn ?? "—"}</div>
-            <button className="mt-2 text-[10px] font-bold uppercase bg-warn text-white px-2 py-1 rounded hover:opacity-90">
-              Create patient
-            </button>
+            <div className="text-[10px] text-ink-300 mt-1 italic">Use the Add Patient button above to create.</div>
           </div>
         )}
       </div>
@@ -408,11 +477,11 @@ function LynqPanel({
       {/* Why this list */}
       <details className="bg-bone-100 border border-bone-300 rounded p-2 text-xs">
         <summary className="cursor-pointer font-semibold text-ink-100 select-none">
-          Why this list? · {totalRequired} docs required for {treatmentMeta[session.treatment].label}
+          Why this list? · {totalRequired} docs required for {SPECIALTY_META[session.specialty].label} · {treatmentMeta[session.treatment].label}
         </summary>
         <div className="mt-2 space-y-2">
           <p className="text-[11px] text-ink-300">
-            For <strong>{treatmentMeta[session.treatment].label}</strong> patients, MedLynq tracks the following documents grouped by treatment stage:
+            For <strong>{SPECIALTY_META[session.specialty].label} · {treatmentMeta[session.treatment].label}</strong> patients, MedLynq tracks the following documents grouped by treatment stage:
           </p>
           <Group title={`Pre-Auth (${required.pre_auth.length})`} items={required.pre_auth} />
           <Group title={`Mid-Way (${required.mid_way.length})`}   items={required.mid_way} />
@@ -432,6 +501,110 @@ function Group({ title, items }: { title: string; items: string[] }) {
       <div className="text-[10px] uppercase tracking-wide text-accent font-bold">{title}</div>
       <ul className="ml-2 mt-0.5 list-disc list-inside text-[11px] text-ink-200">
         {items.map((i) => <li key={i}>{i}</li>)}
+      </ul>
+    </div>
+  );
+}
+
+function SegmentCard({
+  lane, title, hint, jobs, pendingJobs, busy,
+}: {
+  lane: Lane;
+  title: string;
+  hint: string;
+  jobs: Job[];          // done jobs in this lane
+  pendingJobs: Job[];   // in-flight jobs in this lane
+  busy: boolean;
+}) {
+  const accent = lane === "text"
+    ? { tag: "bg-good-soft text-good border-good/40", icon: "📝", chip: "bg-good text-white" }
+    : { tag: "bg-accent-soft text-accent border-accent/40", icon: "🖼️", chip: "bg-accent text-white" };
+
+  const downloadAll = () => {
+    const ts = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    downloadZip(jobs, `medlynq_${lane}_${ts}.zip`);
+  };
+
+  const total = jobs.length + pendingJobs.length;
+  if (total === 0) return null;
+
+  return (
+    <div className={`border rounded-lg overflow-hidden ${accent.tag.replace("text-", "border-").replace(/text-\w+/, "")}`}>
+      <div className={`px-4 py-3 border-b ${accent.tag} flex items-center justify-between flex-wrap gap-2`}>
+        <div className="flex items-center gap-2">
+          <span className="text-base">{accent.icon}</span>
+          <div>
+            <div className="text-sm font-bold text-ink-100">{title} <span className="text-ink-300 font-normal">· {total}</span></div>
+            <div className="text-[10px] text-ink-300">{hint}</div>
+          </div>
+        </div>
+        <button
+          onClick={downloadAll}
+          disabled={busy || jobs.length === 0}
+          className={`text-xs font-semibold px-3 py-1.5 rounded hover:opacity-90 disabled:opacity-40 ${accent.chip}`}
+        >
+          ⬇ Download all ({jobs.length}) as zip
+        </button>
+      </div>
+      <ul className="divide-y divide-bone-300 bg-bone-0">
+        {pendingJobs.map((j) => (
+          <li key={j.id} className="px-4 py-3 text-sm flex items-center gap-4">
+            <div className="flex-1 min-w-0">
+              <div className="font-mono text-xs text-ink-200 truncate">{j.name}</div>
+              <div className="text-[10px] text-ink-300 mt-0.5">{fmtBytes(j.size)} {j.error && <> · <span className="text-bad">{j.error}</span></>}</div>
+            </div>
+            <StatusPill status={j.status} />
+          </li>
+        ))}
+        {jobs.map((j) => (
+          <li key={j.id} className="px-4 py-3 text-sm">
+            <div className="flex items-center gap-4">
+              <div className="flex-1 min-w-0">
+                <div className="font-mono text-xs text-ink-200 truncate">{j.result?.ai_filename ?? j.name}</div>
+                {j.result?.ai_filename && (
+                  <div className="text-[10px] text-ink-300 mt-0.5 truncate">↻ renamed from <span className="font-mono">{j.name}</span></div>
+                )}
+                <div className="text-[10px] text-ink-300 mt-0.5">
+                  {fmtBytes(j.size)} · → <span className="text-good font-semibold">{fmtBytes(j.result!.compressed_size)}</span> · saved <span className="text-good font-semibold">{j.result!.reduction_pct}%</span>
+                </div>
+              </div>
+              <StatusPill status={j.status} />
+            </div>
+            {(j.result!.doc_type || (j.result!.fields && Object.keys(j.result!.fields).length > 0)) && (
+              <div className="mt-2 bg-bone-100 border border-bone-300 rounded p-3 space-y-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[10px] uppercase tracking-wide text-ink-300 font-semibold">Lynq detected</span>
+                  {j.result!.doc_type && j.result!.doc_type !== "Unclassified" ? (
+                    <>
+                      <span className="bg-accent text-white text-[11px] font-semibold px-2 py-0.5 rounded">{j.result!.doc_type}</span>
+                      {j.result!.doc_type_confidence !== undefined && (
+                        <span className="text-[10px] text-ink-300">{Math.round(j.result!.doc_type_confidence * 100)}% confidence</span>
+                      )}
+                      {j.result!.doc_type_source && (
+                        <span className="text-[10px] text-ink-300">· matched via {j.result!.doc_type_source}</span>
+                      )}
+                    </>
+                  ) : (
+                    <span className="bg-bone-200 text-ink-300 text-[11px] font-semibold px-2 py-0.5 rounded">Unknown — kept original name</span>
+                  )}
+                  {typeof j.result!.page_count === "number" && j.result!.page_count > 0 && (
+                    <span className="text-[10px] text-ink-300">· {j.result!.page_count} page{j.result!.page_count === 1 ? "" : "s"}</span>
+                  )}
+                </div>
+                {j.result!.fields && Object.keys(j.result!.fields).length > 0 && (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
+                    {Object.entries(j.result!.fields).map(([k, v]) => (
+                      <div key={k}>
+                        <div className="text-[10px] uppercase tracking-wide text-ink-300 font-semibold">{k.replace(/_/g, " ")}</div>
+                        <div className="text-ink-100 truncate" title={v}>{v}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </li>
+        ))}
       </ul>
     </div>
   );

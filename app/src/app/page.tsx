@@ -4,9 +4,13 @@ import WorkQueue from "@/components/WorkQueue";
 import ActivityStream from "@/components/ActivityStream";
 import LynqNudges from "@/components/LynqNudges";
 import Scoreboard from "@/components/Scoreboard";
-import { morningTiles, workQueueGroups, activity } from "@/lib/mockData";
+import MobileConnectionCard from "@/components/MobileConnectionCard";
+import { morningTiles, workQueueGroups, activity, loadDynamicData } from "@/lib/mockData";
+
+export const dynamic = "force-dynamic";
 
 export default function DashboardPage() {
+  loadDynamicData();
   const tiles = morningTiles();
   const groups = workQueueGroups();
 
@@ -28,6 +32,9 @@ export default function DashboardPage() {
 
         {/* Personal scoreboard */}
         <Scoreboard user="Richa" />
+
+        {/* Local Mobile App Link */}
+        <MobileConnectionCard />
 
         {/* Lynq nudges — rule-based AI-style suggestions */}
         <LynqNudges />

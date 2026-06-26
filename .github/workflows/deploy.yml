@@ -1,5 +1,16 @@
 name: Deploy MedLynQ to Azure
 
+# Deploys the app SOURCE and lets Azure Oryx run `npm install && npm run build`
+# on the server. This keeps wwwroot WRITABLE (the app writes compressed docs,
+# mobile-pairing state, and PatientLog at runtime), which the standalone +
+# run-from-package method does not allow.
+#
+# Requires these App Service settings (set via Azure CLI / Portal):
+#   SCM_DO_BUILD_DURING_DEPLOYMENT=true
+#   ENABLE_ORYX_BUILD=true
+#   WEBSITE_RUN_FROM_PACKAGE  -> must NOT be set (would make wwwroot read-only)
+# Startup command: npm start
+
 on:
   push:
     branches: [main]
@@ -10,45 +21,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-          cache-dependency-path: app/package-lock.json
-
-      - name: Install dependencies
-        working-directory: app
-        run: npm ci
-
-      - name: Build Next.js
-        working-directory: app
-        run: npm run build
-        env:
-          NODE_ENV: production
-          NEXT_TELEMETRY_DISABLED: 1
-
-      - name: Assemble standalone package
-        run: |
-          cp -r app/.next/static app/.next/standalone/.next/static
-          mkdir -p app/.next/standalone/public
-          [ -d app/public ] && cp -r app/public/. app/.next/standalone/public/ || true
-          # Override package.json so Oryx's "npm run build" is a no-op (not a real Next.js build)
-          echo '{"name":"medlynq","version":"1.0.0","scripts":{"build":"echo pre-built","start":"node server.js"}}' \
-            > app/.next/standalone/package.json
-          # Belt-and-suspenders: tell Kudu to skip build entirely
-          printf '[config]\ncommand = echo pre-built\n' > app/.next/standalone/.deployment
-
-      - name: Deploy to Azure Web App
+      - name: Deploy source to Azure (Oryx builds on the server)
         uses: azure/webapps-deploy@v3
         with:
           app-name: medlynq-app
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: app/.next/standalone
-          clean: false
+          package: app

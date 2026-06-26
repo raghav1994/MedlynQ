@@ -8,20 +8,25 @@ import ActionButtons from "@/components/patient/ActionButtons";
 import Tabs from "@/components/patient/Tabs";
 import CaseSynopsis from "@/components/patient/CaseSynopsis";
 import QueryProofBadge from "@/components/patient/QueryProofBadge";
-import { patients, cases } from "@/lib/mockData";
+import WhatsAppShare from "@/components/WhatsAppShare";
+import { patients, cases, loadDynamicData } from "@/lib/mockData";
 import { docsForCase } from "@/lib/mockDocuments";
 import { buildChecklist } from "@/lib/checklist";
 import { stageOf } from "@/lib/types";
-import { caseSynopsisFor } from "@/lib/synopsis";
+import { caseSynopsisFor, fetchCaseSynopsisFromPipeline } from "@/lib/synopsis";
 import { scoreCase } from "@/lib/queryProof";
+import { headers } from "next/headers";
 
-export default function PatientDetailPage({
+export const dynamic = "force-dynamic";
+
+export default async function PatientDetailPage({
   params,
   searchParams,
 }: {
   params: { id: string };
   searchParams: { case?: string };
 }) {
+  loadDynamicData();
   const p = patients.find((x) => x.id === params.id);
   if (!p) {
     return (
@@ -44,7 +49,14 @@ export default function PatientDetailPage({
   const docs = docsForCase(activeCase.id);
   const checklist = buildChecklist(docs, activeCase.treatment_type);
   const currentStage = stageOf(activeCase.status);
-  const caseSyn = caseSynopsisFor(activeCase.id);
+  // Try pipeline-extracted synopsis first; fall back to mock if empty.
+  const h = headers();
+  const proto = h.get("x-forwarded-proto") ?? "http";
+  const host = h.get("host") ?? "localhost:3000";
+  const baseUrl = `${proto}://${host}`;
+  const pipeline = await fetchCaseSynopsisFromPipeline(p.mrn, baseUrl);
+  const caseSyn = pipeline.case ?? caseSynopsisFor(activeCase.id);
+  const synopsisSource = pipeline.source === "pipeline" ? "live" : (caseSyn ? "mock" : "none");
   const qpScore = scoreCase(activeCase, docs);
 
   return (
@@ -73,11 +85,26 @@ export default function PatientDetailPage({
           <PatientIdentity p={p} hospital="Apollo Multispecialty Clinic" />
           <ClinicalVitals admission_date={activeCase.admission_date} />
           <ActionButtons />
+          <WhatsAppShare
+            caseCode={activeCase.registration_id}
+            kind={
+              activeCase.status === "query" ? "query_received" :
+              activeCase.status === "discharged" ? "discharge_done" :
+              activeCase.status === "submitted" ? "claim_submitted" :
+              activeCase.status === "preauth_pending" ? "preauth_submitted" :
+              "docs_uploaded"
+            }
+            detail={`Specialty: ${activeCase.treatment_type}`}
+            deepLink={`${baseUrl}/patient/${p.id}?case=${activeCase.id}`}
+          />
           <QueryProofBadge score={qpScore} />
           <CaseTimeline c={activeCase} />
         </aside>
 
         <main className="space-y-4">
+          {synopsisSource === "live" && (
+            <div className="text-[10px] uppercase tracking-wide font-semibold text-good">● Synopsis from live pipeline</div>
+          )}
           {caseSyn && <CaseSynopsis synopsis={caseSyn} />}
           <Tabs c={activeCase} docs={docs} checklist={checklist} currentStage={currentStage} />
         </main>

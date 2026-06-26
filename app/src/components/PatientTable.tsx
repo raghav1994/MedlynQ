@@ -6,12 +6,14 @@ import AgingPill from "./AgingPill";
 import type { Case } from "@/lib/types";
 import { patientName, folderKey } from "@/lib/mockData";
 
+type ResolvedCase = Case & { _patient_name?: string; _folder_key?: string };
+
 function rupees(n: number | null) {
   if (n == null) return "—";
   return "₹" + n.toLocaleString("en-IN");
 }
 
-export default function PatientTable({ cases }: { cases: Case[] }) {
+export default function PatientTable({ cases }: { cases: ResolvedCase[] }) {
   return (
     <div className="bg-bone-0 border border-bone-300 rounded-lg overflow-hidden">
       <div className="p-4 border-b border-bone-300 flex items-center justify-between">
@@ -54,8 +56,8 @@ export default function PatientTable({ cases }: { cases: Case[] }) {
                 </td>
                 <td className="px-4 py-3">
                   <Link href={`/patient/${c.patient_id}?case=${c.id}`} className="block">
-                    <div className="font-semibold text-ink-100">{patientName(c.patient_id)}</div>
-                    <div className="text-xs text-ink-300 font-mono">{folderKey(c.patient_id)}</div>
+                    <div className="font-semibold text-ink-100">{c._patient_name ?? patientName(c.patient_id)}</div>
+                    <div className="text-xs text-ink-300 font-mono">{c._folder_key ?? folderKey(c.patient_id)}</div>
                   </Link>
                 </td>
                 <td className="px-4 py-3">

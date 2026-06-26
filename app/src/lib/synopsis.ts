@@ -108,6 +108,26 @@ export function synopsisFor(filename: string): DocSynopsis | null {
   return MOCK_DOC_SYNOPSIS[filename] ?? null;
 }
 
+// Server-side fetch: pulls real pipeline output for a given MRN.
+// Falls back to mock case synopsis if no extracted JSON exists yet.
+export async function fetchCaseSynopsisFromPipeline(
+  mrn: string,
+  baseUrl: string = ""
+): Promise<{ case: CaseSynopsis | null; doc_synopses: DocSynopsis[]; source: "pipeline" | "mock" | "empty" }> {
+  try {
+    const url = `${baseUrl}/api/synopsis?mrn=${encodeURIComponent(mrn)}`;
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error(String(res.status));
+    const json = await res.json();
+    if (json.ok && (json.doc_synopses?.length > 0 || json.case)) {
+      return { case: json.case, doc_synopses: json.doc_synopses ?? [], source: "pipeline" };
+    }
+  } catch {
+    // fall through to mock
+  }
+  return { case: null, doc_synopses: [], source: "empty" };
+}
+
 export function caseSynopsisFor(case_id: string): CaseSynopsis | null {
   if (case_id === "2026051410041450") {
     return {

@@ -1,0 +1,156 @@
+code,name,specialty,schemes,cap_inr,length_of_stay_days,notes
+MO001F,Trastuzumab Cycle (HER2+ Breast Ca),Oncology,PMJAY|CGHS|SHA,42500,1,Day-care chemo · 1 cycle
+MO002F,Paclitaxel + Carboplatin Cycle,Oncology,PMJAY|CGHS|SHA,12500,1,Day-care chemo · 1 cycle
+MO003F,FOLFOX Cycle (colorectal),Oncology,PMJAY|CGHS,15000,1,Day-care chemo · 1 cycle
+MO004F,CHOP Cycle (NHL),Oncology,PMJAY|CGHS|SHA,18000,1,Day-care chemo · 1 cycle
+MO005F,Cisplatin + Etoposide Cycle (SCLC),Oncology,PMJAY|CGHS,14500,1,Day-care chemo · 1 cycle
+MO006F,Rituximab Maintenance,Oncology,PMJAY|CGHS,38000,1,Day-care chemo
+MO007F,Targeted therapy · Imatinib month,Oncology,PMJAY|CGHS,9500,30,Oral · monthly dispense
+MO008F,Tamoxifen 6-month course,Oncology,PMJAY|CGHS|SHA,4200,180,Oral hormonal
+SG001B,Wide Local Excision (breast),Oncology,PMJAY|CGHS|Railway|SHA,55000,3,Surgery
+SG075B,Modified Radical Mastectomy,Oncology,PMJAY|CGHS|Railway|SHA,75000,5,Surgery
+SG076B,Mastectomy + Axillary Clearance,Oncology,PMJAY|CGHS|Railway,82000,5,Surgery
+SG077B,Sentinel Lymph Node Biopsy,Oncology,PMJAY|CGHS,28000,2,Surgery
+SG101S,Hemicolectomy,Oncology,PMJAY|CGHS|Railway,135000,7,Surgery
+SG102S,Total Laryngectomy + Neck Dissection,Oncology,CGHS|Railway,165000,8,Surgery
+SG103S,Lobectomy (lung),Oncology,PMJAY|CGHS|Railway,185000,7,Surgery
+SG104S,Whipple Procedure,Oncology,CGHS|Railway,275000,12,Surgery
+SG105S,Radical Prostatectomy,Oncology,PMJAY|CGHS|Railway,165000,7,Surgery
+SG106S,Nephrectomy (radical),Oncology,PMJAY|CGHS|Railway,145000,6,Surgery
+SG107S,Hysterectomy (oncology),Oncology,PMJAY|CGHS|Railway,105000,5,Surgery
+RT001R,External Beam Radiation - whole course,Oncology,PMJAY|CGHS|SHA,72000,30,Outpatient · 25-30 fractions
+RT002R,IMRT - whole course,Oncology,PMJAY|CGHS,125000,35,Outpatient · 25-30 fractions
+RT003R,Brachytherapy (HDR),Oncology,PMJAY|CGHS,45000,3,Inpatient
+RT004R,Stereotactic Radiosurgery (SRS),Oncology,CGHS,165000,2,Single session
+SC001C,Coronary Angiography (diagnostic),Cardiac,PMJAY|CGHS|Railway|SHA,18500,1,Cath lab
+SC002C,PTCA + Stent (single vessel · DES),Cardiac,PMJAY|CGHS|Railway,165000,3,Includes 1 DES
+SC003C,PTCA + Stent (double vessel),Cardiac,PMJAY|CGHS|Railway,225000,3,Includes 2 DES
+SC004C,Permanent Pacemaker Implant (single chamber),Cardiac,PMJAY|CGHS|Railway,140000,4,
+SC005C,Permanent Pacemaker Implant (dual chamber),Cardiac,PMJAY|CGHS|Railway,185000,4,
+SC006C,ICD Implant,Cardiac,CGHS|Railway,425000,5,
+SC007C,Balloon Mitral Valvotomy,Cardiac,PMJAY|CGHS|Railway,95000,4,
+SC061A,CABG + Valve Repair,Cardiac,CGHS|Railway,250000,12,Open heart
+SC062A,Off-pump CABG (single vessel),Cardiac,CGHS|Railway,185000,10,
+SC063A,On-pump CABG (triple vessel),Cardiac,CGHS|Railway,215000,12,
+SC064A,Mitral Valve Replacement,Cardiac,CGHS|Railway,275000,14,
+SC065A,Aortic Valve Replacement,Cardiac,CGHS|Railway,285000,14,
+SC066A,Double Valve Replacement,Cardiac,CGHS|Railway,365000,16,
+SC067A,ASD / VSD Closure (surgical),Cardiac,PMJAY|CGHS|Railway,165000,8,Pediatric or adult
+SC068B,Chemotherapy admission · day-care,Cardiac,PMJAY|Railway|CGHS,42500,1,Cardio-oncology bridge
+OR001O,Conservative fracture management,Orthopaedic,PMJAY|CGHS|ECHS,12500,2,POP / cast
+OR002O,Open Reduction Internal Fixation (long bone),Orthopaedic,PMJAY|CGHS|ECHS,55000,4,
+OR003O,External Fixator Application,Orthopaedic,PMJAY|CGHS|ECHS,38000,5,
+OR041X,Hip Hemiarthroplasty,Orthopaedic,PMJAY|CGHS|ECHS,72000,5,
+OR042X,Total Knee Replacement (unilateral),Orthopaedic,PMJAY|CGHS|ECHS,95000,5,Implant cost separate
+OR043X,Total Knee Replacement (bilateral),Orthopaedic,PMJAY|CGHS|ECHS,175000,7,
+OR044X,Total Hip Replacement,Orthopaedic,PMJAY|CGHS|ECHS,115000,6,
+OR045X,Revision Hip Replacement,Orthopaedic,CGHS|ECHS,155000,8,
+OR046X,Arthroscopic ACL Reconstruction,Orthopaedic,PMJAY|CGHS|ECHS,42000,2,Day-care possible
+OR047X,Spinal Fusion (single level),Orthopaedic,CGHS|ECHS,165000,7,
+OR048X,Spinal Decompression (laminectomy),Orthopaedic,PMJAY|CGHS|ECHS,85000,5,
+DI001D,Haemodialysis · single session,Dialysis,PMJAY|ESI|Railway,1800,1,Outpatient
+DI002D,Haemodialysis package · 13 sessions,Dialysis,PMJAY|ESI|Railway,21000,30,Monthly bundled
+DI003D,Peritoneal Dialysis · CAPD month,Dialysis,PMJAY|ESI|Railway,18000,30,Outpatient
+DI004D,AV Fistula Creation,Dialysis,PMJAY|CGHS|ESI|Railway,28500,2,
+DI005D,AV Graft Creation,Dialysis,PMJAY|CGHS|Railway,42000,3,
+DI006D,Central Line · Tunneled Catheter,Dialysis,PMJAY|CGHS|Railway,15500,2,Temporary access
+DI018C,Haemodialysis (PMJAY day rate),Dialysis,PMJAY|ESI|Railway,1800,1,Government per-session rate
+IC001I,ICU stay · day (medical),ICU,PMJAY|CGHS|Railway,9500,1,Per day rate
+IC002I,ICU stay · day (surgical post-op),ICU,PMJAY|CGHS|Railway,11000,1,Per day rate
+IC003I,Ventilator support · day,ICU,PMJAY|CGHS|Railway,4500,1,Add-on to ICU
+IC004I,CRRT · day,ICU,CGHS|Railway,22000,1,Continuous renal replacement
+IC005I,Sepsis Bundle (3-day),ICU,PMJAY|CGHS,32000,3,Bundled
+IC006I,Acute MI · ICU package,ICU,PMJAY|CGHS|Railway,75000,5,Includes ECG · troponin
+IC007I,Stroke · ICU package,ICU,PMJAY|CGHS|Railway,68000,5,
+IC008I,Severe Pneumonia · ICU package,ICU,PMJAY|CGHS|Railway,52000,5,
+MA001M,Normal Vaginal Delivery,Maternity,PMJAY|ESI|CGHS,9000,2,
+MA002M,Assisted Vaginal Delivery,Maternity,PMJAY|ESI|CGHS,12500,3,
+MA003M,LSCS (elective),Maternity,PMJAY|ESI|CGHS|Railway,22000,4,
+MA004M,LSCS (emergency),Maternity,PMJAY|ESI|CGHS|Railway,28500,5,
+MA022D,Normal Vaginal Delivery (PMJAY rate),Maternity,PMJAY|ESI,9000,2,Government per-delivery
+MA005M,High-risk Pregnancy Management,Maternity,PMJAY|ESI,32000,7,
+MA006M,Eclampsia Management,Maternity,PMJAY|CGHS|ESI,42000,7,
+MA007M,Postpartum Haemorrhage Management,Maternity,PMJAY|CGHS|ESI,35000,5,
+MA008M,NICU stay · day (level 2),Maternity,PMJAY|CGHS|ESI,4500,1,Per day
+MA009M,NICU stay · day (level 3),Maternity,PMJAY|CGHS|ESI,7500,1,Per day
+MA010M,Neonatal Phototherapy,Maternity,PMJAY|CGHS|ESI,2500,3,
+GE001G,General Ward Admission · day,General,PMJAY|CGHS|Railway|ESI,2500,1,Per day · room only
+GE002G,Semi-Private Room · day,General,CGHS|Railway,3500,1,Per day · room only
+GE003G,Private Room · day,General,CGHS|Railway,5000,1,Per day · room only
+GE004G,Appendicectomy (laparoscopic),General,PMJAY|CGHS|Railway,32000,3,
+GE005G,Appendicectomy (open),General,PMJAY|CGHS|Railway,22000,4,
+GE006G,Inguinal Hernia Repair,General,PMJAY|CGHS|Railway,28500,2,
+GE007G,Cholecystectomy (laparoscopic),General,PMJAY|CGHS|Railway,42000,3,
+GE008G,Cholecystectomy (open),General,PMJAY|CGHS|Railway,38000,5,
+GE009G,Thyroidectomy,General,PMJAY|CGHS|Railway,52000,4,
+GE010G,Mastoidectomy,General,PMJAY|CGHS,42000,3,
+GE011G,Tonsillectomy,General,PMJAY|CGHS|ESI,15500,2,
+GE012G,Cataract Surgery (phaco + IOL),General,PMJAY|CGHS|ESI|Railway,12500,1,Day-care
+GE013G,Vitrectomy,General,PMJAY|CGHS,52000,3,
+GE014G,Glaucoma Surgery,General,PMJAY|CGHS,32000,2,
+GE015G,Diabetic Retinopathy · Laser,General,PMJAY|CGHS,8500,1,
+NS001N,Lumbar Disc Surgery,Neurosurgery,PMJAY|CGHS|Railway,125000,6,
+NS002N,Cervical Disc Surgery,Neurosurgery,PMJAY|CGHS|Railway,135000,6,
+NS003N,Craniotomy (tumour),Neurosurgery,CGHS|Railway,225000,10,
+NS004N,Craniotomy (haemorrhage),Neurosurgery,PMJAY|CGHS|Railway,185000,8,
+NS005N,Shunt Procedure (VP),Neurosurgery,PMJAY|CGHS|Railway,95000,5,
+UR001U,TURP (BPH),Urology,PMJAY|CGHS|Railway,45000,3,
+UR002U,Cystoscopy (diagnostic),Urology,PMJAY|CGHS|Railway,8500,1,Day-care
+UR003U,Ureteric Stent Insertion,Urology,PMJAY|CGHS|Railway,18000,2,
+UR004U,PCNL (kidney stone),Urology,PMJAY|CGHS|Railway,62000,4,
+UR005U,URSL · ureteric stone,Urology,PMJAY|CGHS|Railway,38000,2,
+UR006U,Open Prostatectomy,Urology,CGHS|Railway,82000,7,
+GA001G,Upper GI Endoscopy (diagnostic),Gastro,PMJAY|CGHS|ESI|Railway,4500,1,Day-care
+GA002G,Colonoscopy (diagnostic),Gastro,PMJAY|CGHS|ESI|Railway,7500,1,Day-care
+GA003G,ERCP (therapeutic),Gastro,PMJAY|CGHS|Railway,35000,2,
+GA004G,Polypectomy (endoscopic),Gastro,PMJAY|CGHS|Railway,12500,1,
+GA005G,Variceal Banding,Gastro,PMJAY|CGHS|Railway,18000,2,
+PD001P,Newborn Care · normal,Paediatrics,PMJAY|ESI|CGHS,4500,2,
+PD002P,Bronchiolitis (paediatric admission),Paediatrics,PMJAY|ESI|CGHS,12500,4,
+PD003P,Severe Dengue (paediatric admission),Paediatrics,PMJAY|ESI|CGHS,28500,6,
+PD004P,Acute Lymphoblastic Leukaemia · Induction,Paediatrics,PMJAY|CGHS,165000,30,Paeds onco bridge
+PD005P,Paediatric Surgery · circumcision,Paediatrics,PMJAY|ESI|CGHS,5500,1,Day-care
+TR001T,Renal Transplant · Live Related,Transplant,CGHS|Railway,650000,21,Donor work-up separate
+TR002T,Renal Transplant · Deceased Donor,Transplant,CGHS|Railway,725000,21,
+TR003T,Bone Marrow Transplant · Autologous,Transplant,CGHS|Railway,1250000,30,
+TR004T,Liver Transplant · Live Donor,Transplant,CGHS|Railway,2200000,45,
+PS001S,Burns Management (10-30 percent BSA),Plastic,PMJAY|CGHS|Railway,85000,10,
+PS002S,Split Skin Graft,Plastic,PMJAY|CGHS|Railway,38000,5,
+PS003S,Cleft Lip Repair,Plastic,PMJAY|CGHS,42000,3,
+PS004S,Cleft Palate Repair,Plastic,PMJAY|CGHS,52000,4,
+PS005S,Flap Reconstruction (free flap),Plastic,CGHS|Railway,165000,8,
+MH001H,Acute Psychiatric Admission · day,Mental Health,PMJAY|CGHS|ESI,2500,1,Per day
+MH002H,ECT · single session,Mental Health,PMJAY|CGHS,3500,1,Outpatient
+MH003H,Substance De-addiction · 14 day inpatient,Mental Health,PMJAY|CGHS,42000,14,
+INF001I,Acute Febrile Illness (medical admission),Infectious,PMJAY|ESI|CGHS,12500,4,
+INF002I,Drug-Resistant TB · monthly,Infectious,PMJAY,8500,30,Outpatient
+INF003I,Falciparum Malaria (severe),Infectious,PMJAY|ESI|CGHS,18000,5,
+INF004I,COVID-19 Severe (medical admission),Infectious,PMJAY|CGHS|ESI,42000,7,
+INF005I,Dengue Haemorrhagic Fever,Infectious,PMJAY|ESI|CGHS,28500,6,
+END001E,Diabetic Ketoacidosis Management,Endocrine,PMJAY|CGHS|ESI,32000,4,
+END002E,Thyroid Crisis Management,Endocrine,PMJAY|CGHS,38000,4,
+END003E,Adrenal Crisis Management,Endocrine,CGHS,42000,5,
+DERM001D,Pemphigus Management (admission),Dermatology,PMJAY|CGHS,28500,7,
+DERM002D,SJS / TEN Management,Dermatology,PMJAY|CGHS,52000,10,
+RHEUM001R,Rheumatoid Arthritis Flare · admission,Rheumatology,PMJAY|CGHS,22000,5,
+RHEUM002R,Lupus Flare · admission,Rheumatology,PMJAY|CGHS,32000,7,
+RHEUM003R,Vasculitis Management,Rheumatology,CGHS,52000,10,
+PUL001P,Acute Severe Asthma · admission,Pulmonary,PMJAY|CGHS|ESI,15500,4,
+PUL002P,COPD Exacerbation · admission,Pulmonary,PMJAY|CGHS|ESI,18500,5,
+PUL003P,Pulmonary Embolism Management,Pulmonary,PMJAY|CGHS,52000,7,
+PUL004P,Bronchoscopy (diagnostic),Pulmonary,PMJAY|CGHS|Railway,8500,1,Day-care
+HEM001H,Acute Leukaemia · Induction (adult),Haematology,CGHS|Railway,225000,30,
+HEM002H,Multiple Myeloma · monthly therapy,Haematology,CGHS,82000,30,
+HEM003H,ITP Management,Haematology,PMJAY|CGHS,22000,5,
+HEM004H,Sickle Cell Crisis Management,Haematology,PMJAY|CGHS,18000,5,
+ENT001N,Septoplasty,ENT,PMJAY|CGHS|Railway,28500,2,
+ENT002N,Functional Endoscopic Sinus Surgery (FESS),ENT,PMJAY|CGHS|Railway,42000,3,
+ENT003N,Microlaryngoscopy,ENT,PMJAY|CGHS|Railway,15500,1,Day-care
+ENT004N,Mastoid Surgery,ENT,PMJAY|CGHS|Railway,52000,4,
+GYN001G,D&C (diagnostic),Gynaecology,PMJAY|CGHS|ESI,8500,1,Day-care
+GYN002G,Vaginal Hysterectomy,Gynaecology,PMJAY|CGHS|Railway,55000,4,
+GYN003G,Abdominal Hysterectomy,Gynaecology,PMJAY|CGHS|Railway,62000,5,
+GYN004G,Laparoscopic Hysterectomy,Gynaecology,PMJAY|CGHS|Railway,85000,3,
+GYN005G,Myomectomy (open),Gynaecology,PMJAY|CGHS,52000,4,
+GYN006G,Ectopic Pregnancy Management,Gynaecology,PMJAY|CGHS|ESI,32000,4,
+GYN007G,Ovarian Cystectomy,Gynaecology,PMJAY|CGHS|Railway,42000,3,

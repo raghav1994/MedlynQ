@@ -8,10 +8,11 @@
 //   capped at 95
 
 import { RULES } from "./checklist";
-import type { Treatment } from "./types";
+import type { Treatment, Specialty } from "./types";
 
 export type RiskInput = {
   treatment: Treatment;
+  specialty?: Specialty;
   present_doc_types: string[];
   low_confidence_types?: string[];
 };
@@ -30,11 +31,15 @@ const WEIGHTS: Record<string, number> = {
   discharge: 10,
 };
 
-export function scoreRisk({ treatment, present_doc_types, low_confidence_types = [] }: RiskInput): RiskOutput {
+export function scoreRisk({ treatment, specialty = "oncology", present_doc_types, low_confidence_types = [] }: RiskInput): RiskOutput {
   const present = new Set(present_doc_types.map((t) => t.toLowerCase()));
   const lowConf = new Set(low_confidence_types.map((t) => t.toLowerCase()));
 
-  const applicable = RULES.filter((r) => !r.for_treatments || r.for_treatments.includes(treatment));
+  const applicable = RULES.filter((r) => {
+    const treatOk = !r.for_treatments || r.for_treatments.includes(treatment);
+    const specOk = !r.for_specialties || r.for_specialties.includes(specialty);
+    return treatOk && specOk;
+  });
 
   let score = 25;
   const missing: { stage: string; doc_type: string }[] = [];
