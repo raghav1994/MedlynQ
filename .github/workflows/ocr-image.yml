@@ -1,0 +1,35 @@
+name: Build OCR image
+
+# Builds the Python OCR/redact container (PaddleOCR + OpenCV + PyMuPDF) on a
+# GitHub amd64 runner and pushes it to Azure Container Registry. Used because
+# ACR Tasks (cloud build) is not permitted on this subscription and there is no
+# local Docker. The Azure Container App pulls this image.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'app/python/**'
+      - '.github/workflows/ocr-image.yml'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to Azure Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build and push OCR image
+        uses: docker/build-push-action@v6
+        with:
+          context: app/python
+          file: app/python/Dockerfile
+          push: true
+          tags: ${{ secrets.ACR_LOGIN_SERVER }}/medlynq-ocr:v1

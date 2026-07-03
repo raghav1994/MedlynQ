@@ -1,0 +1,13 @@
+# Container deps for the MedLynq OCR/redact HTTP service.
+# opencv-python-headless (no libGL needed) + FastAPI stack on top of the pipeline.
+pymupdf>=1.24
+pillow>=10.0
+numpy<2.0
+paddleocr>=2.7,<2.10
+paddlepaddle>=2.6,<3.0
+opencv-python-headless>=4.9
+requests>=2.31
+python-dotenv>=1.0
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9
