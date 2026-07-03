@@ -7,10 +7,12 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     PORT=8000
 
-# System libs paddle/opencv need at runtime
+# System libs paddle/opencv need at runtime.
+# libgl1 provides libGL.so.1 — PaddleOCR pulls in non-headless opencv which needs it.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         libglib2.0-0 \
         libgomp1 \
+        libgl1 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
