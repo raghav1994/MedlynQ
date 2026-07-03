@@ -32,4 +32,4 @@ jobs:
           context: app/python
           file: app/python/Dockerfile
           push: true
-          tags: ${{ secrets.ACR_LOGIN_SERVER }}/medlynq-ocr:v2
+          tags: ${{ secrets.ACR_LOGIN_SERVER }}/medlynq-ocr:v3

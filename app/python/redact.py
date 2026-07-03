@@ -46,8 +46,13 @@ def _get_paddle():
     if _paddle is None:
         from paddleocr import PaddleOCR
         import logging
-        from paddleocr import logger
-        logger.setLevel(logging.ERROR)
+        # Quiet paddle logs. The logger's location moved across versions, so try
+        # the known names and fall back to the plain logging name.
+        try:
+            from paddleocr import logger as _plog  # older versions
+            _plog.setLevel(logging.ERROR)
+        except Exception:
+            logging.getLogger("ppocr").setLevel(logging.ERROR)
         _paddle = PaddleOCR(use_angle_cls=True, lang="en", enable_mkldnn=True)
     return _paddle
 
