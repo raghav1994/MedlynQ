@@ -92,7 +92,8 @@ export async function POST(req: NextRequest) {
       const publicDir = path.join(process.cwd(), "public", "_compressed");
       await mkdir(publicDir, { recursive: true });
       await writeFile(path.join(publicDir, outName), redactedBuffer);
-      downloadUrl = `/_compressed/${outName}`;
+      // Served via API route — Next does not reliably serve runtime-written public/ files.
+      downloadUrl = `/api/compressed?name=${encodeURIComponent(outName)}`;
     }
 
     // 3. DPDP: upload REDACTED copy to Azure unless it's an identity doc

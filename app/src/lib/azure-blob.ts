@@ -103,8 +103,8 @@ export async function getBlobSasUrl(
     sharedKey,
   ).toString();
 
-  const endpoint = conn.match(/BlobEndpoint=([^;]+)/)?.[1]
-    || `https://${accountName}.blob.core.windows.net`;
+  const endpoint = (conn.match(/BlobEndpoint=([^;]+)/)?.[1]
+    || `https://${accountName}.blob.core.windows.net`).replace(/\/+$/, "");
 
   return `${endpoint}/${containerName}/${blobName}?${sasQuery}`;
 }
