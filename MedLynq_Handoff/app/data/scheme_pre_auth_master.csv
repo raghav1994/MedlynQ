@@ -1,0 +1,123 @@
+scheme,variant,entry_mode,doc_type,is_required,alt_group,notes
+Ayushman,*,checkup,Aadhaar,1,,
+Ayushman,*,checkup,Doctor's Prescription,1,,OPD slip
+Ayushman,*,checkup,Insurance / Scheme Card,1,,Ayushman card or NHA portal screenshot
+Ayushman,*,checkup,Consent Form,1,,
+Ayushman,*,checkup,Geotag Photo,1,,
+Ayushman,*,checkup,Referral,1,,From outside hospital
+Ayushman,*,checkup,Tumor Board Certificate,1,,Public scheme · oncology only · 3-stamp
+Ayushman,*,checkup,CBC / LFT / KFT Profile,1,,Mandatory for SHA / Ayushman pre-auth
+Ayushman,*,checkup,Histopathology Report,1,report,Any one of the report alt-group
+Ayushman,*,checkup,Biopsy Report,1,report,Any one of the report alt-group
+Ayushman,*,checkup,PET-CT Report,1,report,Any one of the report alt-group
+Ayushman,*,emergency,Doctor's Prescription with codes,1,,Replaces referral letter in emergency
+Ayushman,SHA_UP,checkup,Ration Card,1,,UP state-specific
+PMJAY,*,checkup,Aadhaar,1,,
+PMJAY,*,checkup,Doctor's Prescription,1,,
+PMJAY,*,checkup,Insurance / Scheme Card,1,,
+PMJAY,*,checkup,Consent Form,1,,
+PMJAY,*,checkup,Geotag Photo,1,,
+PMJAY,*,checkup,Referral,1,,From outside hospital
+PMJAY,*,checkup,Tumor Board Certificate,1,,Public scheme · oncology only
+PMJAY,*,checkup,CBC / LFT / KFT Profile,1,,
+PMJAY,*,checkup,Histopathology Report,1,report,
+PMJAY,*,checkup,Biopsy Report,1,report,
+PMJAY,*,checkup,PET-CT Report,1,report,
+CGHS,*,checkup,Aadhaar,1,,
+CGHS,*,checkup,Doctor's Prescription,1,,
+CGHS,*,checkup,Insurance / Scheme Card,1,,CGHS card
+CGHS,*,checkup,Consent Form,1,,
+CGHS,*,checkup,Geotag Photo,1,,
+CGHS,*,checkup,Referral,1,,From outside hospital
+CGHS,*,checkup,Tumor Board Certificate,1,,Public scheme · oncology only
+CGHS,*,checkup,Histopathology Report,1,report,
+CGHS,*,checkup,Biopsy Report,1,report,
+CGHS,*,checkup,PET-CT Report,1,report,
+CGHS,*,emergency,Emergency Certificate,1,,Replaces referral in emergency
+CAPF,*,checkup,Aadhaar,1,,
+CAPF,*,checkup,Doctor's Prescription,1,,
+CAPF,*,checkup,Insurance / Scheme Card,1,,
+CAPF,*,checkup,Consent Form,1,,
+CAPF,*,checkup,Geotag Photo,1,,
+CAPF,*,checkup,Referral,1,,From outside hospital
+CAPF,*,checkup,Tumor Board Certificate,1,,Public scheme · oncology only
+CAPF,*,checkup,Histopathology Report,1,report,
+CAPF,*,checkup,Biopsy Report,1,report,
+CAPF,*,checkup,PET-CT Report,1,report,
+CAPF,*,emergency,Emergency Certificate,1,,Replaces referral in emergency
+ECHS,*,checkup,Aadhaar,1,,
+ECHS,*,checkup,Doctor's Prescription,1,,
+ECHS,*,checkup,Insurance / Scheme Card,1,,ECHS card
+ECHS,*,checkup,Consent Form,1,,
+ECHS,*,checkup,Geotag Photo,1,,
+ECHS,*,checkup,Referral,1,,From outside hospital
+ECHS,*,checkup,Tumor Board Certificate,1,,Public scheme · oncology only
+ECHS,*,checkup,Apex Form,1,,ECHS-only · chemo drug name + sero sign + unlisted procedure & implant
+ECHS,*,checkup,Histopathology Report,1,report,
+ECHS,*,checkup,Biopsy Report,1,report,
+ECHS,*,checkup,PET-CT Report,1,report,
+ECHS,*,emergency,Emergency Certificate,1,,Replaces referral in emergency
+Railway_UMID,*,checkup,Aadhaar,1,,
+Railway_UMID,*,checkup,Doctor's Prescription,1,,
+Railway_UMID,*,checkup,Insurance / Scheme Card,1,,UMID card
+Railway_UMID,*,checkup,Consent Form,1,,
+Railway_UMID,*,checkup,Geotag Photo,1,,
+Railway_UMID,*,checkup,Referral,1,,From outside hospital
+Railway_UMID,*,checkup,Tumor Board Certificate,1,,Public scheme · oncology only
+Railway_UMID,*,checkup,Histopathology Report,1,report,
+Railway_UMID,*,checkup,Biopsy Report,1,report,
+Railway_UMID,*,checkup,PET-CT Report,1,report,
+NDMC,*,checkup,Aadhaar,1,,
+NDMC,*,checkup,Doctor's Prescription,1,,
+NDMC,*,checkup,Insurance / Scheme Card,1,,
+NDMC,*,checkup,Consent Form,1,,
+NDMC,*,checkup,Geotag Photo,1,,
+NDMC,*,checkup,Tumor Board Certificate,1,,Public scheme · oncology only
+NDMC,*,checkup,Histopathology Report,1,report,
+NDMC,*,checkup,Biopsy Report,1,report,
+NDMC,*,checkup,PET-CT Report,1,report,
+FCI,*,checkup,Aadhaar,1,,
+FCI,*,checkup,Doctor's Prescription,1,,
+FCI,*,checkup,Insurance / Scheme Card,1,,
+FCI,*,checkup,Consent Form,1,,
+FCI,*,checkup,Geotag Photo,1,,
+FCI,*,checkup,Referral,1,,From outside hospital
+FCI,*,checkup,Tumor Board Certificate,1,,Public scheme · oncology only
+FCI,*,checkup,Histopathology Report,1,report,
+FCI,*,checkup,Biopsy Report,1,report,
+FCI,*,checkup,PET-CT Report,1,report,
+DU,DU_MAIN,checkup,Aadhaar,1,,
+DU,DU_MAIN,checkup,Doctor's Prescription,1,,
+DU,DU_MAIN,checkup,Insurance / Scheme Card,1,,
+DU,DU_MAIN,checkup,Consent Form,1,,
+DU,DU_MAIN,checkup,Geotag Photo,1,,
+DU,DU_MAIN,checkup,Tumor Board Certificate,1,,Public scheme · oncology only
+DU,DU_MAIN,checkup,Histopathology Report,1,report,
+DU,DU_MAIN,checkup,Biopsy Report,1,report,
+DU,DU_MAIN,checkup,PET-CT Report,1,report,
+DU,DU_AFFILIATED,checkup,Aadhaar,1,,
+DU,DU_AFFILIATED,checkup,Doctor's Prescription,1,,
+DU,DU_AFFILIATED,checkup,Insurance / Scheme Card,1,,
+DU,DU_AFFILIATED,checkup,Consent Form,1,,
+DU,DU_AFFILIATED,checkup,Geotag Photo,1,,
+DU,DU_AFFILIATED,checkup,Referral,1,,From outside hospital · DU affiliated only
+DU,DU_AFFILIATED,checkup,Tumor Board Certificate,1,,Public scheme · oncology only
+DU,DU_AFFILIATED,checkup,Histopathology Report,1,report,
+DU,DU_AFFILIATED,checkup,Biopsy Report,1,report,
+DU,DU_AFFILIATED,checkup,PET-CT Report,1,report,
+TPA,*,checkup,Aadhaar,1,,
+TPA,*,checkup,Doctor's Prescription,1,,
+TPA,*,checkup,Insurance / Scheme Card,1,,
+TPA,*,checkup,Consent Form,1,,
+TPA,*,checkup,PAN Card,1,,Private TPA-specific
+TPA,*,checkup,KYC Form,1,,TPA's own format
+TPA,*,checkup,Pre-Auth Form,1,,TPA's own format
+TPA,*,checkup,Histopathology Report,1,report,
+TPA,*,checkup,Biopsy Report,1,report,
+TPA,*,checkup,PET-CT Report,1,report,
+ESI,*,checkup,Aadhaar,1,,
+ESI,*,checkup,Doctor's Prescription,1,,
+ESI,*,checkup,Insurance / Scheme Card,1,,ESI card
+ESI,*,checkup,Consent Form,1,,
+Cash,*,checkup,Aadhaar,1,,For receipt + GST
+Cash,*,checkup,Doctor's Prescription,1,,

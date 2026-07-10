@@ -1,0 +1,294 @@
+code,name,specialty,schemes,cap_inr,length_of_stay_days,notes,source
+MO001F,Trastuzumab Cycle (HER2+ Breast Ca),Oncology,PMJAY|CGHS|SHA,42500,1,Day-care chemo · 1 cycle,seed_v1
+MO002F,Paclitaxel + Carboplatin Cycle,Oncology,PMJAY|CGHS|SHA,12500,1,Day-care chemo · 1 cycle,seed_v1
+MO003F,FOLFOX Cycle (colorectal),Oncology,PMJAY|CGHS,15000,1,Day-care chemo · 1 cycle,seed_v1
+MO004F,CHOP Cycle (NHL),Oncology,PMJAY|CGHS|SHA,18000,1,Day-care chemo · 1 cycle,seed_v1
+MO005F,Cisplatin + Etoposide Cycle (SCLC),Oncology,PMJAY|CGHS,14500,1,Day-care chemo · 1 cycle,seed_v1
+MO006F,Rituximab Maintenance,Oncology,PMJAY|CGHS,38000,1,Day-care chemo,seed_v1
+MO007F,Targeted therapy · Imatinib month,Oncology,PMJAY|CGHS,9500,30,Oral · monthly dispense,seed_v1
+MO008F,Tamoxifen 6-month course,Oncology,PMJAY|CGHS|SHA,4200,180,Oral hormonal,seed_v1
+SG001B,Wide Local Excision (breast),Oncology,PMJAY|CGHS|Railway|SHA,55000,3,Surgery,seed_v1
+SG075B,Modified Radical Mastectomy,Oncology,PMJAY|CGHS|Railway|SHA,75000,5,Surgery,seed_v1
+SG076B,Mastectomy + Axillary Clearance,Oncology,PMJAY|CGHS|Railway,82000,5,Surgery,seed_v1
+SG077B,Sentinel Lymph Node Biopsy,Oncology,PMJAY|CGHS,28000,2,Surgery,seed_v1
+SG101S,Hemicolectomy,Oncology,PMJAY|CGHS|Railway,135000,7,Surgery,seed_v1
+SG102S,Total Laryngectomy + Neck Dissection,Oncology,CGHS|Railway,165000,8,Surgery,seed_v1
+SG103S,Lobectomy (lung),Oncology,PMJAY|CGHS|Railway,185000,7,Surgery,seed_v1
+SG104S,Whipple Procedure,Oncology,CGHS|Railway,275000,12,Surgery,seed_v1
+SG105S,Radical Prostatectomy,Oncology,PMJAY|CGHS|Railway,165000,7,Surgery,seed_v1
+SG106S,Nephrectomy (radical),Oncology,PMJAY|CGHS|Railway,145000,6,Surgery,seed_v1
+SG107S,Hysterectomy (oncology),Oncology,PMJAY|CGHS|Railway,105000,5,Surgery,seed_v1
+RT001R,External Beam Radiation - whole course,Oncology,PMJAY|CGHS|SHA,72000,30,Outpatient · 25-30 fractions,seed_v1
+RT002R,IMRT - whole course,Oncology,PMJAY|CGHS,125000,35,Outpatient · 25-30 fractions,seed_v1
+RT003R,Brachytherapy (HDR),Oncology,PMJAY|CGHS,45000,3,Inpatient,seed_v1
+RT004R,Stereotactic Radiosurgery (SRS),Oncology,CGHS,165000,2,Single session,seed_v1
+SC001C,Coronary Angiography (diagnostic),Cardiac,PMJAY|CGHS|Railway|SHA,18500,1,Cath lab,seed_v1
+SC002C,PTCA + Stent (single vessel · DES),Cardiac,PMJAY|CGHS|Railway,165000,3,Includes 1 DES,seed_v1
+SC003C,PTCA + Stent (double vessel),Cardiac,PMJAY|CGHS|Railway,225000,3,Includes 2 DES,seed_v1
+SC004C,Permanent Pacemaker Implant (single chamber),Cardiac,PMJAY|CGHS|Railway,140000,4,,seed_v1
+SC005C,Permanent Pacemaker Implant (dual chamber),Cardiac,PMJAY|CGHS|Railway,185000,4,,seed_v1
+SC006C,ICD Implant,Cardiac,CGHS|Railway,425000,5,,seed_v1
+SC007C,Balloon Mitral Valvotomy,Cardiac,PMJAY|CGHS|Railway,95000,4,,seed_v1
+SC061A,CABG + Valve Repair,Cardiac,CGHS|Railway,250000,12,Open heart,seed_v1
+SC062A,Off-pump CABG (single vessel),Cardiac,CGHS|Railway,185000,10,,seed_v1
+SC063A,On-pump CABG (triple vessel),Cardiac,CGHS|Railway,215000,12,,seed_v1
+SC064A,Mitral Valve Replacement,Cardiac,CGHS|Railway,275000,14,,seed_v1
+SC065A,Aortic Valve Replacement,Cardiac,CGHS|Railway,285000,14,,seed_v1
+SC066A,Double Valve Replacement,Cardiac,CGHS|Railway,365000,16,,seed_v1
+SC067A,ASD / VSD Closure (surgical),Cardiac,PMJAY|CGHS|Railway,165000,8,Pediatric or adult,seed_v1
+SC068B,Chemotherapy admission · day-care,Cardiac,PMJAY|Railway|CGHS,42500,1,Cardio-oncology bridge,seed_v1
+OR001O,Conservative fracture management,Orthopaedic,PMJAY|CGHS|ECHS,12500,2,POP / cast,seed_v1
+OR002O,Open Reduction Internal Fixation (long bone),Orthopaedic,PMJAY|CGHS|ECHS,55000,4,,seed_v1
+OR003O,External Fixator Application,Orthopaedic,PMJAY|CGHS|ECHS,38000,5,,seed_v1
+OR041X,Hip Hemiarthroplasty,Orthopaedic,PMJAY|CGHS|ECHS,72000,5,,seed_v1
+OR042X,Total Knee Replacement (unilateral),Orthopaedic,PMJAY|CGHS|ECHS,95000,5,Implant cost separate,seed_v1
+OR043X,Total Knee Replacement (bilateral),Orthopaedic,PMJAY|CGHS|ECHS,175000,7,,seed_v1
+OR044X,Total Hip Replacement,Orthopaedic,PMJAY|CGHS|ECHS,115000,6,,seed_v1
+OR045X,Revision Hip Replacement,Orthopaedic,CGHS|ECHS,155000,8,,seed_v1
+OR046X,Arthroscopic ACL Reconstruction,Orthopaedic,PMJAY|CGHS|ECHS,42000,2,Day-care possible,seed_v1
+OR047X,Spinal Fusion (single level),Orthopaedic,CGHS|ECHS,165000,7,,seed_v1
+OR048X,Spinal Decompression (laminectomy),Orthopaedic,PMJAY|CGHS|ECHS,85000,5,,seed_v1
+DI001D,Haemodialysis · single session,Dialysis,PMJAY|ESI|Railway,1800,1,Outpatient,seed_v1
+DI002D,Haemodialysis package · 13 sessions,Dialysis,PMJAY|ESI|Railway,21000,30,Monthly bundled,seed_v1
+DI003D,Peritoneal Dialysis · CAPD month,Dialysis,PMJAY|ESI|Railway,18000,30,Outpatient,seed_v1
+DI004D,AV Fistula Creation,Dialysis,PMJAY|CGHS|ESI|Railway,28500,2,,seed_v1
+DI005D,AV Graft Creation,Dialysis,PMJAY|CGHS|Railway,42000,3,,seed_v1
+DI006D,Central Line · Tunneled Catheter,Dialysis,PMJAY|CGHS|Railway,15500,2,Temporary access,seed_v1
+DI018C,Haemodialysis (PMJAY day rate),Dialysis,PMJAY|ESI|Railway,1800,1,Government per-session rate,seed_v1
+IC001I,ICU stay · day (medical),ICU,PMJAY|CGHS|Railway,9500,1,Per day rate,seed_v1
+IC002I,ICU stay · day (surgical post-op),ICU,PMJAY|CGHS|Railway,11000,1,Per day rate,seed_v1
+IC003I,Ventilator support · day,ICU,PMJAY|CGHS|Railway,4500,1,Add-on to ICU,seed_v1
+IC004I,CRRT · day,ICU,CGHS|Railway,22000,1,Continuous renal replacement,seed_v1
+IC005I,Sepsis Bundle (3-day),ICU,PMJAY|CGHS,32000,3,Bundled,seed_v1
+IC006I,Acute MI · ICU package,ICU,PMJAY|CGHS|Railway,75000,5,Includes ECG · troponin,seed_v1
+IC007I,Stroke · ICU package,ICU,PMJAY|CGHS|Railway,68000,5,,seed_v1
+IC008I,Severe Pneumonia · ICU package,ICU,PMJAY|CGHS|Railway,52000,5,,seed_v1
+MA001M,Normal Vaginal Delivery,Maternity,PMJAY|ESI|CGHS,9000,2,,seed_v1
+MA002M,Assisted Vaginal Delivery,Maternity,PMJAY|ESI|CGHS,12500,3,,seed_v1
+MA003M,LSCS (elective),Maternity,PMJAY|ESI|CGHS|Railway,22000,4,,seed_v1
+MA004M,LSCS (emergency),Maternity,PMJAY|ESI|CGHS|Railway,28500,5,,seed_v1
+MA022D,Normal Vaginal Delivery (PMJAY rate),Maternity,PMJAY|ESI,9000,2,Government per-delivery,seed_v1
+MA005M,High-risk Pregnancy Management,Maternity,PMJAY|ESI,32000,7,,seed_v1
+MA006M,Eclampsia Management,Maternity,PMJAY|CGHS|ESI,42000,7,,seed_v1
+MA007M,Postpartum Haemorrhage Management,Maternity,PMJAY|CGHS|ESI,35000,5,,seed_v1
+MA008M,NICU stay · day (level 2),Maternity,PMJAY|CGHS|ESI,4500,1,Per day,seed_v1
+MA009M,NICU stay · day (level 3),Maternity,PMJAY|CGHS|ESI,7500,1,Per day,seed_v1
+MA010M,Neonatal Phototherapy,Maternity,PMJAY|CGHS|ESI,2500,3,,seed_v1
+GE001G,General Ward Admission · day,General,PMJAY|CGHS|Railway|ESI,2500,1,Per day · room only,seed_v1
+GE002G,Semi-Private Room · day,General,CGHS|Railway,3500,1,Per day · room only,seed_v1
+GE003G,Private Room · day,General,CGHS|Railway,5000,1,Per day · room only,seed_v1
+GE004G,Appendicectomy (laparoscopic),General,PMJAY|CGHS|Railway,32000,3,,seed_v1
+GE005G,Appendicectomy (open),General,PMJAY|CGHS|Railway,22000,4,,seed_v1
+GE006G,Inguinal Hernia Repair,General,PMJAY|CGHS|Railway,28500,2,,seed_v1
+GE007G,Cholecystectomy (laparoscopic),General,PMJAY|CGHS|Railway,42000,3,,seed_v1
+GE008G,Cholecystectomy (open),General,PMJAY|CGHS|Railway,38000,5,,seed_v1
+GE009G,Thyroidectomy,General,PMJAY|CGHS|Railway,52000,4,,seed_v1
+GE010G,Mastoidectomy,General,PMJAY|CGHS,42000,3,,seed_v1
+GE011G,Tonsillectomy,General,PMJAY|CGHS|ESI,15500,2,,seed_v1
+GE012G,Cataract Surgery (phaco + IOL),General,PMJAY|CGHS|ESI|Railway,12500,1,Day-care,seed_v1
+GE013G,Vitrectomy,General,PMJAY|CGHS,52000,3,,seed_v1
+GE014G,Glaucoma Surgery,General,PMJAY|CGHS,32000,2,,seed_v1
+GE015G,Diabetic Retinopathy · Laser,General,PMJAY|CGHS,8500,1,,seed_v1
+NS001N,Lumbar Disc Surgery,Neurosurgery,PMJAY|CGHS|Railway,125000,6,,seed_v1
+NS002N,Cervical Disc Surgery,Neurosurgery,PMJAY|CGHS|Railway,135000,6,,seed_v1
+NS003N,Craniotomy (tumour),Neurosurgery,CGHS|Railway,225000,10,,seed_v1
+NS004N,Craniotomy (haemorrhage),Neurosurgery,PMJAY|CGHS|Railway,185000,8,,seed_v1
+NS005N,Shunt Procedure (VP),Neurosurgery,PMJAY|CGHS|Railway,95000,5,,seed_v1
+UR001U,TURP (BPH),Urology,PMJAY|CGHS|Railway,45000,3,,seed_v1
+UR002U,Cystoscopy (diagnostic),Urology,PMJAY|CGHS|Railway,8500,1,Day-care,seed_v1
+UR003U,Ureteric Stent Insertion,Urology,PMJAY|CGHS|Railway,18000,2,,seed_v1
+UR004U,PCNL (kidney stone),Urology,PMJAY|CGHS|Railway,62000,4,,seed_v1
+UR005U,URSL · ureteric stone,Urology,PMJAY|CGHS|Railway,38000,2,,seed_v1
+UR006U,Open Prostatectomy,Urology,CGHS|Railway,82000,7,,seed_v1
+GA001G,Upper GI Endoscopy (diagnostic),Gastro,PMJAY|CGHS|ESI|Railway,4500,1,Day-care,seed_v1
+GA002G,Colonoscopy (diagnostic),Gastro,PMJAY|CGHS|ESI|Railway,7500,1,Day-care,seed_v1
+GA003G,ERCP (therapeutic),Gastro,PMJAY|CGHS|Railway,35000,2,,seed_v1
+GA004G,Polypectomy (endoscopic),Gastro,PMJAY|CGHS|Railway,12500,1,,seed_v1
+GA005G,Variceal Banding,Gastro,PMJAY|CGHS|Railway,18000,2,,seed_v1
+PD001P,Newborn Care · normal,Paediatrics,PMJAY|ESI|CGHS,4500,2,,seed_v1
+PD002P,Bronchiolitis (paediatric admission),Paediatrics,PMJAY|ESI|CGHS,12500,4,,seed_v1
+PD003P,Severe Dengue (paediatric admission),Paediatrics,PMJAY|ESI|CGHS,28500,6,,seed_v1
+PD004P,Acute Lymphoblastic Leukaemia · Induction,Paediatrics,PMJAY|CGHS,165000,30,Paeds onco bridge,seed_v1
+PD005P,Paediatric Surgery · circumcision,Paediatrics,PMJAY|ESI|CGHS,5500,1,Day-care,seed_v1
+TR001T,Renal Transplant · Live Related,Transplant,CGHS|Railway,650000,21,Donor work-up separate,seed_v1
+TR002T,Renal Transplant · Deceased Donor,Transplant,CGHS|Railway,725000,21,,seed_v1
+TR003T,Bone Marrow Transplant · Autologous,Transplant,CGHS|Railway,1250000,30,,seed_v1
+TR004T,Liver Transplant · Live Donor,Transplant,CGHS|Railway,2200000,45,,seed_v1
+PS001S,Burns Management (10-30 percent BSA),Plastic,PMJAY|CGHS|Railway,85000,10,,seed_v1
+PS002S,Split Skin Graft,Plastic,PMJAY|CGHS|Railway,38000,5,,seed_v1
+PS003S,Cleft Lip Repair,Plastic,PMJAY|CGHS,42000,3,,seed_v1
+PS004S,Cleft Palate Repair,Plastic,PMJAY|CGHS,52000,4,,seed_v1
+PS005S,Flap Reconstruction (free flap),Plastic,CGHS|Railway,165000,8,,seed_v1
+MH001H,Acute Psychiatric Admission · day,Mental Health,PMJAY|CGHS|ESI,2500,1,Per day,seed_v1
+MH002H,ECT · single session,Mental Health,PMJAY|CGHS,3500,1,Outpatient,seed_v1
+MH003H,Substance De-addiction · 14 day inpatient,Mental Health,PMJAY|CGHS,42000,14,,seed_v1
+INF001I,Acute Febrile Illness (medical admission),Infectious,PMJAY|ESI|CGHS,12500,4,,seed_v1
+INF002I,Drug-Resistant TB · monthly,Infectious,PMJAY,8500,30,Outpatient,seed_v1
+INF003I,Falciparum Malaria (severe),Infectious,PMJAY|ESI|CGHS,18000,5,,seed_v1
+INF004I,COVID-19 Severe (medical admission),Infectious,PMJAY|CGHS|ESI,42000,7,,seed_v1
+INF005I,Dengue Haemorrhagic Fever,Infectious,PMJAY|ESI|CGHS,28500,6,,seed_v1
+END001E,Diabetic Ketoacidosis Management,Endocrine,PMJAY|CGHS|ESI,32000,4,,seed_v1
+END002E,Thyroid Crisis Management,Endocrine,PMJAY|CGHS,38000,4,,seed_v1
+END003E,Adrenal Crisis Management,Endocrine,CGHS,42000,5,,seed_v1
+DERM001D,Pemphigus Management (admission),Dermatology,PMJAY|CGHS,28500,7,,seed_v1
+DERM002D,SJS / TEN Management,Dermatology,PMJAY|CGHS,52000,10,,seed_v1
+RHEUM001R,Rheumatoid Arthritis Flare · admission,Rheumatology,PMJAY|CGHS,22000,5,,seed_v1
+RHEUM002R,Lupus Flare · admission,Rheumatology,PMJAY|CGHS,32000,7,,seed_v1
+RHEUM003R,Vasculitis Management,Rheumatology,CGHS,52000,10,,seed_v1
+PUL001P,Acute Severe Asthma · admission,Pulmonary,PMJAY|CGHS|ESI,15500,4,,seed_v1
+PUL002P,COPD Exacerbation · admission,Pulmonary,PMJAY|CGHS|ESI,18500,5,,seed_v1
+PUL003P,Pulmonary Embolism Management,Pulmonary,PMJAY|CGHS,52000,7,,seed_v1
+PUL004P,Bronchoscopy (diagnostic),Pulmonary,PMJAY|CGHS|Railway,8500,1,Day-care,seed_v1
+HEM001H,Acute Leukaemia · Induction (adult),Haematology,CGHS|Railway,225000,30,,seed_v1
+HEM002H,Multiple Myeloma · monthly therapy,Haematology,CGHS,82000,30,,seed_v1
+HEM003H,ITP Management,Haematology,PMJAY|CGHS,22000,5,,seed_v1
+HEM004H,Sickle Cell Crisis Management,Haematology,PMJAY|CGHS,18000,5,,seed_v1
+ENT001N,Septoplasty,ENT,PMJAY|CGHS|Railway,28500,2,,seed_v1
+ENT002N,Functional Endoscopic Sinus Surgery (FESS),ENT,PMJAY|CGHS|Railway,42000,3,,seed_v1
+ENT003N,Microlaryngoscopy,ENT,PMJAY|CGHS|Railway,15500,1,Day-care,seed_v1
+ENT004N,Mastoid Surgery,ENT,PMJAY|CGHS|Railway,52000,4,,seed_v1
+GYN001G,D&C (diagnostic),Gynaecology,PMJAY|CGHS|ESI,8500,1,Day-care,seed_v1
+GYN002G,Vaginal Hysterectomy,Gynaecology,PMJAY|CGHS|Railway,55000,4,,seed_v1
+GYN003G,Abdominal Hysterectomy,Gynaecology,PMJAY|CGHS|Railway,62000,5,,seed_v1
+GYN004G,Laparoscopic Hysterectomy,Gynaecology,PMJAY|CGHS|Railway,85000,3,,seed_v1
+GYN005G,Myomectomy (open),Gynaecology,PMJAY|CGHS,52000,4,,seed_v1
+GYN006G,Ectopic Pregnancy Management,Gynaecology,PMJAY|CGHS|ESI,32000,4,,seed_v1
+GYN007G,Ovarian Cystectomy,Gynaecology,PMJAY|CGHS|Railway,42000,3,,seed_v1
+ON001A,Breast Conservative Surgery (BCS),Oncology,PMJAY|CGHS,72000,5,Lumpectomy + axillary,pmjay_hbp_2.2_seed
+ON002A,Wide Local Excision + SLNB,Oncology,PMJAY|CGHS,58000,3,,pmjay_hbp_2.2_seed
+ON003A,Modified Radical Mastectomy (alt),Oncology,PMJAY|CGHS|Railway,78000,5,,pmjay_hbp_2.2_seed
+ON004A,Cytoreductive Surgery + HIPEC,Oncology,CGHS|Railway,425000,14,Complex onco,pmjay_hbp_2.2_seed
+ON005A,Hemiglossectomy,Oncology,PMJAY|CGHS,95000,6,Oral cavity,pmjay_hbp_2.2_seed
+ON006A,Maxillectomy,Oncology,PMJAY|CGHS,115000,7,Oral cavity,pmjay_hbp_2.2_seed
+ON007A,Esophagectomy (Ivor Lewis),Oncology,CGHS|Railway,235000,14,GI onco,pmjay_hbp_2.2_seed
+ON008A,Total Gastrectomy,Oncology,CGHS|Railway,205000,12,,pmjay_hbp_2.2_seed
+ON009A,Pancreaticoduodenectomy (alt code),Oncology,CGHS|Railway,275000,12,Whipple,pmjay_hbp_2.2_seed
+ON010A,Anterior Resection (rectal),Oncology,PMJAY|CGHS|Railway,135000,8,,pmjay_hbp_2.2_seed
+ON011A,Abdominoperineal Resection,Oncology,PMJAY|CGHS|Railway,165000,9,APR,pmjay_hbp_2.2_seed
+ON012A,Wertheim Hysterectomy,Oncology,PMJAY|CGHS|Railway,165000,8,Cervical Ca,pmjay_hbp_2.2_seed
+ON013A,Radical Hysterectomy + BSO,Oncology,PMJAY|CGHS|Railway,155000,7,,pmjay_hbp_2.2_seed
+ON014A,Penectomy (partial),Oncology,PMJAY|CGHS,85000,6,Penile Ca,pmjay_hbp_2.2_seed
+ON015A,Penectomy (radical),Oncology,PMJAY|CGHS,125000,8,Penile Ca,pmjay_hbp_2.2_seed
+CL001I,Coronary Angiography Diagnostic (alt),Cardiac,PMJAY|CGHS|Railway,17500,1,Cath lab,pmjay_hbp_2.2_seed
+CL002I,Coronary Angiogram Trans-radial,Cardiac,PMJAY|CGHS|Railway,18000,1,Day-care,pmjay_hbp_2.2_seed
+CL003I,Renal Angiography,Cardiac,CGHS|Railway,18500,1,,pmjay_hbp_2.2_seed
+CL004I,Right Heart Cath,Cardiac,CGHS|Railway,22500,1,,pmjay_hbp_2.2_seed
+CL005I,Endomyocardial Biopsy,Cardiac,CGHS|Railway,32000,2,,pmjay_hbp_2.2_seed
+CL006I,Electrophysiology Study (EPS),Cardiac,CGHS|Railway,55000,2,,pmjay_hbp_2.2_seed
+CL007I,Radiofrequency Ablation (AVNRT),Cardiac,CGHS|Railway,125000,3,Arrhythmia,pmjay_hbp_2.2_seed
+CL008I,Atrial Fibrillation Ablation,Cardiac,CGHS|Railway,265000,4,,pmjay_hbp_2.2_seed
+CL009I,Closure of ASD (device),Cardiac,PMJAY|CGHS|Railway,225000,4,,pmjay_hbp_2.2_seed
+CL010I,Closure of PDA (device),Cardiac,PMJAY|CGHS|Railway,165000,3,Paeds,pmjay_hbp_2.2_seed
+CT001S,Open Heart Bypass (CABG x4),Cardiac,CGHS|Railway,235000,12,Quadruple,pmjay_hbp_2.2_seed
+CT002S,Beating Heart CABG,Cardiac,CGHS|Railway,225000,11,OPCAB,pmjay_hbp_2.2_seed
+CT003S,Bentall Procedure,Cardiac,CGHS|Railway,425000,16,Complex,pmjay_hbp_2.2_seed
+CT004S,Aortic Root Replacement,Cardiac,CGHS|Railway,385000,15,,pmjay_hbp_2.2_seed
+CT005S,Pericardiectomy,Cardiac,CGHS|Railway,135000,8,,pmjay_hbp_2.2_seed
+CT006S,Atrial Septal Defect Repair (open),Cardiac,PMJAY|CGHS|Railway,195000,10,,pmjay_hbp_2.2_seed
+CT007S,Ventricular Septal Defect Repair,Cardiac,PMJAY|CGHS|Railway,225000,10,,pmjay_hbp_2.2_seed
+CT008S,Tetralogy of Fallot Total Correction,Cardiac,CGHS|Railway,325000,12,Paeds,pmjay_hbp_2.2_seed
+CT009S,Maze Procedure,Cardiac,CGHS|Railway,295000,12,,pmjay_hbp_2.2_seed
+CT010S,LVAD Implantation,Cardiac,CGHS,1850000,21,Mech circulatory,pmjay_hbp_2.2_seed
+GA006G,Liver Resection (left lateral),Gastro,CGHS|Railway,165000,8,,pmjay_hbp_2.2_seed
+GA007G,Right Hepatectomy,Gastro,CGHS|Railway,235000,12,,pmjay_hbp_2.2_seed
+GA008G,Splenectomy (open),Gastro,PMJAY|CGHS|Railway,52000,5,,pmjay_hbp_2.2_seed
+GA009G,Splenectomy (lap),Gastro,PMJAY|CGHS|Railway,72000,3,,pmjay_hbp_2.2_seed
+GA010G,Colostomy Creation,Gastro,PMJAY|CGHS|Railway,42000,5,,pmjay_hbp_2.2_seed
+GA011G,Ileostomy Creation,Gastro,PMJAY|CGHS|Railway,45000,5,,pmjay_hbp_2.2_seed
+GA012G,Colostomy Closure,Gastro,PMJAY|CGHS|Railway,55000,5,,pmjay_hbp_2.2_seed
+GA013G,Hemicolectomy (alt code),Gastro,PMJAY|CGHS|Railway,142000,7,,pmjay_hbp_2.2_seed
+GA014G,EUS-guided Biopsy,Gastro,PMJAY|CGHS|Railway,15500,1,Day-care,pmjay_hbp_2.2_seed
+GA015G,Capsule Endoscopy,Gastro,CGHS|Railway,12500,1,,pmjay_hbp_2.2_seed
+NS006N,Aneurysm Clipping,Neurosurgery,CGHS|Railway,265000,12,SAH,pmjay_hbp_2.2_seed
+NS007N,Aneurysm Coiling (endovascular),Neurosurgery,CGHS|Railway,425000,8,,pmjay_hbp_2.2_seed
+NS008N,AVM Excision,Neurosurgery,CGHS|Railway,295000,12,,pmjay_hbp_2.2_seed
+NS009N,Deep Brain Stimulator Implant,Neurosurgery,CGHS,985000,8,Parkinson,pmjay_hbp_2.2_seed
+NS010N,Spinal Tumour Excision,Neurosurgery,CGHS|Railway,195000,8,,pmjay_hbp_2.2_seed
+NS011N,Microvascular Decompression,Neurosurgery,CGHS|Railway,165000,7,Trigeminal,pmjay_hbp_2.2_seed
+NS012N,Trans-sphenoidal Pituitary Surgery,Neurosurgery,CGHS|Railway,225000,9,,pmjay_hbp_2.2_seed
+NS013N,Decompressive Craniectomy,Neurosurgery,PMJAY|CGHS|Railway,165000,10,Trauma,pmjay_hbp_2.2_seed
+UR007U,Nephroureterectomy,Urology,PMJAY|CGHS|Railway,135000,7,,pmjay_hbp_2.2_seed
+UR008U,Partial Nephrectomy,Urology,PMJAY|CGHS|Railway,125000,6,,pmjay_hbp_2.2_seed
+UR009U,Pyeloplasty,Urology,PMJAY|CGHS|Railway,85000,5,UPJ obstruction,pmjay_hbp_2.2_seed
+UR010U,Ureteric Reimplantation,Urology,PMJAY|CGHS|Railway,95000,6,,pmjay_hbp_2.2_seed
+UR011U,Vesicovaginal Fistula Repair,Urology,PMJAY|CGHS|Railway,72000,5,,pmjay_hbp_2.2_seed
+UR012U,Penile Implant,Urology,CGHS,225000,3,ED,pmjay_hbp_2.2_seed
+UR013U,Sacral Neuromodulation,Urology,CGHS,425000,3,Bladder,pmjay_hbp_2.2_seed
+UR014U,Botox Bladder Injection,Urology,CGHS,32000,1,Day-care,pmjay_hbp_2.2_seed
+OR049X,Total Shoulder Replacement,Orthopaedic,PMJAY|CGHS|ECHS,125000,5,,pmjay_hbp_2.2_seed
+OR050X,Reverse Shoulder Replacement,Orthopaedic,PMJAY|CGHS|ECHS,165000,6,,pmjay_hbp_2.2_seed
+OR051X,Elbow Replacement,Orthopaedic,CGHS|ECHS,135000,5,,pmjay_hbp_2.2_seed
+OR052X,Arthroscopic Rotator Cuff Repair,Orthopaedic,PMJAY|CGHS|ECHS,52000,2,Day-care,pmjay_hbp_2.2_seed
+OR053X,Arthroscopic Meniscectomy,Orthopaedic,PMJAY|CGHS|ECHS,32000,1,Day-care,pmjay_hbp_2.2_seed
+OR054X,Scoliosis Correction Surgery,Orthopaedic,CGHS|ECHS,425000,10,,pmjay_hbp_2.2_seed
+OR055X,Spinal Cord Stimulator Implant,Orthopaedic,CGHS|ECHS,365000,4,Chronic pain,pmjay_hbp_2.2_seed
+OR056X,Limb Lengthening (external fixator),Orthopaedic,PMJAY|CGHS|ECHS,225000,10,,pmjay_hbp_2.2_seed
+OR057X,Bone Tumour Excision + Recon,Orthopaedic,CGHS|ECHS,295000,12,Onco-ortho,pmjay_hbp_2.2_seed
+OR058X,Carpal Tunnel Release,Orthopaedic,PMJAY|CGHS|ECHS,28500,1,Day-care,pmjay_hbp_2.2_seed
+GE016G,Pilonidal Sinus Excision,General,PMJAY|CGHS|Railway,22500,2,Day-care,pmjay_hbp_2.2_seed
+GE017G,Fistulectomy,General,PMJAY|CGHS|Railway,32000,3,,pmjay_hbp_2.2_seed
+GE018G,Hemorrhoidectomy,General,PMJAY|CGHS|Railway,25000,2,Day-care,pmjay_hbp_2.2_seed
+GE019G,Anal Fissure Surgery,General,PMJAY|CGHS|Railway,22500,1,Day-care,pmjay_hbp_2.2_seed
+GE020G,Varicose Vein Stripping,General,PMJAY|CGHS|Railway,52000,2,,pmjay_hbp_2.2_seed
+GE021G,EVLA (varicose vein laser),General,CGHS|Railway,72000,1,Day-care,pmjay_hbp_2.2_seed
+GE022G,Umbilical Hernia Repair,General,PMJAY|CGHS|Railway,28500,2,,pmjay_hbp_2.2_seed
+GE023G,Incisional Hernia Repair,General,PMJAY|CGHS|Railway,55000,4,,pmjay_hbp_2.2_seed
+GE024G,Lipoma Excision,General,PMJAY|CGHS|Railway,12500,1,Day-care,pmjay_hbp_2.2_seed
+GE025G,Sebaceous Cyst Excision,General,PMJAY|CGHS|Railway,8500,1,Day-care,pmjay_hbp_2.2_seed
+GE026G,Mediastinoscopy,General,CGHS|Railway,42000,3,,pmjay_hbp_2.2_seed
+GE027G,Thoracotomy + Lung Wedge,General,CGHS|Railway,165000,8,,pmjay_hbp_2.2_seed
+GE028G,Lobectomy (general · alt),General,CGHS|Railway,185000,9,,pmjay_hbp_2.2_seed
+GE029G,Pleurodesis,General,PMJAY|CGHS|Railway,42000,4,,pmjay_hbp_2.2_seed
+PD006P,Paeds Asthma Admission,Paediatrics,PMJAY|ESI|CGHS,9500,3,,pmjay_hbp_2.2_seed
+PD007P,Paeds Pneumonia Admission,Paediatrics,PMJAY|ESI|CGHS,12500,5,,pmjay_hbp_2.2_seed
+PD008P,Paeds Meningitis Admission,Paediatrics,PMJAY|ESI|CGHS,32000,7,,pmjay_hbp_2.2_seed
+PD009P,Paeds Status Epilepticus,Paediatrics,PMJAY|ESI|CGHS,28500,5,,pmjay_hbp_2.2_seed
+PD010P,Paeds Cardiac Cath,Paediatrics,PMJAY|CGHS|Railway,52000,2,,pmjay_hbp_2.2_seed
+PD011P,Paeds VSD Repair,Paediatrics,PMJAY|CGHS|Railway,235000,10,,pmjay_hbp_2.2_seed
+PD012P,Paeds TOF Repair,Paediatrics,CGHS|Railway,325000,12,,pmjay_hbp_2.2_seed
+PD013P,Wilms Tumour Surgery,Paediatrics,PMJAY|CGHS|Railway,165000,8,Paeds onco,pmjay_hbp_2.2_seed
+PD014P,Neuroblastoma Surgery,Paediatrics,PMJAY|CGHS|Railway,195000,10,Paeds onco,pmjay_hbp_2.2_seed
+PD015P,Paeds Bone Marrow Transplant,Paediatrics,CGHS|Railway,1450000,30,Allogeneic,pmjay_hbp_2.2_seed
+ENT005N,Cochlear Implant Surgery,ENT,PMJAY|CGHS|Railway,625000,5,,pmjay_hbp_2.2_seed
+ENT006N,Stapedotomy,ENT,PMJAY|CGHS|Railway,52000,2,,pmjay_hbp_2.2_seed
+ENT007N,Adenoidectomy,ENT,PMJAY|CGHS|ESI|Railway,18500,1,Day-care,pmjay_hbp_2.2_seed
+ENT008N,Tonsillectomy + Adenoidectomy,ENT,PMJAY|CGHS|ESI|Railway,22500,2,T+A,pmjay_hbp_2.2_seed
+ENT009N,Laryngomicrosurgery,ENT,PMJAY|CGHS|Railway,42000,2,,pmjay_hbp_2.2_seed
+ENT010N,Total Laryngectomy (ENT scope),ENT,CGHS|Railway,165000,8,,pmjay_hbp_2.2_seed
+ENT011N,Parotid Surgery (superficial),ENT,PMJAY|CGHS|Railway,72000,4,,pmjay_hbp_2.2_seed
+ENT012N,Parotid Surgery (total),ENT,PMJAY|CGHS|Railway,95000,5,,pmjay_hbp_2.2_seed
+ENT013N,Submandibular Gland Excision,ENT,PMJAY|CGHS|Railway,52000,3,,pmjay_hbp_2.2_seed
+ENT014N,Thyroglossal Cyst Excision,ENT,PMJAY|CGHS|Railway,38000,3,Sistrunk,pmjay_hbp_2.2_seed
+OPH001G,Cataract Surgery Phaco + Foldable IOL,Ophthalmology,PMJAY|CGHS|ESI|Railway,14500,1,Day-care,cghs_2014_seed
+OPH002G,Combined Cataract + Trabeculectomy,Ophthalmology,PMJAY|CGHS|Railway,22500,2,,cghs_2014_seed
+OPH003G,Retinal Detachment Surgery,Ophthalmology,PMJAY|CGHS|Railway,52000,3,,cghs_2014_seed
+OPH004G,Pars Plana Vitrectomy,Ophthalmology,PMJAY|CGHS|Railway,65000,2,,cghs_2014_seed
+OPH005G,Squint Surgery,Ophthalmology,PMJAY|CGHS|ESI|Railway,32000,1,Day-care,cghs_2014_seed
+OPH006G,Dacryocystorhinostomy (DCR),Ophthalmology,PMJAY|CGHS|Railway,28500,2,,cghs_2014_seed
+OPH007G,Pterygium Excision,Ophthalmology,PMJAY|CGHS|ESI|Railway,12500,1,Day-care,cghs_2014_seed
+OPH008G,Penetrating Keratoplasty,Ophthalmology,CGHS|Railway,82000,3,Corneal graft,cghs_2014_seed
+OPH009G,Intra-vitreal Anti-VEGF Injection,Ophthalmology,CGHS|Railway,12500,1,Day-care,cghs_2014_seed
+OPH010G,Glaucoma Drainage Implant,Ophthalmology,CGHS|Railway,42000,2,,cghs_2014_seed
+ESI001E,Normal Delivery (ESI rate),Maternity,ESI,7500,2,Per ESIC rate annexure,esic_rates_seed
+ESI002E,LSCS (ESI rate),Maternity,ESI,18500,4,,esic_rates_seed
+ESI003E,Inguinal Hernia (ESI rate),General,ESI,18500,2,,esic_rates_seed
+ESI004E,Appendicectomy (ESI rate),General,ESI,15500,3,,esic_rates_seed
+ESI005E,Tonsillectomy (ESI rate),ENT,ESI,12500,2,,esic_rates_seed
+ESI006E,Cataract Phaco (ESI rate),Ophthalmology,ESI,9500,1,Day-care,esic_rates_seed
+ESI007E,Haemodialysis (ESI rate · session),Dialysis,ESI,1650,1,Per ESIC,esic_rates_seed
+ESI008E,DJ Stent (ESI rate),Urology,ESI,15500,2,,esic_rates_seed
+ECH001E,CABG (ECHS rate),Cardiac,ECHS,165000,10,ECHS rate card,echs_rates_seed
+ECH002E,PTCA + DES (ECHS rate),Cardiac,ECHS,145000,3,,echs_rates_seed
+ECH003E,TKR (ECHS rate),Orthopaedic,ECHS,85000,5,,echs_rates_seed
+ECH004E,THR (ECHS rate),Orthopaedic,ECHS,105000,6,,echs_rates_seed
+ECH005E,Cataract + IOL (ECHS rate),Ophthalmology,ECHS,12500,1,Day-care,echs_rates_seed
+ECH006E,Coronary Angiography (ECHS rate),Cardiac,ECHS,17500,1,,echs_rates_seed
+ECH007E,Hemodialysis (ECHS rate · session),Dialysis,ECHS,1750,1,,echs_rates_seed
+RAIL001U,General Ward (UMID · day),General,Railway_UMID,1800,1,Per day room,railway_umid_seed
+RAIL002U,ICU Stay (UMID · day),ICU,Railway_UMID,8500,1,Per day,railway_umid_seed
+RAIL003U,Ventilator Support (UMID · day),ICU,Railway_UMID,4500,1,Add-on,railway_umid_seed
+RAIL004U,CABG (Railway rate),Cardiac,Railway_UMID,225000,12,,railway_umid_seed
+RAIL005U,TKR (Railway rate),Orthopaedic,Railway_UMID,95000,5,,railway_umid_seed
+RAIL006U,Chemotherapy Cycle (Railway · day-care),Oncology,Railway_UMID,38000,1,Day-care,railway_umid_seed
+RAIL007U,Coronary Angiography (Railway rate),Cardiac,Railway_UMID,16500,1,,railway_umid_seed
+RAIL008U,Dialysis Session (Railway rate),Dialysis,Railway_UMID,1850,1,Per session,railway_umid_seed

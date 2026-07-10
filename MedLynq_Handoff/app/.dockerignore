@@ -1,0 +1,12 @@
+node_modules
+.venv
+.next
+.git
+.env
+.env.local
+PatientLog
+public/_compressed
+public/_merged
+public/_thumbs
+db/*.json
+!db/users.json

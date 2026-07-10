@@ -1,0 +1,30 @@
+{
+  "hospital_id": "HOSP-DEL-77",
+  "name": "Fortis Escorts Heart Institute",
+  "short_name": "Fortis",
+  "subdomain": "fortis",
+  "logo_initial": "F",
+  "primary_color": "#1e3a8a",
+  "accent_color": "#3b82f6",
+  "city": "New Delhi",
+  "district": "South Delhi",
+  "vocabulary": {
+    "MEDCO": "Insurance Coordinator",
+    "BIS": "Eligibility Officer",
+    "MEDCO_SHORT": "IC"
+  },
+  "features": {
+    "whatsapp": false,
+    "mobile_uploader": true,
+    "nhcx_send": true,
+    "drop_and_go": true,
+    "tumor_board": false,
+    "benchmarks": true,
+    "team_performance": true,
+    "rejection_appeals": true,
+    "auto_rename": true
+  },
+  "schemes_enabled": ["PMJAY", "CGHS", "ECHS", "CAPF"],
+  "his_webhook_secret": "fortis-his-demo-secret-2026",
+  "tagline": "Cardiac claims, simplified."
+}

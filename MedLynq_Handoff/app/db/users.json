@@ -1,0 +1,86 @@
+[
+  {
+    "id": "U001",
+    "email": "admin@action.in",
+    "name": "Dr. Rahul Mehta",
+    "role": "ADMIN",
+    "hospital_id": "HOSP-BLR-49",
+    "hospital_name": "Action Cancer Hospital",
+    "designation": "Head of Claims Department",
+    "bis_enabled": true,
+    "password_hash": "$2a$10$22B8kRqMMLVnQLOGr2DJSePCxPgtGVuioxbytJlWaRqWGeL.myuGm",
+    "created_at": "2026-06-29T13:09:48.079Z"
+  },
+  {
+    "id": "U002",
+    "email": "richa@action.in",
+    "name": "Richa Attri",
+    "role": "MEDCO",
+    "hospital_id": "HOSP-BLR-49",
+    "hospital_name": "Action Cancer Hospital",
+    "designation": "Medical Coordinator",
+    "bis_enabled": true,
+    "password_hash": "$2a$10$DX9ApYBDB8VTOfcRhzOggOl7MOMwfRRJI6PtaUh8hMrjo1zL9xp7m",
+    "created_at": "2026-06-29T13:09:48.139Z"
+  },
+  {
+    "id": "U003",
+    "email": "priya@action.in",
+    "name": "Priya Kulkarni",
+    "role": "MEDCO",
+    "hospital_id": "HOSP-BLR-49",
+    "hospital_name": "Action Cancer Hospital",
+    "designation": "Medical Coordinator",
+    "bis_enabled": false,
+    "password_hash": "$2a$10$AtRhzXRmowuEqTvi7.sv2.3W1FvsrknKx/WImUhrJlkbYYroJI/pG",
+    "created_at": "2026-06-29T13:09:48.199Z"
+  },
+  {
+    "id": "U004",
+    "email": "cfo@action.in",
+    "name": "Anand Krishnan",
+    "role": "CFO",
+    "hospital_id": "HOSP-BLR-49",
+    "hospital_name": "Action Cancer Hospital",
+    "designation": "Chief Financial Officer",
+    "bis_enabled": false,
+    "password_hash": "$2a$10$VfYlu8KlV9oOJLUvqWsoVeuUaZOVfqcJP79EF/SKHse7IIbRmqija",
+    "created_at": "2026-06-29T13:09:48.259Z"
+  },
+  {
+    "id": "U010",
+    "email": "admin@fortis.in",
+    "name": "Dr. Vikrant Bhargava",
+    "role": "ADMIN",
+    "hospital_id": "HOSP-DEL-77",
+    "hospital_name": "Fortis Escorts Heart Institute",
+    "designation": "Head of Insurance Cell",
+    "bis_enabled": true,
+    "password_hash": "$2a$10$lbzimju/uDHy0d8uh1UO/usH13FyUxhKQVkfc/6pSuueoh.jG8sIi",
+    "created_at": "2026-06-29T17:03:47.874Z"
+  },
+  {
+    "id": "U011",
+    "email": "kavita@fortis.in",
+    "name": "Kavita Sharma",
+    "role": "MEDCO",
+    "hospital_id": "HOSP-DEL-77",
+    "hospital_name": "Fortis Escorts Heart Institute",
+    "designation": "Insurance Coordinator",
+    "bis_enabled": true,
+    "password_hash": "$2a$10$YxVEsIV1O/jY/sWeI/vF6.6mfv4dz6Sex2iiRof4EXpVAh8p1z5DC",
+    "created_at": "2026-06-29T17:03:47.936Z"
+  },
+  {
+    "id": "U012",
+    "email": "cfo@fortis.in",
+    "name": "Sanjay Iyer",
+    "role": "CFO",
+    "hospital_id": "HOSP-DEL-77",
+    "hospital_name": "Fortis Escorts Heart Institute",
+    "designation": "Chief Financial Officer",
+    "bis_enabled": false,
+    "password_hash": "$2a$10$VkrIsGtOBVKO3qgjNG8cyukU8xoz89l7l9LI2A2tqRjSeEEJ26yuG",
+    "created_at": "2026-06-29T17:03:47.997Z"
+  }
+]

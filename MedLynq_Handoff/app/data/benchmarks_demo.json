@@ -1,0 +1,93 @@
+{
+  "_note": "Sample benchmark data sourced from NHA PMJAY public dashboards (pmjay.gov.in/empanelled-hospital) + plausible demo figures. Live cross-hospital benchmarks will activate once 5+ hospitals are onboarded to MedLynq. Last updated: 2026-06 quarter.",
+  "district": "Bangalore Urban, Karnataka",
+  "month_label": "June 2026",
+  "you_hospital_id": "HOSP-BLR-49",
+  "hospitals": [
+    {
+      "hospital_id": "HOSP-BLR-49",
+      "name": "Action Cancer Hospital",
+      "type": "private_corporate",
+      "is_you": true,
+      "claims_submitted_mtd": 142,
+      "claims_submitted_amount_inr": 4280000,
+      "claims_approved_mtd": 128,
+      "claims_approved_amount_inr": 3895000,
+      "approval_rate_pct": 90.1,
+      "avg_tat_days": 6.4,
+      "open_queries": 11,
+      "top_scheme": "PMJAY",
+      "specialty_mix": ["oncology", "cardiology", "ortho"]
+    },
+    {
+      "hospital_id": "HOSP-BLR-31",
+      "name": "Fortis Hospital · Bannerghatta",
+      "type": "private_corporate",
+      "claims_submitted_mtd": 168,
+      "claims_submitted_amount_inr": 5120000,
+      "claims_approved_mtd": 139,
+      "claims_approved_amount_inr": 4290000,
+      "approval_rate_pct": 82.7,
+      "avg_tat_days": 8.1,
+      "open_queries": 24,
+      "top_scheme": "PMJAY",
+      "specialty_mix": ["cardiology", "neurosurgery", "oncology"]
+    },
+    {
+      "hospital_id": "HOSP-BLR-22",
+      "name": "Manipal Hospital · Old Airport Road",
+      "type": "private_corporate",
+      "claims_submitted_mtd": 201,
+      "claims_submitted_amount_inr": 6480000,
+      "claims_approved_mtd": 174,
+      "claims_approved_amount_inr": 5610000,
+      "approval_rate_pct": 86.6,
+      "avg_tat_days": 7.2,
+      "open_queries": 19,
+      "top_scheme": "CGHS",
+      "specialty_mix": ["oncology", "transplant", "cardiology"]
+    },
+    {
+      "hospital_id": "HOSP-BLR-14",
+      "name": "Narayana Health City",
+      "type": "private_corporate",
+      "claims_submitted_mtd": 312,
+      "claims_submitted_amount_inr": 7920000,
+      "claims_approved_mtd": 281,
+      "claims_approved_amount_inr": 7180000,
+      "approval_rate_pct": 90.1,
+      "avg_tat_days": 5.8,
+      "open_queries": 17,
+      "top_scheme": "PMJAY",
+      "specialty_mix": ["cardiology", "oncology", "paediatrics"]
+    },
+    {
+      "hospital_id": "HOSP-BLR-09",
+      "name": "Aster CMI Hospital",
+      "type": "private_corporate",
+      "claims_submitted_mtd": 124,
+      "claims_submitted_amount_inr": 3640000,
+      "claims_approved_mtd": 102,
+      "claims_approved_amount_inr": 3020000,
+      "approval_rate_pct": 82.3,
+      "avg_tat_days": 9.4,
+      "open_queries": 22,
+      "top_scheme": "PMJAY",
+      "specialty_mix": ["oncology", "neuro", "ortho"]
+    },
+    {
+      "hospital_id": "HOSP-BLR-77",
+      "name": "Kidwai Memorial Institute of Oncology",
+      "type": "public_govt",
+      "claims_submitted_mtd": 487,
+      "claims_submitted_amount_inr": 8950000,
+      "claims_approved_mtd": 461,
+      "claims_approved_amount_inr": 8420000,
+      "approval_rate_pct": 94.7,
+      "avg_tat_days": 4.2,
+      "open_queries": 9,
+      "top_scheme": "PMJAY",
+      "specialty_mix": ["oncology"]
+    }
+  ]
+}

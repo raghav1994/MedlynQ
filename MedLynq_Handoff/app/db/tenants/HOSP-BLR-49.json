@@ -1,0 +1,30 @@
+{
+  "hospital_id": "HOSP-BLR-49",
+  "name": "Action Cancer Hospital",
+  "short_name": "Action",
+  "subdomain": "action",
+  "logo_initial": "A",
+  "primary_color": "#1a1a1a",
+  "accent_color": "#dc2626",
+  "city": "Bangalore",
+  "district": "Bangalore Urban",
+  "vocabulary": {
+    "MEDCO": "Medical Coordinator",
+    "BIS": "Eligibility Officer",
+    "MEDCO_SHORT": "MEDCO"
+  },
+  "features": {
+    "whatsapp": true,
+    "mobile_uploader": false,
+    "nhcx_send": true,
+    "drop_and_go": true,
+    "tumor_board": true,
+    "benchmarks": true,
+    "team_performance": true,
+    "rejection_appeals": true,
+    "auto_rename": true
+  },
+  "schemes_enabled": ["PMJAY", "CGHS", "ECHS", "CAPF", "ESI", "RAILWAY", "NDMC", "FCI", "DU"],
+  "his_webhook_secret": "action-his-demo-secret-2026",
+  "tagline": "Cancer-focused claims intelligence."
+}
