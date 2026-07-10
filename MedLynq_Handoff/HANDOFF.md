@@ -96,6 +96,25 @@ The app originally used Supabase, but only as a hosted Postgres database (via `@
 - **Azure Database for PostgreSQL (Flexible Server)** — recommended, since you're deploying on Azure anyway
 - Any other Postgres 13+
 
+**Update (2026-07-10): fully migrated off Supabase's hosted Postgres to Azure.** Provisioned
+`medlynq-pg` (Azure Database for PostgreSQL Flexible Server, Burstable B1ms, Central India,
+`medlynq-rg`), and moved to the per-tenant-database model one server ahead of schedule:
+- `hosp_blr_49` — `HOSP-BLR-49`'s database. All real data migrated and row-count-verified:
+  1 hospital, 4 users, 19 patients, 19 cases, 29 documents, 437 audit-log rows.
+- `hosp_del_77` — `HOSP-DEL-77`'s database. Migrated its 1 hospital row + 3 users; it had no
+  patients/cases/documents in Supabase either, so there was nothing else to bring over.
+- `pgcrypto` had to be allow-listed via `az postgres flexible-server parameter set --name
+  azure.extensions --value PGCRYPTO` before `schema_v2.sql` would apply — Azure Flexible Server
+  blocks unlisted extensions by default.
+- Firewall: a rule allows Azure services (`0.0.0.0`) for future app connectivity, plus the
+  provisioning machine's IP. Add each deployment host's IP (or switch to VNet integration) before
+  going further than local testing.
+- The Supabase project itself was **not** deleted — connection info is preserved in
+  `.env.local` (commented) purely as a rollback record, but the app no longer reads it.
+- Credentials live only in local `.env.local` / `.env.HOSP-DEL-77.local` files (gitignored) —
+  not committed, not in this doc. Reset via `az postgres flexible-server update -n medlynq-pg
+  -g medlynq-rg -p <new-password>` if lost.
+
 **To point at a new database:** run `db/schema_v2.sql` against it, set `DATABASE_URL` in `.env.local` (or the container's env), done. No code changes needed for a different Postgres host.
 
 **Important, pre-existing limitation to know about:** the schema has no Row Level Security and the app queries every table without a `hospital_id` filter at the SQL level — tenant isolation happens only in application code (`src/lib/dataScope.ts`), after the full table is fetched into memory. This was an acceptable shortcut for a 2-tenant demo; **for the per-tenant-container model you're building (one database per hospital), this stops being a risk automatically** since each container's database only ever contains one hospital's data. If you ever go back to one shared database serving multiple tenants, add real `hospital_id` filtering or RLS first.
@@ -145,8 +164,8 @@ The same Docker image works for every tenant — only the env vars differ per de
 
 ## 7. Deployment checklist for Azure
 
-- [ ] Provision Azure Database for PostgreSQL (Flexible Server) per tenant
-- [ ] Run `db/schema_v2.sql` against each tenant's database
+- [x] Provision Azure Database for PostgreSQL (Flexible Server) per tenant — `medlynq-pg`, done 2026-07-10, see §4
+- [x] Run `db/schema_v2.sql` against each tenant's database — applied to `hosp_blr_49` and `hosp_del_77`
 - [ ] Build the Docker image (`docker build -t medlynq app/`) — one image, reused across all tenants
 - [ ] Deploy to Azure Container Apps (or App Service, if it supports the container well — Container Apps is the more natural fit for "spawn a subprocess pool" workloads), one instance per tenant
 - [ ] Set env vars per instance per the checklist in section 5, plus `MEDLYNQ_TENANT_ID`
