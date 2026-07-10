@@ -24,6 +24,7 @@ export const cases: Case[] = [
   {
     id: "PRE-2026-0118",
     patient_id: "P0009",
+    hospital_id: ACTION,
     registration_id: "PRE-2026-0118",
     scheme: "PMJAY", payer: "NHA / SHA Delhi",
     procedure_code: "SG075B", procedure_name: "Modified radical mastectomy",
@@ -38,6 +39,7 @@ export const cases: Case[] = [
   {
     id: "ADM-2026-0204",
     patient_id: "P0010",
+    hospital_id: ACTION,
     registration_id: "REG-2026-9701",
     scheme: "PMJAY", payer: "NHA / SHA Delhi",
     procedure_code: "MO001F", procedure_name: "Trastuzumab cycle 3",
@@ -53,6 +55,7 @@ export const cases: Case[] = [
   {
     id: "2026061510020413",
     patient_id: "P0001",
+    hospital_id: ACTION,
     registration_id: "REG-2026-9598",
     scheme: "PMJAY", payer: "NHA / SHA Delhi",
     procedure_code: "MO001F", procedure_name: "Trastuzumab cycle 4",
@@ -68,6 +71,7 @@ export const cases: Case[] = [
   {
     id: "2026051410041450",
     patient_id: "P0008",
+    hospital_id: ACTION,
     registration_id: "REG-2026-8810",
     scheme: "Railway_UMID", payer: "Railway UMID",
     procedure_code: "SC068B", procedure_name: "Chemotherapy administration",
@@ -83,6 +87,7 @@ export const cases: Case[] = [
   {
     id: "2026051810066828",
     patient_id: "P0003",
+    hospital_id: ACTION,
     registration_id: "REG-2026-9088",
     scheme: "CGHS", payer: "CGHS Central",
     procedure_code: "SC061A", procedure_name: "CABG + valve repair",
@@ -97,6 +102,7 @@ export const cases: Case[] = [
   {
     id: "2026051610039147",
     patient_id: "P0007",
+    hospital_id: ACTION,
     registration_id: "REG-2026-8901",
     scheme: "PMJAY", payer: "NHA / SHA Delhi",
     procedure_code: "SC068B", procedure_name: "Chemotherapy administration",

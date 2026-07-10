@@ -149,7 +149,6 @@ export const PRE_APPROVAL_SLA_BY_VARIANT: Partial<Record<SchemeVariant, number>>
 export const QUERY_RESPONSE_DAYS: Partial<Record<Scheme, number | "physical">> = {
   CGHS:     15,
   CAPF:     15,
-  SHA:      15 as any,  // legacy — kept for compat
   Ayushman: 15,
   ECHS:     30,
   FCI:      "physical",

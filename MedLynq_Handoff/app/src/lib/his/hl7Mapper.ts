@@ -48,7 +48,7 @@ function normalizeScheme(raw: string | undefined): Scheme {
   if (u.includes("ECHS")) return "ECHS";
   if (u.includes("CAPF")) return "CAPF";
   if (u.includes("ESI"))  return "ESI";
-  if (u.includes("RAIL") || u.includes("UMID")) return "Railway";
+  if (u.includes("RAIL") || u.includes("UMID")) return "Railway_UMID";
   if (u.includes("NDMC")) return "NDMC";
   if (u.includes("FCI"))  return "FCI";
   return "PMJAY";

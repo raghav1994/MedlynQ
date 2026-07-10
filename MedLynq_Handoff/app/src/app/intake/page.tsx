@@ -11,7 +11,7 @@
 // useState — so navigating to Patient List and back via the sidebar doesn't
 // wipe an in-progress detection/commit. Only a hard reload resets it.
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import SinglePatientUpload from "@/components/SinglePatientUpload";
@@ -21,7 +21,17 @@ import {
   type CommitStatus, type CommittedGroup,
 } from "@/lib/intakeStore";
 
+// useSearchParams() opts this page out of static generation unless wrapped
+// in Suspense — Next.js App Router requirement.
 export default function IntakePage() {
+  return (
+    <Suspense fallback={null}>
+      <IntakePageInner />
+    </Suspense>
+  );
+}
+
+function IntakePageInner() {
   const searchParams = useSearchParams();
   const deepLinkMrn = searchParams.get("mrn");
   const deepLinkPatientId = searchParams.get("patient_id");

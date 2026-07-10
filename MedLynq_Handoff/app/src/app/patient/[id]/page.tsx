@@ -126,7 +126,6 @@ export default async function PatientDetailPage({
           <PatientIdentity p={p} hospital={tenant.name} />
           <ClinicalVitals admission_date={activeCase.admission_date} vitals={vitals} />
           <ActionButtons />
-          {/* @ts-expect-error Async Server Component */}
           <IfFeature flag="whatsapp"><WhatsAppShare
             caseCode={activeCase.registration_id}
             kind={
@@ -152,7 +151,6 @@ export default async function PatientDetailPage({
             <DoctorsPlanCard plan={doctorsPlan} schemeForCheck={activeCase.scheme} billTotal={activeCase.claimed_amount} />
           )}
           {caseSyn && <CaseSynopsis synopsis={caseSyn} />}
-          {/* @ts-expect-error Async Server Component */}
           <IfFeature flag="nhcx_send"><NHCXBridge c={activeCase} /></IfFeature>
           <Tabs c={activeCase} docs={docs} checklist={checklist} mrn={p.mrn} />
         </main>
