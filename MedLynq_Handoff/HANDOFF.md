@@ -166,28 +166,60 @@ The same Docker image works for every tenant — only the env vars differ per de
 
 - [x] Provision Azure Database for PostgreSQL (Flexible Server) per tenant — `medlynq-pg`, done 2026-07-10, see §4
 - [x] Run `db/schema_v2.sql` against each tenant's database — applied to `hosp_blr_49` and `hosp_del_77`
-- [ ] Build the Docker image (`docker build -t medlynq app/`) — one image, reused across all tenants
-- [ ] Deploy to Azure Container Apps (or App Service, if it supports the container well — Container Apps is the more natural fit for "spawn a subprocess pool" workloads), one instance per tenant
-- [ ] Set env vars per instance per the checklist in section 5, plus `MEDLYNQ_TENANT_ID`
-- [ ] Size the instance's memory for `MEDLYNQ_WORKER_POOL_SIZE` × ~1.5GB per OCR worker, plus Node's own footprint
-- [ ] Point each tenant's subdomain/custom domain at its container
-- [ ] Confirm `IRON_SESSION_SECRET` is unique per environment (don't reuse the dev one)
-- [ ] Get a real `SARVAM_API_KEY` for production volume (dev key may be rate-limited/low-quota)
+- [x] Build the Docker image — via GitHub Actions to ACR (`app-image.yml`), not locally, since no local Docker/ACR Tasks. Several real build bugs found and fixed along the way, see §7a.
+- [x] Deploy to Azure App Service (Container) — `medlynq-app` for `HOSP-BLR-49`, done 2026-07-11. `HOSP-DEL-77` still needs its own instance — see §7a.
+- [x] Set env vars per instance per the checklist in section 5, plus `MEDLYNQ_TENANT_ID` — done for `medlynq-app`/`HOSP-BLR-49`
+- [x] Size the instance's memory for `MEDLYNQ_WORKER_POOL_SIZE` × ~1.5GB per OCR worker, plus Node's own footprint — set to 1 to fit the B2 plan's 3.5GB; raise the plan tier before raising this
+- [ ] Point each tenant's subdomain/custom domain at its container — `medlynq-app.azurewebsites.net` is being used directly for now, no custom domain/subdomain-per-tenant routing set up
+- [x] Confirm `IRON_SESSION_SECRET` is unique per environment — freshly generated for `medlynq-app`, not the shared dev one
+- [ ] Get a real `SARVAM_API_KEY` for production volume — still using the dev key carried over from `.env.local`, may be rate-limited/low-quota
 
 ---
 
-## 7a. Current live Azure resources (as of 2026-07-10 — read before starting section 7)
+## 7a. Current live Azure resources (updated 2026-07-11)
 
-The per-tenant-container model in sections 6-7 is the target architecture for you to build.
-It is **not deployed yet**. What's *already* live on Azure today is an earlier, single-tenant
-iteration of this app (Azure Blob storage instead of Postgres, one shared instance instead of
-per-hospital containers) — kept running as the current demo/reference deployment:
+**Update (2026-07-11): `medlynq-app` now runs THIS app** (the one this handoff package
+describes — multi-tenant, NHCX, HL7, Postgres-backed), not the older Blob-storage build. It's a
+container deployment (not source/Oryx), locked to the `HOSP-BLR-49` tenant, pointed at the
+`hosp_blr_49` Azure Postgres database from §4. Verified end-to-end: `/api/ping` returns 200, the
+login page renders the correct tenant branding ("Action Cancer Hospital"), and a bogus-credential
+login attempt returns a clean `401 Invalid email or password` (proving the DB query path works,
+not just static assets). `HOSP-DEL-77` has no deployed instance yet — see the per-tenant
+onboarding steps in §6 to stand one up pointed at the `hosp_del_77` database.
 
 - **Resource group:** `medlynq-rg` (`centralindia`)
-- **App Service plan:** `medlynq-plan` (Linux B2)
-- **`medlynq-app`** — main Next.js app, Running — https://medlynq-app.azurewebsites.net
-  - Source + Oryx build deploy (`SCM_DO_BUILD_DURING_DEPLOYMENT=true`), auto-deploys on push to `main` via `.github/workflows/deploy.yml`
-  - App setting `OCR_SERVICE_URL` points at the `medlynq-ocr` Container App below
+- **App Service plan:** `medlynq-plan` (Linux B2 — 2 vCore/3.5GB. `MEDLYNQ_WORKER_POOL_SIZE=1`
+  to stay within that RAM budget; each OCR worker holds ~1-2GB of models resident, so raise the
+  plan tier before raising the pool size)
+- **`medlynq-app`** — Running — https://medlynq-app.azurewebsites.net
+  - Container deploy: `medlynqacr.azurecr.io/medlynq-app:v1`, built via GitHub Actions
+    (`.github/workflows/app-image.yml`) on push to `main` touching `MedLynq_Handoff/app/**`,
+    since ACR Tasks/local Docker aren't available (same reasoning as the OCR image below).
+    Bump the tag (v1 → v2 → ...) to force a clean pull after a rebuild.
+  - The OLD source/Oryx deploy workflow (`deploy.yml`) is disabled (`workflow_dispatch` only) —
+    it targeted the top-level `app/` folder, which no longer matches what's live.
+  - App settings: `DATABASE_URL` (→ `hosp_blr_49`), `MEDLYNQ_TENANT_ID=HOSP-BLR-49`,
+    `IRON_SESSION_SECRET`/`MEDLYNQ_INTERNAL_SECRET` (freshly generated, not the dev defaults),
+    `SARVAM_API_KEY`/`SARVAM_VISION_ENDPOINT`, `MEDLYNQ_WORKER_POOL_SIZE=1`,
+    `MEDLYNQ_REDACTED_RETENTION_DAYS=30`, `WEBSITES_PORT=3000`. The old Blob-storage-era
+    settings (`AZURE_STORAGE_CONNECTION_STRING`, `AZURE_CONTAINER_*`, `OCR_SERVICE_URL`,
+    Oryx build flags) were removed — this app doesn't use Azure Blob at all.
+  - **Real bugs found and fixed getting this to build** (none were deploy-config issues — all
+    were in the app source, meaning this codebase had never actually been built before):
+    Dockerfile had `--no-install-recursive` (not a real apt-get flag, should be
+    `--no-install-recommends`); `requirements.txt` pinned `scipy==1.18.0` which needs Python
+    3.12, but only 3.11 is available via apt on Debian bookworm; `next.config.mjs` tried to
+    exclude `pg` from the client bundle via `resolve.fallback`, which only no-ops Node CORE
+    modules, not real packages — needed `resolve.alias` instead; `zip-batch`/`download-batch`/
+    `thumb` routes needed the same `Buffer as unknown as BodyInit` cast already applied
+    elsewhere (newer `@types/node`); `StatusBadge` was missing 6 of 17 `ClaimStatus` colors;
+    `hl7Mapper` normalized to `"Railway"`, not the real `Scheme` value `"Railway_UMID"`;
+    `types.ts` had a dead `'SHA'` key that was never a valid `Scheme`; `mockData.ts`'s 6 seed
+    cases predated `hospital_id` becoming required; `/intake` used `useSearchParams()` without
+    the Suspense boundary Next 14's App Router requires for static generation. Also: `next
+    build`'s page-data-collection step imports every route, including ones that intentionally
+    throw at import time if secrets are missing — needed placeholder `ENV` values in the
+    Dockerfile for the build step only (real values come from App Service settings at runtime).
 - **`medlynq-rx`** — Rx prescription-decoder service, Running — https://medlynq-rx.azurewebsites.net
   - Deployed from the v1 plain-JS `medlynq-rx/` via `deploy/deploy-rx.sh` — that script expects
     a `medlynq-rx/` folder at repo root, which was **never actually committed here** (past
@@ -197,15 +229,22 @@ per-hospital containers) — kept running as the current demo/reference deployme
 - **`medlynq-ocr`** — Container App running the Python OCR/redact sidecar (FastAPI), 2cpu/4Gi, min-replicas 1
   - Image: `medlynqacr.azurecr.io/medlynq-ocr:v3`, built via GitHub Actions (`.github/workflows/ocr-image.yml`) since ACR Tasks/local Docker aren't available
   - FQDN: `medlynq-ocr.calmforest-2412fe32.centralindia.azurecontainerapps.io`
-- **Storage account:** `medlynqstorage` — containers `medlynq-redacted` (PII-burned docs) and `medlynq-extracted` (JSON manifests). Identity-document types never leave the machine (see `LOCAL_ONLY_DOC_TYPES` in `app/src/lib/azure-blob.ts` if migrated forward)
-- **GitHub repo:** `https://github.com/raghav1994/MedlynQ` (private) — pushes to `main` auto-deploy `medlynq-app`, `medlynq-rx` deploys only via manual `./deploy/deploy-rx.sh` run
+  - Not currently used by `medlynq-app` (this app's OCR pipeline runs in-container per §3, not
+    via this separate service) — kept running for `medlynq-rx`/legacy use, not wired to anything
+    in this handoff package
+- **Storage account:** `medlynqstorage` — containers `medlynq-redacted`/`medlynq-extracted`,
+  unused by this app (see §4/§3 — no Azure Blob dependency here at all)
+- **GitHub repo:** `https://github.com/raghav1994/MedlynQ` (private) — pushes to `main` touching
+  `MedLynq_Handoff/app/**` rebuild+redeploy `medlynq-app`'s image automatically; `medlynq-rx`
+  deploys only via manual `./deploy/deploy-rx.sh` run
 
 **Gotcha carried over from this deployment:** App Service serves stale code/env after any deploy or
 app-setting change until an explicit restart — always `az webapp restart --name <app> -g medlynq-rg`
 after changing anything, and re-test before assuming a deploy failed.
 
-None of the above uses the Postgres/per-tenant-container model — treat it as a running reference
-implementation to learn from, not infrastructure to build on top of for the real per-hospital rollout.
+`HOSP-DEL-77` still needs its own instance (App Service or Container App) with
+`MEDLYNQ_TENANT_ID=HOSP-DEL-77` and `DATABASE_URL` pointed at `hosp_del_77` to be reachable —
+see §6 for the onboarding steps.
 
 ---
 
