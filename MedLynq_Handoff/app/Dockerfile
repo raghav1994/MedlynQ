@@ -37,7 +37,23 @@ COPY . .
 ENV MEDLYNQ_PYTHON=/app/.venv/bin/python
 ENV NODE_ENV=production
 
+# `next build`'s "Collecting page data" step imports every route module to
+# statically analyze it — including ones that deliberately throw at import
+# time if required secrets are missing (session.ts, db/pool.ts — "fail
+# loudly at boot" is correct behavior, just not compatible with a build that
+# has no real secrets yet). These are placeholder values to satisfy that
+# check ONLY; the real values come from the App Service's app settings at
+# container runtime, which override any ENV baked into the image.
+ENV IRON_SESSION_SECRET=build-time-placeholder-not-a-real-secret-32chars
+ENV DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder
+
 RUN npm run build
+
+# Real runtime values overwrite these at container start (Azure App Service
+# app settings, or `docker run -e`) — unset here so a misconfigured deploy
+# fails loudly instead of silently running against the placeholder.
+ENV IRON_SESSION_SECRET=
+ENV DATABASE_URL=
 
 EXPOSE 3000
 CMD ["npm", "run", "start"]
