@@ -1,9 +1,11 @@
-name: Deploy MedLynQ to Azure
+name: Deploy MedLynQ to Azure (LEGACY, disabled)
 
-# Deploys the app SOURCE and lets Azure Oryx run `npm install && npm run build`
-# on the server. This keeps wwwroot WRITABLE (the app writes compressed docs,
-# mobile-pairing state, and PatientLog at runtime), which the standalone +
-# run-from-package method does not allow.
+# Deployed the OLDER top-level app/ SOURCE via Azure Oryx build. As of
+# 2026-07-10, medlynq-app was switched to a container deployment running the
+# newer MedLynq_Handoff/app instead (see app-image.yml) — this workflow's
+# target no longer matches what's live, so its push trigger has been
+# disabled to stop it clobbering the container config on every push to main.
+# Kept as workflow_dispatch-only in case top-level app/ is ever needed again.
 #
 # Requires these App Service settings (set via Azure CLI / Portal):
 #   SCM_DO_BUILD_DURING_DEPLOYMENT=true
@@ -12,11 +14,6 @@ name: Deploy MedLynQ to Azure
 # Startup command: npm start
 
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - 'app/python/**'
-      - '.github/workflows/ocr-image.yml'
   workflow_dispatch:
 
 concurrency:
