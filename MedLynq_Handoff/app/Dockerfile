@@ -14,7 +14,7 @@
 FROM node:20-bookworm AS base
 
 # ---- system deps for the Python ML stack (opencv, paddle) ----
-RUN apt-get update && apt-get install -y --no-install-recursive \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     python3.11 python3.11-venv python3-pip \
     libgl1 libglib2.0-0 libsm6 libxext6 libxrender1 \
     && rm -rf /var/lib/apt/lists/*
