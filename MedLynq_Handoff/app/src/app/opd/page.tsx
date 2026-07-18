@@ -377,12 +377,17 @@ function OPDRegistrationContent() {
                 {saveError && (
                   <div className="text-xs text-bad bg-bad-soft border border-bad/40 rounded px-3 py-2">{saveError}</div>
                 )}
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <button onClick={() => setPhase("register")} className="text-xs px-3 py-1.5 border border-bone-300 rounded hover:bg-bone-200">← Back</button>
-                  <button onClick={save} disabled={!hasHis || saving}
-                    className="text-xs font-semibold px-4 py-2 bg-accent text-white rounded hover:opacity-90 disabled:opacity-40">
-                    {saving ? "Creating…" : "✓ Create case"}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    {!hasHis && (
+                      <span className="text-[10px] text-warn font-semibold">↑ Answer the HIS question above first</span>
+                    )}
+                    <button onClick={save} disabled={!hasHis || saving}
+                      className="text-xs font-semibold px-4 py-2 bg-accent text-white rounded hover:opacity-90 disabled:opacity-40">
+                      {saving ? "Creating…" : "✓ Create case"}
+                    </button>
+                  </div>
                 </div>
               </div>
             ) : (
