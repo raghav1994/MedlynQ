@@ -11,13 +11,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readFile, writeFile, mkdir } from "fs/promises";
 import path from "path";
-import { cases, patients } from "@/lib/mockData";
+import { scopedCase, scopedPatient } from "@/lib/dataScope";
+import { loadTenantByHospitalId } from "@/lib/tenant/loader";
 import { buildFhirBundle, signBundle } from "@/lib/fhirBundle";
 import { deriveTransition, applyTransition } from "@/lib/nhcxStateMachine";
+import { queriesForCase, appendQueryRound, type QueryRound } from "@/lib/mockQueries";
 import { requireRole } from "@/lib/auth/guards";
 import { rateLimit } from "@/lib/auth/rateLimit";
 import { patchCase } from "@/lib/db/patientsCases";
 import { appendEvent } from "@/lib/eventLog";
+import { resolveApiSetting } from "@/lib/apiSettings";
 import { z } from "zod";
 
 const SendBodySchema = z.object({
@@ -44,7 +47,7 @@ async function persistCaseOverride(caseId: string, patch: any) {
   } catch { /* never break the response on persist failure */ }
 }
 
-const NHCX_ENDPOINT = process.env.NHCX_ENDPOINT
+const NHCX_ENDPOINT_ENV_DEFAULT = process.env.NHCX_ENDPOINT
   || "http://localhost:3000/api/nhcx/mock";   // local mock by default
 
 async function appendAudit(event: Record<string, any>) {
@@ -74,15 +77,21 @@ export async function POST(req: NextRequest) {
       );
     }
     const case_id = parsed.data.case_id;
+    const NHCX_ENDPOINT = await resolveApiSetting("nhcx_endpoint", NHCX_ENDPOINT_ENV_DEFAULT);
+    const internalSecret = await resolveApiSetting("nhcx_internal_secret", process.env.MEDLYNQ_INTERNAL_SECRET ?? "");
 
-    const c = cases.find((x) => x.id === case_id);
+    // scopedCase/scopedPatient — not a raw array lookup — so a MEDCO from
+    // one hospital can never submit (or even load) another hospital's case,
+    // regardless of how they got the case_id.
+    const c = await scopedCase(case_id);
     if (!c) {
       return NextResponse.json({ ok: false, error: "case not found" }, { status: 404 });
     }
-    const p = patients.find((x) => x.id === c.patient_id);
+    const p = await scopedPatient(c.patient_id);
     if (!p) {
       return NextResponse.json({ ok: false, error: "patient not found" }, { status: 404 });
     }
+    const tenant = await loadTenantByHospitalId(c.hospital_id);
 
     // Load extracted doc synopses for SupportingInfo
     let doc_synopses: any[] = [];
@@ -111,8 +120,10 @@ export async function POST(req: NextRequest) {
     const bundle = await buildFhirBundle({
       caseRecord: c,
       patient: p,
-      hospital: { id: "HOSP-BLR-49", name: "Action Cancer Hospital", npi: "PR123456" },
-      treating_doctor: "Dr. J B Sharma",
+      // Tenant-resolved — previously hardcoded to Action Cancer Hospital
+      // regardless of which hospital the case actually belonged to, which
+      // meant every Fortis/City General claim submission went out mislabeled.
+      hospital: { id: c.hospital_id, name: tenant?.name ?? c.hospital_id, npi: tenant?.npi },
       doc_synopses,
     });
     const audit_hash = await signBundle(bundle);
@@ -134,7 +145,7 @@ export async function POST(req: NextRequest) {
         headers: {
           "Content-Type": "application/fhir+json",
           "X-MedLynq-Audit-Hash": audit_hash,
-          ...(isLocalMock ? { "X-Internal-Secret": process.env.MEDLYNQ_INTERNAL_SECRET ?? "" } : {}),
+          ...(isLocalMock ? { "X-Internal-Secret": internalSecret } : {}),
         },
         body: JSON.stringify(bundle),
       });
@@ -206,6 +217,38 @@ export async function POST(req: NextRequest) {
             amount: c.claimed_amount,
             text: `Claim ${c.registration_id ?? c.id} rejected by ${c.payer}`,
             tone: "bad",
+          });
+        } else if (patched.status === "query") {
+          // Previously this only incremented open_queries on the Case — the
+          // payer's actual query text never reached the Query Board, so a
+          // real NHCX rejection was invisible to the staff who'd act on it.
+          const notes: string[] = (nhcx_response?.note ?? []).map((n: any) => n.text).filter(Boolean);
+          const noteJoined = notes.join(" | ") || "Additional information required by payer.";
+          const existingRounds = queriesForCase(c.id);
+          const round: QueryRound = {
+            id: `q_nhcx_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+            case_id: c.id,
+            round: existingRounds.length + 1,
+            raw_text: noteJoined,
+            raised_by: `${c.payer ?? c.scheme} · NHCX`,
+            raised_on: new Date(sent_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }),
+            query_type: "missing_doc",
+            amount_at_stake: c.claimed_amount,
+            status: "open",
+            deadline_days_total: 15,
+            days_since_raised: 0,
+          };
+          appendQueryRound(c.id, round);
+          appendEvent({
+            kind: "query_raised",
+            actor_id: guard.session.user.id,
+            actor_name: guard.session.user.name,
+            hospital_id: guard.session.user.hospital_id,
+            case_id: c.id,
+            patient_id: c.patient_id,
+            amount: c.claimed_amount,
+            text: `${c.payer ?? c.scheme} raised a query on ${c.registration_id ?? c.id} · ₹${c.claimed_amount.toLocaleString("en-IN")} at stake`,
+            tone: "warn",
           });
         }
       }

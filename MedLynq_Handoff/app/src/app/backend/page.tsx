@@ -3,6 +3,7 @@
 import { useState } from "react";
 import AppShell from "@/components/AppShell";
 import type { Scheme } from "@/lib/types";
+import { useRoleGate } from "@/lib/useRoleGate";
 
 // ===== Local Aadhaar format check =====
 function aadhaarValid(a: string): { ok: boolean; label: string; detail: string } | null {
@@ -37,6 +38,7 @@ type PackageCheckResp = {
 };
 
 export default function BackendPanelPage() {
+  useRoleGate(["ADMIN"], "/patients");
   const [mode, setMode] = useState<"new_arrival" | "post_doctor">("new_arrival");
 
   // Step 1 — Aadhaar

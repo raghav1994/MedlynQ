@@ -3,17 +3,33 @@ memory for the life of the process, instead of every file paying the cold
 model-load cost (several seconds) that a fresh `python land_document.py`
 subprocess incurs each time.
 
-Protocol: newline-delimited JSON over stdin/stdout. Node spawns this ONE
-process and keeps it alive (see src/lib/pythonWorker.ts) instead of
-spawning-and-killing a new Python process per file.
+Protocol: newline-delimited JSON over stdin/stdout. Node spawns a POOL of
+these (see src/lib/pythonWorker.ts) instead of spawning-and-killing a new
+Python process per file.
 
-Request  (one line):  {"_id": "17", "path": "...", "doc_type_hint": "..."}
-Response (one line):  {"_id": "17", ...land_file() result...}
+Request  (one line):  {"_id": "17", "cmd": "land", "path": "...", "doc_type_hint": "..."}
+Response (one line):  {"_id": "17", ...cmd-specific result...}
 
-Requests are processed one at a time, in the order received — PaddleOCR
-itself isn't safe to call concurrently from multiple threads in one
-process, and the actual win here is skipping the reload, not parallelism
-(Node can still have several requests in flight; they just queue here).
+cmd defaults to "land" (backward compatible with the original single-command
+protocol). Four commands exist:
+  land           - full land_file() pipeline, one call, one file. Used for
+                   most files — small/single-page ones aren't worth splitting.
+  explode        - land_file()'s front half. For a scanned multi-page PDF,
+                   stops before OCR and returns rasterized page paths instead
+                   of processing them in-process, so Node can fan them out
+                   across every worker in the pool. Everything else just
+                   runs the normal full pipeline and returns it directly
+                   (parallel: false).
+  extract_page   - OCRs ONE page image. This is the actual parallelizable
+                   unit of work — Node dispatches one of these per page,
+                   naturally load-balanced across whichever workers are free.
+  finish_parallel- reassembles the extract_page results (gathered by Node,
+                   in page order) back into one document result.
+
+Each worker still processes ONE request at a time (PaddleOCR isn't safe to
+call concurrently within a single process) — parallelism across a batch or
+across a multi-page document's pages comes from Node having several workers
+to hand jobs to, not from any one worker doing more than one thing at once.
 
 A crash mid-file prints one error response for that request and keeps the
 worker alive for the next one, so one bad file can't take down the whole
@@ -35,7 +51,42 @@ if sys.platform == "win32":
         pass
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from land_document import land_file  # noqa: E402
+from land_document import land_file, explode_for_pool, extract_page, finish_parallel  # noqa: E402
+
+
+def handle(req: dict) -> dict:
+    cmd = req.get("cmd", "land")
+
+    if cmd == "land":
+        return land_file(
+            Path(req["path"]),
+            req.get("doc_type_hint", "Unknown Document"),
+            force_doc_type=req.get("force_doc_type"),
+            hospital_id=req.get("hospital_id"),
+        )
+
+    if cmd == "explode":
+        return explode_for_pool(
+            Path(req["path"]),
+            req.get("doc_type_hint", "Unknown Document"),
+            force_doc_type=req.get("force_doc_type"),
+            hospital_id=req.get("hospital_id"),
+        )
+
+    if cmd == "extract_page":
+        return extract_page(Path(req["path"]))
+
+    if cmd == "finish_parallel":
+        return finish_parallel(
+            req["page_results"],
+            req["page_paths"],
+            req["compressed_path"],
+            req.get("doc_type_hint", "Unknown Document"),
+            req.get("force_doc_type"),
+            req.get("hospital_id"),
+        )
+
+    return {"error": f"unknown cmd: {cmd}"}
 
 
 def main() -> int:
@@ -51,11 +102,7 @@ def main() -> int:
         try:
             req = json.loads(line)
             req_id = req.get("_id")
-            result = land_file(
-                Path(req["path"]),
-                req.get("doc_type_hint", "Unknown Document"),
-                force_doc_type=req.get("force_doc_type"),
-            )
+            result = handle(req)
         except Exception as e:
             result = {"error": str(e)}
         result["_id"] = req_id

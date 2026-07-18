@@ -191,6 +191,14 @@ def extract_image(path: Path) -> tuple[str, str, bool, dict]:
             burn_info["has_geotag_stamp"] = r.get("has_geotag_stamp", False)
             burn_info["text_ocr_skipped"] = r.get("text_ocr_skipped", False)
             burn_info["detected_angle"] = r.get("detected_angle", 0)
+            # Not persisted to meta_path/disk — only needed transiently below
+            # to cross-check Sarvam's result on THIS call. A cache-hit on a
+            # later re-drop of the same file skips redact() entirely (see the
+            # `if redacted_path.exists()` branch above), so this is simply
+            # unavailable then — the quality gate degrades to "trust Sarvam"
+            # in that case rather than failing, which is fine since the
+            # cached Sarvam text already passed (or was accepted) once.
+            burn_info["local_ocr_text"] = r.get("local_ocr_text", "")
             try:
                 meta_path.write_text(json.dumps({
                     "burned_count": burn_info["burned_count"],
@@ -256,6 +264,36 @@ def extract_image(path: Path) -> tuple[str, str, bool, dict]:
         # result alone, not just by re-running extract() by hand.
         return "", f"sarvam_failed:{result['error'][:200]}", False, burn_info
     text = (result or {}).get("text", "") or ""
+
+    # Quality gate: Sarvam can return a non-empty but GARBLED response (short,
+    # symbol-heavy, or unrelated to the page) — the empty-text retry in
+    # sarvam_vision.py doesn't catch this. Cross-check against RapidOCR's own
+    # reading of the same page (already computed above for redaction, free).
+    local_ocr_text = burn_info.get("local_ocr_text", "")
+    rubbish = False
+    try:
+        from ocr_quality import looks_rubbish  # type: ignore
+        rubbish = looks_rubbish(text, local_ocr_text)
+    except Exception:
+        pass  # quality module unavailable — fall through, trust Sarvam as before
+
+    if rubbish:
+        # One retry — Sarvam quality issues are often transient (a job that
+        # "completed" but the page was misread that one time).
+        retry_result = sarvam_extract(str(redacted_path), "unknown")
+        retry_text = (retry_result or {}).get("text", "") or "" if not (retry_result or {}).get("error") else ""
+        if not looks_rubbish(retry_text, local_ocr_text):
+            text = retry_text
+        elif local_ocr_text:
+            # Still bad after retry — fall back to RapidOCR's own reading
+            # rather than keep Sarvam's rubbish. Method string makes this
+            # visible in the audit log; land_document.py caps confidence for
+            # this method so the document shows LOW CONFIDENCE in the UI
+            # instead of silently looking fine.
+            text = local_ocr_text
+            if text:
+                return text, "rapid_fallback_sarvam_rubbish", False, burn_info
+
     if text:
         try:
             text_cache_dir.mkdir(parents=True, exist_ok=True)

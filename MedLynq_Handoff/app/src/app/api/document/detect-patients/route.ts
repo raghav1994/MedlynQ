@@ -58,8 +58,8 @@ async function runExtractor(filePath: string): Promise<any> {
 // so the commit-time /land call for this exact file is free). Runs through
 // the persistent worker (pythonWorker.ts) so PaddleOCR's model stays loaded
 // across every file in the batch instead of reloading it each time.
-async function runLander(filePath: string, docTypeHint: string): Promise<any> {
-  return landViaWorker(filePath, docTypeHint);
+async function runLander(filePath: string, docTypeHint: string, hospitalId?: string): Promise<any> {
+  return landViaWorker(filePath, docTypeHint, undefined, hospitalId);
 }
 
 // Visual-only doc types — MEDCO verifies these by eye. Never sent to Sarvam,
@@ -202,7 +202,7 @@ function groupByIdentity(files: FileInfo[]): {
 // cold-loaded its own PaddleOCR model and higher concurrency risked crashes.
 const CONCURRENCY = Number(process.env.MEDLYNQ_WORKER_POOL_SIZE) || 3;
 
-async function processFile(file: File): Promise<FileInfo> {
+async function processFile(file: File, hospitalId?: string): Promise<FileInfo> {
   const ext = path.extname(file.name).toLowerCase();
   if (!ALLOWED_EXT.has(ext)) {
     return { filename: file.name, doc_type: "Unsupported", hints: {}, needs_ocr: false, ext };
@@ -237,7 +237,7 @@ async function processFile(file: File): Promise<FileInfo> {
   // Sarvam pre-pass — redact locally, then OCR, then cache (SP1). This is
   // the ONLY place the pre-pass spends money; the commit-time /land call
   // for this same file hits the cache and costs nothing.
-  let landed = await runLander(tmp, doc_type);
+  let landed = await runLander(tmp, doc_type, hospitalId);
   if (landed.compressed_path) unlink(landed.compressed_path).catch(() => {});
   // A crashed/killed subprocess (e.g. several PaddleOCR loads exhausting
   // memory under concurrent load) shows up as a JSON-parse failure, not a
@@ -245,7 +245,7 @@ async function processFile(file: File): Promise<FileInfo> {
   // same file standalone (no concurrent load) always succeeds, confirming
   // this is transient contention, not a problem with the file itself.
   for (let attempt = 0; attempt < 2 && landed.error && !landed.identity; attempt++) {
-    const retry = await runLander(tmp, doc_type);
+    const retry = await runLander(tmp, doc_type, hospitalId);
     if (retry.compressed_path) unlink(retry.compressed_path).catch(() => {});
     if (!retry.error) { landed = retry; break; }
     landed = retry;
@@ -289,7 +289,8 @@ async function processFile(file: File): Promise<FileInfo> {
 async function runPool(
   files: File[],
   limit: number,
-  onDone: (done: number, total: number, filename: string) => void
+  onDone: (done: number, total: number, filename: string) => void,
+  hospitalId?: string
 ): Promise<FileInfo[]> {
   const results: FileInfo[] = new Array(files.length);
   let nextIndex = 0;
@@ -299,7 +300,7 @@ async function runPool(
     while (true) {
       const i = nextIndex++;
       if (i >= files.length) return;
-      results[i] = await processFile(files[i]);
+      results[i] = await processFile(files[i], hospitalId);
       doneCount++;
       onDone(doneCount, files.length, files[i].name);
     }
@@ -340,7 +341,7 @@ export async function POST(req: NextRequest) {
       try {
         const results = await runPool(filesRaw, CONCURRENCY, (done, total) => {
           enqueue({ type: "progress", done, total });
-        });
+        }, guard.session.user.hospital_id);
 
         const { groups, unassigned } = groupByIdentity(results);
         enqueue({

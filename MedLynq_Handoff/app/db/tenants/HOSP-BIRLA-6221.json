@@ -1,0 +1,417 @@
+{
+  "hospital_id": "HOSP-BIRLA-6221",
+  "name": "Birla",
+  "short_name": "Birla",
+  "subdomain": "birla",
+  "logo_initial": "B",
+  "primary_color": "#1a1a1a",
+  "accent_color": "#1ec247",
+  "state": "Delhi",
+  "city": "dfjsds;",
+  "district": "East Delhi",
+  "vocabulary": {},
+  "features": {
+    "whatsapp": true,
+    "nhcx_send": true
+  },
+  "schemes_enabled": [
+    "ECHS",
+    "CGHS",
+    "Ayushman",
+    "PMJAY",
+    "TPA"
+  ],
+  "specialties_enabled": [
+    "cardiac"
+  ],
+  "document_profiles": [
+    {
+      "doc_type": "patient_id",
+      "label": "Patient ID",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "schemes": [
+        "ECHS"
+      ],
+      "anchors": [
+        "Aadhaar",
+        "Patient ID",
+        "Aadhar",
+        "Aadhaar Card"
+      ]
+    },
+    {
+      "doc_type": "voter_id",
+      "label": "Voter ID",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "schemes": [
+        "ECHS"
+      ],
+      "anchors": [
+        "Voter ID"
+      ]
+    },
+    {
+      "doc_type": "cbc_lft_kft_profile",
+      "label": "CBC / LFT / KFT Profile",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "schemes": [
+        "ECHS"
+      ],
+      "anchors": [
+        "CBC / LFT / KFT Profile",
+        "CBC Report",
+        "LFT Report",
+        "KFT Report",
+        "Baseline Labs"
+      ]
+    },
+    {
+      "doc_type": "prior_imaging_ct_mri_x_ray",
+      "label": "Prior Imaging (CT/MRI/X-ray)",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "schemes": [
+        "ECHS"
+      ],
+      "anchors": [
+        "Prior Imaging (CT/MRI/X-ray)",
+        "Prior Imaging"
+      ]
+    },
+    {
+      "doc_type": "discharge_summary",
+      "label": "Discharge Summary",
+      "specialty": "cardiac",
+      "stage": "discharge",
+      "schemes": [
+        "ECHS"
+      ],
+      "anchors": [
+        "Discharge Summary"
+      ]
+    },
+    {
+      "doc_type": "discharge_photo",
+      "label": "Discharge Photo",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "schemes": [
+        "ECHS"
+      ],
+      "anchors": [
+        "Discharge Photo",
+        "DSP",
+        "Dis Pic"
+      ]
+    },
+    {
+      "doc_type": "drug_pouch_wrapper_photo",
+      "label": "Drug Pouch / Wrapper Photo",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "schemes": [
+        "ECHS"
+      ],
+      "anchors": [
+        "Drug Pouch / Wrapper Photo",
+        "Drug Pouch Barcode",
+        "Pouch Photo"
+      ]
+    },
+    {
+      "doc_type": "aadhaar",
+      "label": "Aadhaar",
+      "specialty": "cardiac",
+      "stage": "opd",
+      "schemes": [
+        "ECHS",
+        "CGHS"
+      ],
+      "anchors": [
+        "Aadhaar",
+        "Patient ID",
+        "Aadhar",
+        "Aadhaar Card"
+      ]
+    },
+    {
+      "doc_type": "cghs_card",
+      "label": "CGHS Card",
+      "specialty": "cardiac",
+      "stage": "opd",
+      "schemes": [
+        "CGHS"
+      ],
+      "anchors": [
+        "Insurance / Scheme Card",
+        "Insurance Card",
+        "Scheme Card",
+        "PMJAY Card",
+        "CGHS Card",
+        "ECHS Card",
+        "Ayushman Card"
+      ]
+    },
+    {
+      "doc_type": "x_ray_report",
+      "label": "X-Ray Report",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "schemes": [
+        "CGHS"
+      ],
+      "anchors": [
+        "X-Ray Report"
+      ]
+    },
+    {
+      "doc_type": "urine_routine_report",
+      "label": "Urine Routine Report",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "schemes": [
+        "CGHS"
+      ],
+      "anchors": [
+        "Urine Routine Report"
+      ]
+    }
+  ],
+  "tagline": "Cool Hospital",
+  "npi": "",
+  "document_library": [
+    {
+      "doc_type": "fever_chart",
+      "label": "fever",
+      "anchors": [
+        "spike"
+      ]
+    },
+    {
+      "doc_type": "stomach_pain",
+      "label": "stomach",
+      "anchors": [
+        "edrgz"
+      ]
+    },
+    {
+      "doc_type": "ct_scan_report",
+      "label": "CT Scan Report",
+      "anchors": [
+        "CT Scan Report"
+      ]
+    },
+    {
+      "doc_type": "aadhaar",
+      "label": "Aadhaar",
+      "anchors": [
+        "Aadhaar",
+        "Patient ID",
+        "Aadhar",
+        "Aadhaar Card"
+      ]
+    },
+    {
+      "doc_type": "registration_copy",
+      "label": "Registration Copy",
+      "anchors": [
+        "Registration Copy"
+      ]
+    },
+    {
+      "doc_type": "insurance_scheme_card",
+      "label": "Insurance / Scheme Card",
+      "anchors": [
+        "Insurance / Scheme Card",
+        "Insurance Card",
+        "Scheme Card",
+        "PMJAY Card",
+        "CGHS Card",
+        "ECHS Card",
+        "Ayushman Card"
+      ]
+    },
+    {
+      "doc_type": "patient_id",
+      "label": "Patient ID",
+      "anchors": [
+        "Aadhaar",
+        "Patient ID",
+        "Aadhar",
+        "Aadhaar Card"
+      ]
+    },
+    {
+      "doc_type": "voter_id",
+      "label": "Voter ID",
+      "anchors": [
+        "Voter ID"
+      ]
+    },
+    {
+      "doc_type": "cbc_lft_kft_profile",
+      "label": "CBC / LFT / KFT Profile",
+      "anchors": [
+        "CBC / LFT / KFT Profile",
+        "CBC Report",
+        "LFT Report",
+        "KFT Report",
+        "Baseline Labs"
+      ]
+    },
+    {
+      "doc_type": "prior_imaging_ct_mri_x_ray",
+      "label": "Prior Imaging (CT/MRI/X-ray)",
+      "anchors": [
+        "Prior Imaging (CT/MRI/X-ray)",
+        "Prior Imaging"
+      ]
+    },
+    {
+      "doc_type": "discharge_summary",
+      "label": "Discharge Summary",
+      "anchors": [
+        "Discharge Summary"
+      ]
+    },
+    {
+      "doc_type": "discharge_photo",
+      "label": "Discharge Photo",
+      "anchors": [
+        "Discharge Photo",
+        "DSP",
+        "Dis Pic"
+      ]
+    },
+    {
+      "doc_type": "drug_pouch_wrapper_photo",
+      "label": "Drug Pouch / Wrapper Photo",
+      "anchors": [
+        "Drug Pouch / Wrapper Photo",
+        "Drug Pouch Barcode",
+        "Pouch Photo"
+      ]
+    },
+    {
+      "doc_type": "cghs_card",
+      "label": "CGHS Card",
+      "anchors": [
+        "Insurance / Scheme Card",
+        "Insurance Card",
+        "Scheme Card",
+        "PMJAY Card",
+        "CGHS Card",
+        "ECHS Card",
+        "Ayushman Card"
+      ]
+    },
+    {
+      "doc_type": "x_ray_report",
+      "label": "X-Ray Report",
+      "anchors": [
+        "X-Ray Report"
+      ]
+    },
+    {
+      "doc_type": "urine_routine_report",
+      "label": "Urine Routine Report",
+      "anchors": [
+        "Urine Routine Report"
+      ]
+    }
+  ],
+  "document_requirements": [
+    {
+      "doc_type": "patient_id",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "schemes": [
+        "ECHS"
+      ]
+    },
+    {
+      "doc_type": "voter_id",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "schemes": [
+        "ECHS"
+      ]
+    },
+    {
+      "doc_type": "cbc_lft_kft_profile",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "schemes": [
+        "ECHS"
+      ]
+    },
+    {
+      "doc_type": "prior_imaging_ct_mri_x_ray",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "schemes": [
+        "ECHS"
+      ]
+    },
+    {
+      "doc_type": "discharge_summary",
+      "specialty": "cardiac",
+      "stage": "discharge",
+      "schemes": [
+        "ECHS"
+      ]
+    },
+    {
+      "doc_type": "discharge_photo",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "schemes": [
+        "ECHS"
+      ]
+    },
+    {
+      "doc_type": "drug_pouch_wrapper_photo",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "schemes": [
+        "ECHS"
+      ]
+    },
+    {
+      "doc_type": "aadhaar",
+      "specialty": "cardiac",
+      "stage": "opd",
+      "schemes": [
+        "ECHS",
+        "CGHS"
+      ]
+    },
+    {
+      "doc_type": "cghs_card",
+      "specialty": "cardiac",
+      "stage": "opd",
+      "schemes": [
+        "CGHS"
+      ]
+    },
+    {
+      "doc_type": "x_ray_report",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "schemes": [
+        "CGHS"
+      ]
+    },
+    {
+      "doc_type": "urine_routine_report",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "schemes": [
+        "CGHS"
+      ]
+    }
+  ]
+}

@@ -2,17 +2,20 @@ import AppShell from "@/components/AppShell";
 import SpecialtyFilter from "@/components/SpecialtyFilter";
 import { patientName, folderKey } from "@/lib/mockData";
 import { scopedData } from "@/lib/dataScope";
+import { getPendingPatientIds } from "@/lib/documentRequests";
 
 export const dynamic = "force-dynamic";
 
 export default async function PatientListPage() {
-  const { cases } = await scopedData();
+  const { cases, hospital_id } = await scopedData();
+  const pendingPatientIds = await getPendingPatientIds(hospital_id);
   // Pre-resolve patient name + folder key per case so the client component
   // never depends on server-only mock state (avoids hydration mismatch).
   const resolved = cases.map((c) => ({
     ...c,
     _patient_name: patientName(c.patient_id),
     _folder_key: folderKey(c.patient_id),
+    _has_pending_request: pendingPatientIds.has(c.patient_id),
   }));
   return (
     <AppShell>

@@ -21,11 +21,11 @@ const stageLabel: Record<string, { label: string; tone: string }> = {
   claim:     { label: "Claim",     tone: "bg-bone-200 text-ink-200" },
 };
 
+// Only the query_type values actually produced anywhere (QueryBoard's
+// matcher, the NHCX-auto-created round, and the seeded fixtures) — trimmed
+// from a longer list that included types nothing ever set.
 const typeLabel: Record<string, string> = {
   missing_doc: "Missing document",
-  code_mismatch: "Code mismatch",
-  clinical_elab: "Clinical elaboration",
-  date_inconsist: "Date inconsistency",
   post_op_hpe: "Post-op HPE request",
 };
 
@@ -33,10 +33,14 @@ export default function QueryTimeline({
   rounds,
   onResolve,
   resolvingId,
+  onDownload,
+  downloading,
 }: {
   rounds: QueryRound[];
   onResolve?: (roundId: string) => void;
   resolvingId?: string | null;
+  onDownload?: (filenames: string[], zipName: string) => void;
+  downloading?: boolean;
 }) {
   if (rounds.length === 0) {
     return <div className="text-sm text-ink-300 italic">No queries on this case yet.</div>;
@@ -128,6 +132,15 @@ export default function QueryTimeline({
                           📎 {f}
                         </span>
                       ))}
+                      {onDownload && (
+                        <button
+                          onClick={() => onDownload(r.response!.attached_doc_filenames, `query_round${r.round}_documents.zip`)}
+                          disabled={downloading}
+                          className="text-[11px] font-semibold px-2 py-0.5 border border-bone-300 rounded hover:bg-bone-200 disabled:opacity-40"
+                        >
+                          ↓ Download
+                        </button>
+                      )}
                     </div>
                   )}
 

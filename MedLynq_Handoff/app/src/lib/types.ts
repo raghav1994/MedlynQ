@@ -9,6 +9,7 @@ export type Scheme =
   | "ESI"
   | "Railway_UMID"
   | "NDMC"
+  | "DGHS"
   | "FCI"
   | "DU"
   | "TPA"
@@ -19,7 +20,7 @@ export type Scheme =
 // source of truth so a new scheme only needs to be added here once.
 export const ALL_SCHEMES: Scheme[] = [
   "PMJAY", "Ayushman", "CGHS", "CAPF", "ECHS", "ESI",
-  "Railway_UMID", "NDMC", "FCI", "DU", "TPA", "Cash",
+  "Railway_UMID", "NDMC", "DGHS", "FCI", "DU", "TPA", "Cash",
 ];
 
 // State / sub-variants. Ayushman has SHA_XX, DU has main vs affiliated.
@@ -59,24 +60,36 @@ export type ClaimStatus =
   | "auto_closed"            // J3: no activity for 45 days · reopenable
   | "successful";            // J3: terminal happy state — discharged + settled
 
-export type Treatment = "chemo" | "surgery" | "radiation" | "medicine";
+// "supportive" — supportive/palliative care path from the oncology flow
+// chart. Has no treatment-specific discharge documents of its own (yet):
+// it inherits every requirement that carries no for_treatments tag, which
+// is exactly the common discharge set (summary/feedback/bill/etc.).
+export type Treatment = "chemo" | "surgery" | "radiation" | "medicine" | "supportive" | "pending";
 
 // New: hospital specialty / department. Lets MedLynq go beyond oncology.
+// Adding a specialty here is now the ONLY code change needed for a new
+// department's UI label/icon — the actual document requirements and
+// classification rules live in each hospital's tenant config
+// (db/tenants/{hospital_id}.json's document_profiles), not here. See
+// checklist.ts's rulesFromDocumentProfiles() and content_classifier.py's
+// tenant_config.py for the config-driven half of this.
 export type Specialty =
   | "oncology"
   | "cardiac"
   | "ortho"
   | "dialysis"
   | "icu"
-  | "maternity";
+  | "maternity"
+  | "general_medicine";
 
-export const SPECIALTY_META: Record<Specialty, { label: string; icon: string; treatments: Treatment[] }> = {
-  oncology:  { label: "Oncology",  icon: "🎗️", treatments: ["chemo", "surgery", "radiation", "medicine"] },
-  cardiac:   { label: "Cardiac",   icon: "❤️",  treatments: ["surgery", "medicine"] },
-  ortho:     { label: "Orthopaedic", icon: "🦴", treatments: ["surgery", "medicine"] },
-  dialysis:  { label: "Dialysis",  icon: "🩺",  treatments: ["medicine"] },
-  icu:       { label: "ICU",       icon: "🏥",  treatments: ["medicine", "surgery"] },
-  maternity: { label: "Maternity", icon: "👶",  treatments: ["surgery", "medicine"] },
+export const SPECIALTY_META: Record<Specialty, { label: string; treatments: Treatment[] }> = {
+  oncology:  { label: "Oncology",  treatments: ["chemo", "surgery", "radiation", "supportive", "medicine"] },
+  cardiac:   { label: "Cardiac",   treatments: ["surgery", "medicine"] },
+  ortho:     { label: "Orthopaedic", treatments: ["surgery", "medicine"] },
+  dialysis:  { label: "Dialysis",  treatments: ["medicine"] },
+  icu:       { label: "ICU",       treatments: ["medicine", "surgery"] },
+  maternity: { label: "Maternity", treatments: ["surgery", "medicine"] },
+  general_medicine: { label: "General Medicine", treatments: ["medicine"] },
 };
 
 // Four-stage case lifecycle.
@@ -101,6 +114,7 @@ export const AUTH_MODE_BY_SCHEME: Record<Scheme, AuthMode> = {
   ESI:          "pre_auth",
   Railway_UMID: "pre_auth",
   NDMC:         "pre_auth",
+  DGHS:         "pre_auth",
   DU:           "pre_auth",         // default for DU_MAIN — variant override below
   TPA:          "pre_auth",
   Cash:         "cash",
@@ -149,13 +163,14 @@ export const PRE_APPROVAL_SLA_BY_VARIANT: Partial<Record<SchemeVariant, number>>
 export const QUERY_RESPONSE_DAYS: Partial<Record<Scheme, number | "physical">> = {
   CGHS:     15,
   CAPF:     15,
+  SHA:      15 as any,  // legacy — kept for compat
   Ayushman: 15,
   ECHS:     30,
   FCI:      "physical",
   DU:       "physical",
   NDMC:     "physical",
   TPA:      15,
-};
+} as any;
 
 // Approval letter validity once received (pre_approval flow).
 export const APPROVAL_VALIDITY_DAYS: Partial<Record<Scheme, number>> = {
@@ -174,6 +189,7 @@ export const SCHEME_META: Record<Scheme, { label: string; icon: string; type: "p
   ESI:          { label: "ESIC",              icon: "🏭", type: "public" },
   Railway_UMID: { label: "Railway UMID",      icon: "🚂", type: "public" },
   NDMC:         { label: "NDMC",              icon: "🏙️", type: "public" },
+  DGHS:         { label: "DGHS",              icon: "🏥", type: "public" },
   FCI:          { label: "FCI",               icon: "🌾", type: "public" },
   DU:           { label: "Delhi University",  icon: "🎓", type: "public" },
   TPA:          { label: "Private TPA",       icon: "💼", type: "private" },
@@ -233,6 +249,15 @@ export type Case = {
   age_days: number;
   missing_docs: number;
   open_queries: number;
+  // Manual correction applied from the pre-send NHCX review screen — takes
+  // priority over resolveIcd10(diagnosis)'s single auto-guess. A human
+  // explicitly adding/editing entries here IS the verification, so every
+  // entry is always treated as verified:true, source:"manual". A real claim
+  // can carry more than one diagnosis (primary + comorbidity), so this is a
+  // list, not a single code — when present (even as an empty array, meaning
+  // "reviewed, deliberately zero codes"), it fully replaces the single
+  // auto-resolved guess rather than merging with it.
+  icd10_codes_override?: Array<{ code: string; display: string }>;
   // === Pre-approval (Ayushman + FCI) ===
   approval_clock_started_at?: string;   // when MEDCO sent the pre-approval bundle
   approval_received_at?: string;         // when the letter landed

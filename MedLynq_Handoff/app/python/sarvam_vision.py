@@ -51,9 +51,11 @@ from dotenv import load_dotenv
 APP_ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(APP_ROOT / ".env.local")
 
-SARVAM_KEY = os.getenv("SARVAM_API_KEY", "")
-SARVAM_LANG = os.getenv("SARVAM_DOC_LANG", "en-IN")          # en-IN / hi-IN / etc.
-SARVAM_FORMAT = os.getenv("SARVAM_DOC_FORMAT", "md")          # md / json / txt
+import api_settings
+
+SARVAM_KEY = api_settings.get("sarvam_api_key", "SARVAM_API_KEY")
+SARVAM_LANG = api_settings.get("sarvam_doc_lang", "SARVAM_DOC_LANG", "en-IN")      # en-IN / hi-IN / etc.
+SARVAM_FORMAT = api_settings.get("sarvam_doc_format", "SARVAM_DOC_FORMAT", "md")  # md / json / txt
 
 
 def extract(file_path: str, doc_type: str | None = None, _retries: int = 1) -> dict[str, Any]:
@@ -108,13 +110,33 @@ def extract(file_path: str, doc_type: str | None = None, _retries: int = 1) -> d
             with zipfile.ZipFile(zip_path, "r") as z:
                 for name in z.namelist():
                     raw_files.append(name)
-                    # Only read text-ish files
-                    if name.endswith((".md", ".txt", ".json")):
+                    # Only .md/.txt are human-readable output. Sarvam's zip
+                    # sometimes also includes a structured layout .json
+                    # (block_id/coordinates/confidence/reading_order) — that
+                    # used to get blindly concatenated in here too, which
+                    # leaked raw internal JSON into text meant for a human
+                    # (e.g. the Query Board's OCR-paste box).
+                    if name.endswith((".md", ".txt")):
                         try:
                             with z.open(name) as f:
                                 text_chunks.append(f.read().decode("utf-8", errors="replace"))
                         except Exception:
                             pass
+                # Fallback only: if Sarvam returned no .md/.txt at all, pull
+                # just the "text" field out of each layout block (in reading
+                # order) instead of dumping the raw JSON envelope.
+                if not text_chunks:
+                    for name in z.namelist():
+                        if name.endswith(".json"):
+                            try:
+                                with z.open(name) as f:
+                                    doc = json.loads(f.read().decode("utf-8", errors="replace"))
+                                blocks = sorted(doc.get("blocks", []), key=lambda b: b.get("reading_order", 0))
+                                page_text = "\n".join(b.get("text", "") for b in blocks if b.get("text"))
+                                if page_text:
+                                    text_chunks.append(page_text)
+                            except Exception:
+                                pass
             full_text = "\n\n".join(text_chunks).strip()
             # Strip inline base64 image data (Sarvam's markdown sometimes
             # embeds a page thumbnail as ![Image](data:image/...;base64,...))

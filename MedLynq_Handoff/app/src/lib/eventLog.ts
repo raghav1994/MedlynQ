@@ -13,7 +13,7 @@ import { randomUUID } from "crypto";
 
 const EVENTS_FILE = path.resolve(process.cwd(), "db", "events.json");
 
-export type EventKind = "query_resolved" | "claim_approved" | "claim_rejected";
+export type EventKind = "query_resolved" | "claim_approved" | "claim_rejected" | "query_raised";
 
 export type AppEvent = {
   id: string;

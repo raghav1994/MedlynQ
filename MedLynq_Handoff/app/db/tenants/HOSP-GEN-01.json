@@ -1,0 +1,378 @@
+{
+  "hospital_id": "HOSP-GEN-01",
+  "name": "City General Hospital",
+  "short_name": "City General",
+  "subdomain": "citygeneral",
+  "logo_initial": "C",
+  "primary_color": "#166534",
+  "accent_color": "#16a34a",
+  "city": "Lucknow",
+  "district": "Lucknow",
+  "vocabulary": {
+    "MEDCO": "Insurance Coordinator",
+    "BIS": "Eligibility Officer",
+    "MEDCO_SHORT": "IC"
+  },
+  "features": {
+    "whatsapp": true,
+    "mobile_uploader": false,
+    "nhcx_send": true,
+    "drop_and_go": true,
+    "tumor_board": false,
+    "benchmarks": false,
+    "team_performance": false,
+    "rejection_appeals": true,
+    "auto_rename": true
+  },
+  "schemes_enabled": [
+    "PMJAY",
+    "CGHS",
+    "ESI"
+  ],
+  "specialties_enabled": [
+    "general_medicine"
+  ],
+  "document_profiles": [
+    {
+      "doc_type": "fever_chart",
+      "label": "Fever / TPR Chart",
+      "specialty": "general_medicine",
+      "stage": "mid_way",
+      "anchors": [
+        "temperature chart",
+        "TPR chart",
+        "fever spike",
+        "temp pulse respiration"
+      ],
+      "extraction_keys": [
+        "max_temp_c",
+        "days_febrile"
+      ]
+    },
+    {
+      "doc_type": "malaria_dengue_report",
+      "label": "Malaria / Dengue Test Report",
+      "specialty": "general_medicine",
+      "stage": "pre_auth",
+      "alt_group": "infection_report",
+      "anchors": [
+        "malaria smear",
+        "dengue NS1",
+        "dengue IgM",
+        "widal test",
+        "rapid diagnostic test"
+      ],
+      "extraction_keys": [
+        "test_result",
+        "test_date"
+      ]
+    },
+    {
+      "doc_type": "ipd_case_sheet",
+      "label": "IPD Case Sheet",
+      "specialty": "general_medicine",
+      "stage": "pre_auth",
+      "anchors": [
+        "admission note",
+        "chief complaints",
+        "IPD case sheet",
+        "present illness"
+      ],
+      "extraction_keys": [
+        "chief_complaint",
+        "provisional_diagnosis"
+      ]
+    },
+    {
+      "doc_type": "cbc_report",
+      "label": "CBC / Blood Count Report",
+      "specialty": "general_medicine",
+      "stage": "pre_auth",
+      "anchors": [
+        "complete blood count",
+        "platelet count",
+        "TLC",
+        "hemoglobin"
+      ],
+      "extraction_keys": [
+        "platelet_count",
+        "hemoglobin"
+      ]
+    },
+    {
+      "doc_type": "widal_test",
+      "label": "Widal Test Report",
+      "specialty": "general_medicine",
+      "stage": "pre_auth",
+      "anchors": [
+        "widal test",
+        "O antigen",
+        "H antigen",
+        "agglutination titre"
+      ]
+    },
+    {
+      "doc_type": "aadhaar",
+      "label": "Aadhaar",
+      "specialty": "general_medicine",
+      "stage": "pre_auth",
+      "anchors": [
+        "Aadhaar",
+        "Patient ID",
+        "Aadhar",
+        "Aadhaar Card"
+      ]
+    },
+    {
+      "doc_type": "insurance_scheme_card",
+      "label": "Insurance / Scheme Card",
+      "specialty": "general_medicine",
+      "stage": "pre_auth",
+      "anchors": [
+        "Insurance / Scheme Card",
+        "Insurance Card",
+        "Scheme Card",
+        "PMJAY Card",
+        "CGHS Card",
+        "ECHS Card",
+        "Ayushman Card"
+      ]
+    },
+    {
+      "doc_type": "consent_form",
+      "label": "Consent Form",
+      "specialty": "general_medicine",
+      "stage": "pre_auth",
+      "anchors": [
+        "Consent Form"
+      ]
+    },
+    {
+      "doc_type": "discharge_summary",
+      "label": "Discharge Summary",
+      "specialty": "general_medicine",
+      "stage": "discharge",
+      "anchors": [
+        "Discharge Summary",
+        "discharge note"
+      ]
+    },
+    {
+      "doc_type": "hospital_bill",
+      "label": "Hospital Bill",
+      "specialty": "general_medicine",
+      "stage": "discharge",
+      "anchors": [
+        "Hospital Bill",
+        "final bill",
+        "itemised bill",
+        "bill"
+      ]
+    },
+    {
+      "doc_type": "feedback_form",
+      "label": "Feedback Form",
+      "specialty": "general_medicine",
+      "stage": "discharge",
+      "anchors": [
+        "Feedback Form",
+        "patient feedback"
+      ]
+    }
+  ],
+  "his_webhook_secret": "citygeneral-his-demo-secret-2026",
+  "tagline": "General medicine claims, sorted.",
+  "latitude": "26.8467° N",
+  "longitude": "80.9462° E",
+  "address": "City General Hospital, Hazratganj, Lucknow",
+  "document_library": [
+    {
+      "doc_type": "fever_chart",
+      "label": "Fever / TPR Chart",
+      "anchors": [
+        "temperature chart",
+        "TPR chart",
+        "fever spike",
+        "temp pulse respiration"
+      ],
+      "extraction_keys": [
+        "max_temp_c",
+        "days_febrile"
+      ]
+    },
+    {
+      "doc_type": "malaria_dengue_report",
+      "label": "Malaria / Dengue Test Report",
+      "anchors": [
+        "malaria smear",
+        "dengue NS1",
+        "dengue IgM",
+        "widal test",
+        "rapid diagnostic test"
+      ],
+      "extraction_keys": [
+        "test_result",
+        "test_date"
+      ]
+    },
+    {
+      "doc_type": "ipd_case_sheet",
+      "label": "IPD Case Sheet",
+      "anchors": [
+        "admission note",
+        "chief complaints",
+        "IPD case sheet",
+        "present illness"
+      ],
+      "extraction_keys": [
+        "chief_complaint",
+        "provisional_diagnosis"
+      ]
+    },
+    {
+      "doc_type": "cbc_report",
+      "label": "CBC / Blood Count Report",
+      "anchors": [
+        "complete blood count",
+        "platelet count",
+        "TLC",
+        "hemoglobin"
+      ],
+      "extraction_keys": [
+        "platelet_count",
+        "hemoglobin"
+      ]
+    },
+    {
+      "doc_type": "widal_test",
+      "label": "Widal Test Report",
+      "anchors": [
+        "widal test",
+        "O antigen",
+        "H antigen",
+        "agglutination titre"
+      ]
+    },
+    {
+      "doc_type": "aadhaar",
+      "label": "Aadhaar",
+      "anchors": [
+        "Aadhaar",
+        "Patient ID",
+        "Aadhar",
+        "Aadhaar Card"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "insurance_scheme_card",
+      "label": "Insurance / Scheme Card",
+      "anchors": [
+        "Insurance / Scheme Card",
+        "Insurance Card",
+        "Scheme Card",
+        "PMJAY Card",
+        "CGHS Card",
+        "ECHS Card",
+        "Ayushman Card"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "consent_form",
+      "label": "Consent Form",
+      "anchors": [
+        "Consent Form"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "discharge_summary",
+      "label": "Discharge Summary",
+      "anchors": [
+        "Discharge Summary",
+        "discharge note"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "hospital_bill",
+      "label": "Hospital Bill",
+      "anchors": [
+        "Hospital Bill",
+        "final bill",
+        "itemised bill",
+        "bill"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "feedback_form",
+      "label": "Feedback Form",
+      "anchors": [
+        "Feedback Form",
+        "patient feedback"
+      ],
+      "catalog_linked": true
+    }
+  ],
+  "document_requirements": [
+    {
+      "doc_type": "fever_chart",
+      "specialty": "general_medicine",
+      "stage": "mid_way"
+    },
+    {
+      "doc_type": "malaria_dengue_report",
+      "specialty": "general_medicine",
+      "stage": "pre_auth",
+      "alt_group": "infection_report"
+    },
+    {
+      "doc_type": "ipd_case_sheet",
+      "specialty": "general_medicine",
+      "stage": "pre_auth"
+    },
+    {
+      "doc_type": "cbc_report",
+      "specialty": "general_medicine",
+      "stage": "pre_auth"
+    },
+    {
+      "doc_type": "widal_test",
+      "specialty": "general_medicine",
+      "stage": "pre_auth"
+    },
+    {
+      "doc_type": "aadhaar",
+      "specialty": "general_medicine",
+      "stage": "pre_auth"
+    },
+    {
+      "doc_type": "insurance_scheme_card",
+      "specialty": "general_medicine",
+      "stage": "pre_auth"
+    },
+    {
+      "doc_type": "consent_form",
+      "specialty": "general_medicine",
+      "stage": "pre_auth"
+    },
+    {
+      "doc_type": "discharge_summary",
+      "specialty": "general_medicine",
+      "stage": "discharge"
+    },
+    {
+      "doc_type": "hospital_bill",
+      "specialty": "general_medicine",
+      "stage": "discharge"
+    },
+    {
+      "doc_type": "feedback_form",
+      "specialty": "general_medicine",
+      "stage": "discharge"
+    }
+  ],
+  "state": "Uttar Pradesh"
+}

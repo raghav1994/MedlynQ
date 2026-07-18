@@ -3,6 +3,16 @@ import { cases, patients, loadDynamicData } from "@/lib/mockData";
 import path from "path";
 import fs from "fs";
 
+const DELETIONS_FILE = path.resolve(process.cwd(), "db", "document_deletions.json");
+
+function markDocumentDeleted(caseId: string, filename: string) {
+  let deletions: Record<string, true> = {};
+  try { deletions = JSON.parse(fs.readFileSync(DELETIONS_FILE, "utf8")); } catch {}
+  deletions[`${caseId}::${filename}`] = true;
+  fs.mkdirSync(path.dirname(DELETIONS_FILE), { recursive: true });
+  fs.writeFileSync(DELETIONS_FILE, JSON.stringify(deletions, null, 2));
+}
+
 export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
@@ -80,6 +90,13 @@ export async function GET(req: NextRequest) {
       status: 200,
       headers: {
         "Content-Type": contentType,
+        // Without this, some browsers (notably Chrome with "Download PDFs"
+        // enabled in chrome://settings/content/pdfDocuments) treat an
+        // ambiguous response as a download rather than opening it in the
+        // tab. inline + a real filename tells every browser this is meant
+        // to be viewed, which is what the "View" button's window.open(...,
+        // "_blank") is actually going for.
+        "Content-Disposition": `inline; filename="${filename.replace(/"/g, "")}"`,
         "Cache-Control": "public, max-age=31536000, immutable",
       },
     });
@@ -124,13 +141,21 @@ export async function DELETE(req: NextRequest) {
       console.log(`DELETED ORIGINAL: ${origPath}`);
     }
 
-    // 2. Delete extracted json manifest if it exists
-    const baseName = path.basename(filename, path.extname(filename));
-    const manifestPath = path.join(process.cwd(), "..", "PatientLog", safeMrn, "extracted", `${baseName}.json`);
+    // 2. Delete extracted json manifest if it exists — land/route.ts writes
+    // this as `${finalName}.json` (the FULL filename, extension included,
+    // e.g. "consent_scan_a.jpg.json"), not "{baseName}.json" — using the
+    // wrong path here silently orphaned every manifest on delete.
+    const manifestPath = path.join(process.cwd(), "..", "PatientLog", safeMrn, "extracted", `${filename}.json`);
     if (fs.existsSync(manifestPath)) {
       fs.unlinkSync(manifestPath);
       console.log(`DELETED MANIFEST: ${manifestPath}`);
     }
+
+    // 3. Some documents (seeded/HIS entries) have no backing file — steps 1
+    // and 2 above are then silent no-ops, and the doc would otherwise
+    // reappear on the next read since it's hardcoded in DOCUMENTS_BY_CASE.
+    // Record the deletion so docsForCase() filters it out regardless.
+    if (caseId) markDocumentDeleted(caseId, filename);
 
     return new Response(JSON.stringify({ ok: true }), {
       status: 200,

@@ -18,6 +18,12 @@ export type CaseDocument = {
   confidence?: number; // 0..1, undefined = full
   fields?: Record<string, any>; // structured fields extracted by md_parser.py, when present
   text_snippet?: string; // first ~200 chars of OCR/extracted text — lets a MEDCO tell what an Unsorted doc is without opening it
+  // Set when content_classifier.py detects a single document covers MORE
+  // than one checklist slot (e.g. a combined "CBC / LFT / KFT Profile"
+  // report contains all three panels) — lets checklist.ts's matchDocument
+  // flip every slot this one file actually proves, instead of only its
+  // primary doc_type label.
+  satisfied_labels?: string[];
 };
 
 function doc(p: Partial<CaseDocument> & Pick<CaseDocument, "case_id" | "doc_type" | "filename" | "ext" | "source">): CaseDocument {
@@ -126,6 +132,7 @@ export function loadDiskDocuments(caseId: string) {
         let uploadedAt = "23 Jun 2026";
         let fields: Record<string, any> | undefined;
         let text_snippet: string | undefined;
+        let satisfied_labels: string[] | undefined;
         // "MedCam" is reserved for the future mobile-camera app — until that
         // exists, everything landed here came from a desktop upload. Only
         // trust an explicit manifest.source if a landing route ever sets
@@ -141,6 +148,7 @@ export function loadDiskDocuments(caseId: string) {
             confidence = manifest.confidence !== undefined ? manifest.confidence : confidence;
             fields = manifest.fields && Object.keys(manifest.fields).length > 0 ? manifest.fields : undefined;
             text_snippet = manifest.text_snippet || undefined;
+            satisfied_labels = Array.isArray(manifest.satisfied_labels) && manifest.satisfied_labels.length > 0 ? manifest.satisfied_labels : undefined;
             if (manifest.source === "MedCam" || manifest.source === "HIS" || manifest.source === "Manual") {
               source = manifest.source;
             }
@@ -159,22 +167,34 @@ export function loadDiskDocuments(caseId: string) {
           DOCUMENTS_BY_CASE[caseId] = [];
         }
         
-        const exists = DOCUMENTS_BY_CASE[caseId].some(d => d.filename === file);
-        if (!exists) {
-          DOCUMENTS_BY_CASE[caseId].push({
-            id: `${caseId}_${file}`.replace(/\W+/g, "_"),
-            case_id: caseId,
-            doc_type: docType,
-            filename: file,
-            original_filename: file,
-            ext: ext.replace(".", "") as any,
-            source,
-            size_bytes: fs.statSync(path.join(originalsDir, file)).size,
-            uploaded_at: uploadedAt,
-            confidence: confidence,
-            fields,
-            text_snippet,
-          });
+        // Upsert, not add-once: a filename already in the cache still needs
+        // its doc_type/confidence/fields refreshed from the manifest every
+        // read, otherwise a manual assign (/api/document/assign) or a
+        // re-land with force_doc_type writes the correct doc_type to disk
+        // but the cached copy this function returns keeps showing the OLD
+        // value forever — the document looks "stuck" in Unsorted no matter
+        // how many times a MEDCO reassigns it, because nothing here ever
+        // re-reads the manifest for a filename it's already seen once.
+        const idx = DOCUMENTS_BY_CASE[caseId].findIndex(d => d.filename === file);
+        const record = {
+          id: `${caseId}_${file}`.replace(/\W+/g, "_"),
+          case_id: caseId,
+          doc_type: docType,
+          filename: file,
+          original_filename: file,
+          ext: ext.replace(".", "") as any,
+          source,
+          size_bytes: fs.statSync(path.join(originalsDir, file)).size,
+          uploaded_at: uploadedAt,
+          confidence: confidence,
+          fields,
+          text_snippet,
+          satisfied_labels,
+        };
+        if (idx >= 0) {
+          DOCUMENTS_BY_CASE[caseId][idx] = record;
+        } else {
+          DOCUMENTS_BY_CASE[caseId].push(record);
         }
       }
     }
@@ -183,7 +203,25 @@ export function loadDiskDocuments(caseId: string) {
   }
 }
 
+// Deleting a document only makes sense as "unlink the file on disk" for
+// documents that actually have one. The seed docs above (and any other
+// hardcoded/HIS-sourced entry) have no backing file, so DELETE /api/document
+// is a silent no-op for them and they reappear on the next read — this file
+// is what makes that delete stick. Keyed by "case_id::filename", checked
+// here on every read so a deleted seed doc stays gone across dev-server
+// restarts too (DOCUMENTS_BY_CASE is just an in-memory object).
+const DELETIONS_FILE = path.resolve(process.cwd(), "db", "document_deletions.json");
+
+function readDeletions(): Record<string, true> {
+  try { return JSON.parse(fs.readFileSync(DELETIONS_FILE, "utf8")); } catch { return {}; }
+}
+
+export function isDocumentDeleted(case_id: string, filename: string): boolean {
+  return !!readDeletions()[`${case_id}::${filename}`];
+}
+
 export function docsForCase(case_id: string): CaseDocument[] {
   loadDiskDocuments(case_id);
-  return DOCUMENTS_BY_CASE[case_id] ?? [];
+  const deletions = readDeletions();
+  return (DOCUMENTS_BY_CASE[case_id] ?? []).filter((d) => !deletions[`${case_id}::${d.filename}`]);
 }

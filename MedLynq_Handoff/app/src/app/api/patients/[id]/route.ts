@@ -1,13 +1,20 @@
-// PATCH /api/patients/[id]  { name?, age?, gender? }
+// PATCH /api/patients/[id]  { name?, mrn?, age?, gender? }
 //
 // Renames or edits patient fields. Overrides are persisted to
 // db/patient_overrides.json and re-applied by loadDynamicData() on every read,
 // so both seed patients and auto-created ones can be renamed uniformly.
 //
+// mrn is special: it's the actual on-disk document-folder key
+// (PatientLog/{mrn}/originals|extracted — every route derives the folder
+// live from patient.mrn on each read, it's never cached at creation time).
+// Changing it here also renames that folder on disk, so uploaded documents
+// stay attached to the patient instead of silently orphaning.
+//
 // Tenant-scoped: only ADMIN/MEDCO of the same hospital as the patient can edit.
 
 import { NextRequest, NextResponse } from "next/server";
-import { readFile, writeFile, mkdir } from "fs/promises";
+import { readFile, writeFile, mkdir, rename } from "fs/promises";
+import { existsSync } from "fs";
 import path from "path";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth/guards";
@@ -19,9 +26,15 @@ export const runtime = "nodejs";
 const OVERRIDE_FILE = path.resolve(process.cwd(), "db", "patient_overrides.json");
 const AUDIT_DIR  = path.resolve(process.cwd(), "..", "PatientLog", "_index");
 const AUDIT_FILE = path.join(AUDIT_DIR, "audit_log.jsonl");
+const PATIENTLOG_DIR = path.resolve(process.cwd(), "..", "PatientLog");
+
+function safeMrn(mrn: string) {
+  return mrn.replace(/[^A-Za-z0-9_-]/g, "_");
+}
 
 const PatchSchema = z.object({
   name:   z.string().trim().min(1).max(120).optional(),
+  mrn:    z.string().trim().min(1).max(60).optional(),
   age:    z.union([z.number().int().min(0).max(150), z.string()]).optional(),
   gender: z.string().max(6).optional(),
 });
@@ -69,6 +82,24 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     const g = String(parsed.data.gender).toUpperCase();
     patch.gender = g.startsWith("F") ? "F" : "M";
   }
+
+  let folderRenamed: { from: string; to: string } | null = null;
+  if (parsed.data.mrn !== undefined) {
+    const newMrn = parsed.data.mrn.trim();
+    if (newMrn !== p.mrn) {
+      const oldDir = path.join(PATIENTLOG_DIR, safeMrn(p.mrn));
+      const newDir = path.join(PATIENTLOG_DIR, safeMrn(newMrn));
+      if (existsSync(newDir)) {
+        return NextResponse.json({ ok: false, error: `MRN "${newMrn}" is already in use by another patient's document folder` }, { status: 409 });
+      }
+      if (existsSync(oldDir)) {
+        await rename(oldDir, newDir);
+        folderRenamed = { from: oldDir, to: newDir };
+      }
+      patch.mrn = newMrn;
+    }
+  }
+
   if (Object.keys(patch).length === 0) {
     return NextResponse.json({ ok: false, error: "No editable fields provided" }, { status: 400 });
   }
@@ -84,6 +115,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     hospital_id: guard.session.user.hospital_id,
     patient_id: p.id,
     patch,
+    folder_renamed: folderRenamed,
     prior: { name: p.name, age: p.age, gender: p.gender },
   });
 

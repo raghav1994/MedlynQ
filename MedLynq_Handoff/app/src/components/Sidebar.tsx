@@ -8,19 +8,21 @@ import { ALL_SCHEMES } from "@/lib/types";
 
 type NavItem = { label: string; href: string; soon?: boolean; roles?: string[] };
 
+// ADMIN/HOD logins are scoped to exactly 2 panels (Patient List + Team
+// Performance) — everything else on this list is MEDCO/CFO territory now.
 const NAV: NavItem[] = [
-  { label: "Dashboard",        href: "/",         roles: ["ADMIN", "MEDCO"] },
-  { label: "Backend Panel",    href: "/backend",  roles: ["ADMIN", "MEDCO"] },
-  { label: "OPD Registration", href: "/opd",      roles: ["ADMIN", "MEDCO"] },
+  { label: "Dashboard",        href: "/",         roles: ["MEDCO"] },
+  { label: "Backend Panel",    href: "/backend",  roles: ["MEDCO"] },
+  { label: "OPD Registration", href: "/opd",      roles: ["MEDCO"] },
   { label: "Patient List",     href: "/patients", roles: ["ADMIN", "MEDCO"] },
-  { label: "Document Intake",  href: "/intake",   roles: ["ADMIN", "MEDCO"] },
+  { label: "Document Intake",  href: "/intake",   roles: ["MEDCO"] },
+  { label: "Mobile Simulator", href: "/mobile-sim", roles: ["MEDCO"] },
   { label: "Team Performance", href: "/team",     roles: ["ADMIN"] },
-  { label: "Finance",          href: "/finance",  roles: ["ADMIN", "CFO"] },
-  { label: "Other Hospitals",  href: "/benchmarks", roles: ["ADMIN", "CFO"] },
-  { label: "Active Queries",   href: "/queries",  soon: true,  roles: ["ADMIN", "MEDCO"] },
-  { label: "Reports",          href: "/reports",  soon: true,  roles: ["ADMIN", "MEDCO"] },
-  { label: "Audit Trail",      href: "/audit",    soon: true,  roles: ["ADMIN", "MEDCO"] },
-  { label: "Admin",            href: "/admin",    roles: ["ADMIN"] },
+  { label: "Finance",          href: "/finance",  roles: ["CFO"] },
+  { label: "Other Hospitals",  href: "/benchmarks", roles: ["CFO"] },
+  { label: "Active Queries",   href: "/queries",  soon: true,  roles: ["MEDCO"] },
+  { label: "Reports",          href: "/reports",  soon: true,  roles: ["MEDCO"] },
+  { label: "Audit Trail",      href: "/audit",    soon: true,  roles: ["MEDCO"] },
 ];
 
 type SessionUser = {

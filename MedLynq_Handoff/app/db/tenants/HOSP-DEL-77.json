@@ -24,7 +24,407 @@
     "rejection_appeals": true,
     "auto_rename": true
   },
-  "schemes_enabled": ["PMJAY", "CGHS", "ECHS", "CAPF"],
+  "schemes_enabled": [
+    "PMJAY",
+    "CGHS",
+    "ECHS",
+    "CAPF"
+  ],
+  "specialties_enabled": [
+    "cardiac"
+  ],
   "his_webhook_secret": "fortis-his-demo-secret-2026",
-  "tagline": "Cardiac claims, simplified."
+  "tagline": "Cardiac claims, simplified.",
+  "latitude": "28.5606° N",
+  "longitude": "77.2730° E",
+  "address": "Fortis Escorts Heart Institute, Okhla, New Delhi",
+  "document_library": [
+    {
+      "doc_type": "doctor_s_prescription",
+      "label": "Doctor's Prescription",
+      "anchors": [
+        "Doctor's Prescription",
+        "Prescription",
+        "OPD Slip",
+        "Doctor Prescription",
+        "Protocol",
+        "Chemo Protocol",
+        "Prescription / Protocol"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "aadhaar",
+      "label": "Aadhaar",
+      "anchors": [
+        "Aadhaar",
+        "Patient ID",
+        "Aadhar",
+        "Aadhaar Card"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "insurance_scheme_card",
+      "label": "Insurance / Scheme Card",
+      "anchors": [
+        "Insurance / Scheme Card",
+        "Insurance Card",
+        "Scheme Card",
+        "PMJAY Card",
+        "CGHS Card",
+        "ECHS Card",
+        "Ayushman Card"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "consent_form",
+      "label": "Consent Form",
+      "anchors": [
+        "Consent Form"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "echo_report",
+      "label": "ECHO Report",
+      "anchors": [
+        "ECHO Report"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "ecg_report",
+      "label": "ECG Report",
+      "anchors": [
+        "ECG Report"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "coronary_angiography_report",
+      "label": "Coronary Angiography Report",
+      "anchors": [
+        "Coronary Angiography Report"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "cardiac_pre_op_workup",
+      "label": "Cardiac Pre-Op Workup",
+      "anchors": [
+        "Cardiac Pre-Op Workup"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "cbc_lft_kft_profile",
+      "label": "CBC / LFT / KFT Profile",
+      "anchors": [
+        "CBC / LFT / KFT Profile"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "cath_lab_note",
+      "label": "Cath Lab Note",
+      "anchors": [
+        "Cath Lab Note"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "stent_implant_invoice",
+      "label": "Stent / Implant Invoice",
+      "anchors": [
+        "Stent / Implant Invoice"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "cardiac_ot_notes",
+      "label": "Cardiac OT Notes",
+      "anchors": [
+        "Cardiac OT Notes"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "discharge_summary",
+      "label": "Discharge Summary",
+      "anchors": [
+        "Discharge Summary",
+        "discharge note"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "feedback_form",
+      "label": "Feedback Form",
+      "anchors": [
+        "Feedback Form",
+        "patient feedback"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "hospital_bill",
+      "label": "Hospital Bill",
+      "anchors": [
+        "Hospital Bill",
+        "final bill",
+        "itemised bill",
+        "bill"
+      ],
+      "catalog_linked": true
+    }
+  ],
+  "document_requirements": [
+    {
+      "doc_type": "doctor_s_prescription",
+      "specialty": "cardiac",
+      "stage": "opd"
+    },
+    {
+      "doc_type": "aadhaar",
+      "specialty": "cardiac",
+      "stage": "pre_auth"
+    },
+    {
+      "doc_type": "insurance_scheme_card",
+      "specialty": "cardiac",
+      "stage": "pre_auth"
+    },
+    {
+      "doc_type": "consent_form",
+      "specialty": "cardiac",
+      "stage": "pre_auth"
+    },
+    {
+      "doc_type": "echo_report",
+      "specialty": "cardiac",
+      "stage": "pre_auth"
+    },
+    {
+      "doc_type": "ecg_report",
+      "specialty": "cardiac",
+      "stage": "pre_auth"
+    },
+    {
+      "doc_type": "coronary_angiography_report",
+      "specialty": "cardiac",
+      "stage": "pre_auth"
+    },
+    {
+      "doc_type": "cardiac_pre_op_workup",
+      "specialty": "cardiac",
+      "stage": "pre_auth"
+    },
+    {
+      "doc_type": "cbc_lft_kft_profile",
+      "specialty": "cardiac",
+      "stage": "pre_auth"
+    },
+    {
+      "doc_type": "cath_lab_note",
+      "specialty": "cardiac",
+      "stage": "mid_way"
+    },
+    {
+      "doc_type": "stent_implant_invoice",
+      "specialty": "cardiac",
+      "stage": "mid_way",
+      "for_treatments": [
+        "surgery"
+      ]
+    },
+    {
+      "doc_type": "cardiac_ot_notes",
+      "specialty": "cardiac",
+      "stage": "mid_way",
+      "for_treatments": [
+        "surgery"
+      ]
+    },
+    {
+      "doc_type": "discharge_summary",
+      "specialty": "cardiac",
+      "stage": "discharge"
+    },
+    {
+      "doc_type": "feedback_form",
+      "specialty": "cardiac",
+      "stage": "discharge"
+    },
+    {
+      "doc_type": "hospital_bill",
+      "specialty": "cardiac",
+      "stage": "discharge"
+    }
+  ],
+  "document_profiles": [
+    {
+      "doc_type": "doctor_s_prescription",
+      "label": "Doctor's Prescription",
+      "specialty": "cardiac",
+      "stage": "opd",
+      "anchors": [
+        "Doctor's Prescription",
+        "Prescription",
+        "OPD Slip",
+        "Doctor Prescription",
+        "Protocol",
+        "Chemo Protocol",
+        "Prescription / Protocol"
+      ]
+    },
+    {
+      "doc_type": "aadhaar",
+      "label": "Aadhaar",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "anchors": [
+        "Aadhaar",
+        "Patient ID",
+        "Aadhar",
+        "Aadhaar Card"
+      ]
+    },
+    {
+      "doc_type": "insurance_scheme_card",
+      "label": "Insurance / Scheme Card",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "anchors": [
+        "Insurance / Scheme Card",
+        "Insurance Card",
+        "Scheme Card",
+        "PMJAY Card",
+        "CGHS Card",
+        "ECHS Card",
+        "Ayushman Card"
+      ]
+    },
+    {
+      "doc_type": "consent_form",
+      "label": "Consent Form",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "anchors": [
+        "Consent Form"
+      ]
+    },
+    {
+      "doc_type": "echo_report",
+      "label": "ECHO Report",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "anchors": [
+        "ECHO Report"
+      ]
+    },
+    {
+      "doc_type": "ecg_report",
+      "label": "ECG Report",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "anchors": [
+        "ECG Report"
+      ]
+    },
+    {
+      "doc_type": "coronary_angiography_report",
+      "label": "Coronary Angiography Report",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "anchors": [
+        "Coronary Angiography Report"
+      ]
+    },
+    {
+      "doc_type": "cardiac_pre_op_workup",
+      "label": "Cardiac Pre-Op Workup",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "anchors": [
+        "Cardiac Pre-Op Workup"
+      ]
+    },
+    {
+      "doc_type": "cbc_lft_kft_profile",
+      "label": "CBC / LFT / KFT Profile",
+      "specialty": "cardiac",
+      "stage": "pre_auth",
+      "anchors": [
+        "CBC / LFT / KFT Profile"
+      ]
+    },
+    {
+      "doc_type": "cath_lab_note",
+      "label": "Cath Lab Note",
+      "specialty": "cardiac",
+      "stage": "mid_way",
+      "anchors": [
+        "Cath Lab Note"
+      ]
+    },
+    {
+      "doc_type": "stent_implant_invoice",
+      "label": "Stent / Implant Invoice",
+      "specialty": "cardiac",
+      "stage": "mid_way",
+      "for_treatments": [
+        "surgery"
+      ],
+      "anchors": [
+        "Stent / Implant Invoice"
+      ]
+    },
+    {
+      "doc_type": "cardiac_ot_notes",
+      "label": "Cardiac OT Notes",
+      "specialty": "cardiac",
+      "stage": "mid_way",
+      "for_treatments": [
+        "surgery"
+      ],
+      "anchors": [
+        "Cardiac OT Notes"
+      ]
+    },
+    {
+      "doc_type": "discharge_summary",
+      "label": "Discharge Summary",
+      "specialty": "cardiac",
+      "stage": "discharge",
+      "anchors": [
+        "Discharge Summary",
+        "discharge note"
+      ]
+    },
+    {
+      "doc_type": "feedback_form",
+      "label": "Feedback Form",
+      "specialty": "cardiac",
+      "stage": "discharge",
+      "anchors": [
+        "Feedback Form",
+        "patient feedback"
+      ]
+    },
+    {
+      "doc_type": "hospital_bill",
+      "label": "Hospital Bill",
+      "specialty": "cardiac",
+      "stage": "discharge",
+      "anchors": [
+        "Hospital Bill",
+        "final bill",
+        "itemised bill",
+        "bill"
+      ]
+    }
+  ],
+  "state": "Delhi"
 }

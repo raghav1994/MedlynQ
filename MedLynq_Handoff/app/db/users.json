@@ -82,5 +82,93 @@
     "bis_enabled": false,
     "password_hash": "$2a$10$VkrIsGtOBVKO3qgjNG8cyukU8xoz89l7l9LI2A2tqRjSeEEJ26yuG",
     "created_at": "2026-06-29T17:03:47.997Z"
+  },
+  {
+    "id": "U900",
+    "email": "boss@medlynq.internal",
+    "name": "MedLynq Ops",
+    "role": "SUPERADMIN",
+    "hospital_id": "MEDLYNQ_HQ",
+    "hospital_name": "MedLynq HQ",
+    "designation": "Internal Operations",
+    "bis_enabled": false,
+    "is_owner": true,
+    "password_hash": "$2a$10$VwmCLYRvQDp8P1cq3y.8huPxix8cQ7JRBlV/yXvjU/WxsdiHdXJ.i",
+    "created_at": "2026-07-09T00:00:00.000Z"
+  },
+  {
+    "id": "U_DC115E24",
+    "email": "priya@citygeneral.in",
+    "name": "Priya Nair",
+    "role": "MEDCO",
+    "hospital_id": "HOSP-GEN-01",
+    "hospital_name": "City General Hospital",
+    "designation": "Insurance Coordinator",
+    "bis_enabled": false,
+    "password_hash": "$2a$10$QH4R.AJRVOoVs.aeYqMtsu79vGuFZrWA5JhSZ1xq8hD4q3bT1twQ6",
+    "created_at": "2026-07-09T20:14:28.751Z"
+  },
+  {
+    "id": "U_E3976888",
+    "email": "nik@gmail.com",
+    "name": "Nik",
+    "role": "MEDCO",
+    "hospital_id": "HOSP-BIRLA-6221",
+    "hospital_name": "Birla",
+    "designation": "Clerk",
+    "bis_enabled": false,
+    "password_hash": "$2a$10$pOcv5lKMBvsVPp4yPP9K.eo5/0k8Npn0G/7QVcpBCQEQdGvaGrZd6",
+    "created_at": "2026-07-11T05:32:55.336Z",
+    "disabled": false
+  },
+  {
+    "id": "U_989B69D6",
+    "email": "test-staff@medlynq.internal",
+    "name": "Test Onboarding Staff",
+    "role": "SUPERADMIN",
+    "hospital_id": "MEDLYNQ_HQ",
+    "hospital_name": "MedLynq HQ",
+    "designation": "Onboarding Specialist",
+    "bis_enabled": false,
+    "password_hash": "$2a$10$wmO.UjwOAGhGlBsdzSQiku4k3ASgL0HovOw2uK3LnJekAMVVw8/GO",
+    "created_at": "2026-07-11T06:11:59.292Z",
+    "disabled": false
+  },
+  {
+    "id": "U_7CBDE1AD",
+    "email": "chela@medlynq.internal",
+    "name": "CHELA",
+    "role": "SUPERADMIN",
+    "hospital_id": "MEDLYNQ_HQ",
+    "hospital_name": "MedLynq HQ",
+    "designation": "BACKEND SPECIALIS",
+    "bis_enabled": false,
+    "password_hash": "$2a$10$87jWjSUcxUxUi0IajR5mLOjS1dq7VdDq6BvS/wqDWDQdXUkalJ49i",
+    "created_at": "2026-07-11T07:22:11.933Z"
+  },
+  {
+    "id": "U_9A16AD44",
+    "email": "nikhil@birla.in",
+    "name": "nikhil",
+    "role": "ADMIN",
+    "hospital_id": "HOSP-BIRLA-6221",
+    "hospital_name": "Birla",
+    "designation": "Admin",
+    "bis_enabled": false,
+    "password_hash": "$2a$10$G6Kw3upYMO0IR0P6Yc0WbOcN3BbmJkhSsw5nlBx/W6/rddzb6t1fy",
+    "created_at": "2026-07-11T07:25:17.569Z"
+  },
+  {
+    "id": "U_ONB606S3",
+    "email": "flooradmin@action.in",
+    "name": "Suresh Kumar",
+    "role": "ADMIN",
+    "hospital_id": "HOSP-BLR-49",
+    "hospital_name": "Action Cancer Hospital",
+    "designation": "Floor Admin",
+    "bis_enabled": false,
+    "password_hash": "$2a$10$moeWW2DCMWSh6KS.RpwTPu8WgO6RbBi6wjpmTFUI5MW8/L2xpU8Ri",
+    "created_at": "2026-07-14T05:31:28.172Z",
+    "desktop_access": false
   }
 ]

@@ -155,7 +155,13 @@ export async function POST(req: NextRequest) {
       procedure_code: "",
       procedure_name: "",
       diagnosis: "",
-      treatment_type: "other",
+      // Auto-created from a doc bag with no MEDCO input yet — "pending" is a
+      // real, type-safe sentinel (not a guessed clinical treatment). It
+      // renders as "Treatment pending" via PatientHeader's fallback and
+      // matches no for_treatments-tagged checklist rule, so nothing gets
+      // falsely required until a human picks the real treatment via OPD edit.
+      treatment_type: "pending",
+      specialty: "oncology",
       admission_date: new Date().toISOString().slice(0, 10),
       discharge_date: null,
       status: decision.new_case_status ?? "preauth_pending",

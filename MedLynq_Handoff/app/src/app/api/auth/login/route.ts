@@ -42,7 +42,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: "Invalid email or password" }, { status: 401 });
     }
 
-    // Tenant scope check — user from hospital A cannot log in on hospital B's subdomain
+    // This is the tenant-facing login — SUPERADMIN never authenticates here,
+    // only at /internal/login (api/auth/internal-login). Two separate doors,
+    // enforced server-side on both sides rather than just hidden in the UI.
+    if (user.role === "SUPERADMIN") {
+      return NextResponse.json(
+        { ok: false, error: "MedLynq internal staff sign in at /internal/login, not the hospital login." },
+        { status: 403 }
+      );
+    }
+
+    // Tenant scope check — user from hospital A cannot log in on hospital B's subdomain.
     const host = req.headers.get("host");
     const sub = subdomainFromHost(host);
     // Dev override: cookie set by login UI tenant-switcher

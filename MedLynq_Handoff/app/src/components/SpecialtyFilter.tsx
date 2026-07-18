@@ -5,7 +5,7 @@ import type { Case, Specialty } from "@/lib/types";
 import { SPECIALTY_META } from "@/lib/types";
 import PatientTable from "./PatientTable";
 
-export type ResolvedCase = Case & { _patient_name?: string; _folder_key?: string };
+export type ResolvedCase = Case & { _patient_name?: string; _folder_key?: string; _has_pending_request?: boolean };
 
 // Default-infer specialty when case doesn't carry it: today's mock corpus is all oncology.
 function specialtyOf(c: Case): Specialty {
@@ -27,7 +27,7 @@ export default function SpecialtyFilter({ cases }: { cases: ResolvedCase[] }) {
 
   const counts: Record<Specialty | "all", number> = {
     all: cases.length,
-    oncology: 0, cardiac: 0, ortho: 0, dialysis: 0, icu: 0, maternity: 0,
+    oncology: 0, cardiac: 0, ortho: 0, dialysis: 0, icu: 0, maternity: 0, general_medicine: 0,
   };
   for (const c of cases) counts[specialtyOf(c)]++;
 
@@ -44,10 +44,10 @@ export default function SpecialtyFilter({ cases }: { cases: ResolvedCase[] }) {
     .filter((c) => sel === "all" ? true : specialtyOf(c) === sel)
     .filter((c) => status === "all" ? true : c.status === status);
 
-  const chips: Array<{ key: Specialty | "all"; label: string; icon: string }> = [
-    { key: "all", label: "All specialties", icon: "🏥" },
+  const chips: Array<{ key: Specialty | "all"; label: string }> = [
+    { key: "all", label: "All specialties" },
     ...(Object.keys(SPECIALTY_META) as Specialty[]).map((s) => ({
-      key: s, label: SPECIALTY_META[s].label, icon: SPECIALTY_META[s].icon,
+      key: s, label: SPECIALTY_META[s].label,
     })),
   ];
 
@@ -74,7 +74,6 @@ export default function SpecialtyFilter({ cases }: { cases: ResolvedCase[] }) {
                 : "bg-bone-0 text-ink-200 border-bone-300 hover:bg-bone-200"
             }`}
           >
-            <span className="mr-1">{c.icon}</span>
             {c.label}
             <span className={`ml-1 text-[10px] ${sel === c.key ? "text-white/80" : "text-ink-300"}`}>
               {counts[c.key]}

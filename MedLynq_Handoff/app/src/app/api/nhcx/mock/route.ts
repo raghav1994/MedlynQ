@@ -15,6 +15,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { findPackage } from "@/lib/packages";
+import { resolveApiSetting } from "@/lib/apiSettings";
 
 export const runtime = "nodejs";
 
@@ -59,7 +60,8 @@ export async function POST(req: NextRequest) {
   // cookie either) — trust this shared secret instead, set only by our own
   // /api/nhcx/send when it's calling this local mock.
   const secret = req.headers.get("x-internal-secret");
-  if (!secret || secret !== process.env.MEDLYNQ_INTERNAL_SECRET) {
+  const expected = await resolveApiSetting("nhcx_internal_secret", process.env.MEDLYNQ_INTERNAL_SECRET ?? "");
+  if (!secret || secret !== expected) {
     return NextResponse.json({ ok: false, error: "Invalid or missing internal secret" }, { status: 401 });
   }
 
@@ -82,7 +84,15 @@ export async function POST(req: NextRequest) {
     // 2. Clinical content checks
     const claim = bundle.entry.find((e: any) => e.resource?.resourceType === "Claim")?.resource;
     const supportingInfo = claim?.supportingInfo ?? [];
-    const diagnosis = claim?.diagnosis?.[0]?.diagnosisCodeableConcept?.text;
+    // Now that a coded diagnosis becomes a Condition resource (see
+    // fhirBundle.ts) the Claim usually carries diagnosisReference instead of
+    // inline diagnosisCodeableConcept — resolve either shape so a properly
+    // ICD-10-coded claim isn't misread as having no diagnosis at all.
+    const diagnosisRef = claim?.diagnosis?.[0]?.diagnosisReference?.reference as string | undefined;
+    const referencedCondition = diagnosisRef
+      ? bundle.entry.find((e: any) => `${e.resource?.resourceType}/${e.resource?.id}` === diagnosisRef)?.resource
+      : undefined;
+    const diagnosis = claim?.diagnosis?.[0]?.diagnosisCodeableConcept?.text || referencedCondition?.code?.text;
     const procedureCode = claim?.item?.[0]?.productOrService?.coding?.[0]?.code;
     const claimAmount = Number(claim?.total?.value ?? 0);
     const insurer = bundle.entry.find((e: any) =>

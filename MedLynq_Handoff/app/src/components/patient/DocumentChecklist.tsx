@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import clsx from "clsx";
 import DocumentTile from "./DocumentTile";
@@ -11,6 +11,17 @@ import { summaryByStage, deriveCurrentStage, unmatchedDocuments } from "@/lib/ch
 import type { Stage, Treatment } from "@/lib/types";
 import { scoreRisk } from "@/lib/risk";
 import { classifyByFilename } from "@/lib/classifyByFilename";
+import { useRequestMissing } from "./RequestMissingContext";
+import { contrastingHighlight } from "@/lib/color";
+
+type DocRequest = {
+  id: string;
+  doc_type: string;
+  note: string;
+  status: "pending" | "fulfilled";
+  requested_by: string;
+  requested_at: string;
+};
 
 const ALLOWED_EXT = new Set([".pdf", ".jpg", ".jpeg", ".png"]);
 
@@ -22,25 +33,61 @@ const stageLabels: Record<Stage, string> = {
 };
 
 export default function DocumentChecklist({
-  entries: localEntries, onEntriesChange, docs, caseId, mrn, treatment,
+  entries: localEntries, onEntriesChange, docs, caseId, patientId, mrn, treatment, tenantAccentColor,
 }: {
   entries: ChecklistEntry[];
   onEntriesChange: (updater: (prev: ChecklistEntry[]) => ChecklistEntry[]) => void;
   docs: CaseDocument[];
   caseId: string;
+  patientId: string;
   mrn: string;
   treatment?: Treatment;
+  tenantAccentColor: string;
 }) {
   const router = useRouter();
+  // Computed once per tenant color, not hardcoded red — a hospital that
+  // picks a red/orange brand color would otherwise see "still outstanding"
+  // flags blend right into their own buttons.
+  const requestedHighlight = useMemo(() => contrastingHighlight(tenantAccentColor), [tenantAccentColor]);
   const bulkInputRef = useRef<HTMLInputElement>(null);
   const slotInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  const addPageInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [merging, setMerging] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [assigning, setAssigning] = useState<string | null>(null); // doc id currently being reassigned
+  const [addingPageTo, setAddingPageTo] = useState<string | null>(null); // doc_type currently getting a page merged in
   const [msg, setMsg] = useState<string | null>(null);
+  const [requests, setRequests] = useState<DocRequest[]>([]);
+  const { active: requestMode, selected: requestSelected, toggle: toggleRequestDoc, refreshToken } = useRequestMissing();
+
+  // Which staff-facing requests are still pending, keyed by doc_type
+  // (lowercased — desktop and mobile don't always agree on capitalization
+  // for the same label). This is what turns a MISSING tile into REQUESTED.
+  const pendingByDocType = useMemo(() => {
+    const m = new Map<string, DocRequest>();
+    for (const r of requests) {
+      if (r.status === "pending") m.set(r.doc_type.trim().toLowerCase(), r);
+    }
+    return m;
+  }, [requests]);
+
+  async function refreshRequests() {
+    try {
+      const res = await fetch(`/api/document-requests?patient_id=${encodeURIComponent(patientId)}`);
+      const json = await res.json();
+      if (json.ok) setRequests(json.requests);
+    } catch { /* non-critical — tile just won't show a request badge this round */ }
+  }
+  useEffect(() => { refreshRequests(); }, [patientId]);
+  // The bulk request send (via ActionButtons' "Request Missing Doc" flow)
+  // happens outside this component; refetch once it completes so tiles flip
+  // from MISSING to "requested" without a full page reload.
+  useEffect(() => { if (refreshToken > 0) refreshRequests(); }, [refreshToken]);
 
   const perStage = summaryByStage(localEntries);
   const currentStage = deriveCurrentStage(perStage);
@@ -155,24 +202,56 @@ export default function DocumentChecklist({
     if (accepted.length === 0) { setMsg("Only PDF, JPG, JPEG, PNG are supported."); return; }
     setUploading(true);
     setMsg(null);
+    setProgress({ done: 0, total: accepted.length });
     try {
       let landed = 0;
-      for (const file of accepted) {
-        const form = new FormData();
-        form.append("mrn", mrn);
-        form.append("doc_type_hint", classifyByFilename(file.name));
-        form.append("source", "Manual");
-        form.append("file", file);
-        const res = await fetch("/api/document/land", { method: "POST", body: form });
-        const json = await res.json();
-        if (json.ok) landed++;
+      let doneCount = 0;
+      const mismatches: { filename: string; doc_name?: string; doc_mrn?: string }[] = [];
+      // Matches the persistent Python worker pool size (MEDLYNQ_WORKER_POOL_SIZE,
+      // default 3) — sending files one at a time left 2 of 3 warm workers idle
+      // the entire drop. This mirrors the same worker-queue pattern already
+      // used for Intake's bulk detect-patients call.
+      const BULK_CONCURRENCY = 3;
+      let nextIndex = 0;
+      async function worker() {
+        while (true) {
+          const i = nextIndex++;
+          if (i >= accepted.length) return;
+          const file = accepted[i];
+          const form = new FormData();
+          form.append("mrn", mrn);
+          form.append("doc_type_hint", classifyByFilename(file.name));
+          form.append("source", "Manual");
+          form.append("file", file);
+          try {
+            const res = await fetch("/api/document/land", { method: "POST", body: form });
+            const json = await res.json();
+            if (json.ok) landed++;
+            if (json.identity_mismatch) mismatches.push({ filename: file.name, doc_name: json.identity_mismatch.doc_name, doc_mrn: json.identity_mismatch.doc_mrn });
+          } catch { /* counted as not-landed below */ }
+          doneCount++;
+          setProgress({ done: doneCount, total: accepted.length });
+        }
       }
+      await Promise.all(Array.from({ length: Math.min(BULK_CONCURRENCY, accepted.length) }, worker));
       setMsg(`Added ${landed} of ${accepted.length} document${accepted.length === 1 ? "" : "s"}.`);
       router.refresh();
+      refreshRequests();
+      // Flag once per batch (not per file) — a MEDCO scanning a real stack
+      // of mixed documents shouldn't get interrupted mid-drop by a dialog
+      // for every page; one summary after everything lands is enough for
+      // them to go check the Unsorted tray / reassign anything wrong.
+      if (mismatches.length > 0) {
+        const lines = mismatches.map((m) => `• ${m.filename} — says "${m.doc_name ?? "?"}"${m.doc_mrn ? ` (MRN ${m.doc_mrn})` : ""}`).join("\n");
+        window.alert(
+          `⚠ ${mismatches.length} of ${accepted.length} document(s) don't match this patient's name/MRN (this case is MRN ${mrn}) and may belong to someone else:\n\n${lines}\n\nDouble-check these before submitting.`
+        );
+      }
     } catch (e: any) {
       setMsg("Upload error: " + (e?.message ?? String(e)));
     } finally {
       setUploading(false);
+      setProgress(null);
     }
   }
 
@@ -194,7 +273,14 @@ export default function DocumentChecklist({
       const json = await res.json();
       if (!json.ok) { setMsg(`Upload failed: ${json.error}`); return; }
       setMsg(`Added "${docType}".`);
+      if (json.identity_mismatch) {
+        const m = json.identity_mismatch;
+        window.alert(
+          `⚠ This document doesn't match this patient's name/MRN (this case is MRN ${mrn}) and may belong to someone else:\n\nDocument says: ${m.doc_name ?? "?"}${m.doc_mrn ? ` (MRN ${m.doc_mrn})` : ""}\n\nDouble-check before submitting — you can reassign or delete it from the Unsorted tray if it's wrong.`
+        );
+      }
       router.refresh();
+      refreshRequests();
     } catch (e: any) {
       setMsg("Upload error: " + (e?.message ?? String(e)));
     } finally {
@@ -215,15 +301,22 @@ export default function DocumentChecklist({
 
   // Reassign an Unsorted doc onto a known slot — this is the training signal:
   // what we guessed (or failed to guess) vs. what the MEDCO actually meant.
-  async function assignToSlot(doc: CaseDocument, docType: string) {
+  async function assignToSlot(doc: CaseDocument, docType: string, force = false) {
     setAssigning(doc.id);
     try {
       const res = await fetch("/api/document/assign", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ caseId, filename: doc.filename, doc_type: docType }),
+        body: JSON.stringify({ caseId, filename: doc.filename, doc_type: docType, force }),
       });
       const json = await res.json();
+      if (json.needs_confirmation) {
+        setAssigning(null);
+        if (window.confirm(json.warning)) {
+          await assignToSlot(doc, docType, true);
+        }
+        return;
+      }
       if (!json.ok) { setMsg(`Couldn't assign: ${json.error}`); return; }
       router.refresh();
     } catch (e: any) {
@@ -233,8 +326,60 @@ export default function DocumentChecklist({
     }
   }
 
+  // A slot that already has a document but is missing a page (e.g. MEDCO
+  // scanned page 1 as its own file, then found page 2 later). Combines the
+  // existing document + the new page into one PDF via the same merger.py
+  // used by the multi-select "Merge" toolbar, re-lands it straight into this
+  // slot (force_doc_type — no manual reassignment needed), then retires the
+  // old single-page file so it doesn't linger as an orphan duplicate.
+  async function addPageToSlot(item: ChecklistEntry, file: File) {
+    if (!item.doc) return;
+    if (!extOk(file.name)) { setMsg("Only PDF, JPG, JPEG, PNG are supported."); return; }
+    setAddingPageTo(item.doc_type);
+    setMsg("Adding page…");
+    try {
+      const existingFile = await fetchAsFile(item.doc);
+      const form = new FormData();
+      form.append("file", existingFile);
+      form.append("file", file);
+      const res = await fetch("/api/merge", { method: "POST", body: form });
+      const json = await res.json();
+      if (!json.ok) { setMsg("Couldn't add page: " + (json.error ?? "unknown")); return; }
+
+      const mergedRes = await fetch(json.download_url);
+      const mergedBlob = await mergedRes.blob();
+      const landForm = new FormData();
+      landForm.append("mrn", mrn);
+      landForm.append("doc_type_hint", item.doc_type);
+      landForm.append("force_doc_type", item.doc_type);
+      landForm.append("source", "Manual");
+      landForm.append("file", new File([mergedBlob], `${item.doc_type.replace(/[^a-z0-9]+/gi, "_")}_merged.pdf`, { type: "application/pdf" }));
+      const landRes = await fetch("/api/document/land", { method: "POST", body: landForm });
+      const landJson = await landRes.json();
+      if (!landJson.ok) { setMsg(`Couldn't add page: ${landJson.error}`); return; }
+
+      // Old single-page file is now fully superseded by the merged one.
+      await fetch(`/api/document?caseId=${encodeURIComponent(caseId)}&filename=${encodeURIComponent(item.doc.filename)}`, { method: "DELETE" });
+
+      setMsg(`Added page to "${item.doc_type}" (${json.page_count} pages total).`);
+      router.refresh();
+      refreshRequests();
+    } catch (e: any) {
+      setMsg("Add-page error: " + (e?.message ?? String(e)));
+    } finally {
+      setAddingPageTo(null);
+    }
+  }
+
+  // Only slots that still need a document — assigning an Unsorted file onto
+  // an already-filled slot silently overwrites that slot's manifest and
+  // orphans the file that was there (see assignToSlot), so a filled slot
+  // should never be a target here. To attach a second page to a document
+  // that's already present, use "+ Add page" on that slot instead.
   const assignOptions = useMemo(
-    () => Array.from(new Set(localEntries.map((e) => e.doc_type))).sort(),
+    () => Array.from(new Set(
+      localEntries.filter((e) => e.status === "missing").map((e) => e.doc_type),
+    )).sort(),
     [localEntries],
   );
 
@@ -270,7 +415,7 @@ export default function DocumentChecklist({
       <div className="flex items-center justify-between mb-1 flex-wrap gap-2">
         <h3 className="text-sm font-bold text-ink-100 flex items-center gap-2"><span>✓</span> Documents &amp; Checklist</h3>
         <div className="flex items-center gap-3 text-[10px]">
-          <Legend dot="bg-good" label={`Present (${localEntries.filter(e=>e.status==="present").length})`} />
+          <Legend dot="bg-good" label={`Present (${localEntries.filter(e=>e.status==="present" || e.status==="alternative_present").length})`} />
           <Legend dot="bg-warn" label={`Low confidence (${localEntries.filter(e=>e.status==="low_confidence").length})`} />
           <Legend dot="bg-bad"  label={`Missing (${localEntries.filter(e=>e.status==="missing").length})`} />
           <Legend dot="bg-ink-300" label={`Not needed (${localEntries.filter(e=>e.status==="skipped").length})`} />
@@ -289,15 +434,38 @@ export default function DocumentChecklist({
       <StageProgress currentStage={currentStage} perStage={perStage} />
 
       {/* Bulk drop */}
-      <button
-        type="button"
-        onClick={() => bulkInputRef.current?.click()}
-        disabled={uploading}
-        className="w-full bg-bone-100 border-2 border-dashed border-bone-300 rounded-lg p-3 flex items-center justify-center gap-2 hover:border-accent hover:bg-accent-soft transition disabled:opacity-60"
+      <div
+        onDragOver={(e) => { e.preventDefault(); if (!uploading) setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragOver(false);
+          if (!uploading && e.dataTransfer.files.length > 0) addBulkFiles(e.dataTransfer.files);
+        }}
+        onClick={() => !uploading && bulkInputRef.current?.click()}
+        className={clsx(
+          "w-full border-2 border-dashed rounded-lg p-3 flex flex-col items-center justify-center gap-1 transition cursor-pointer",
+          uploading ? "opacity-60 pointer-events-none" : "",
+          dragOver ? "bg-accent-soft border-accent" : "bg-bone-100 border-bone-300 hover:border-accent hover:bg-accent-soft"
+        )}
       >
-        <span className="text-lg text-ink-300">{uploading ? "…" : "+"}</span>
-        <span className="text-xs font-semibold text-ink-100">{uploading ? "Uploading…" : "Drop or add documents in bulk — they'll be auto-sorted into slots below"}</span>
-      </button>
+        <div className="flex items-center gap-2">
+          <span className="text-lg text-ink-300">{uploading ? "…" : "+"}</span>
+          <span className="text-xs font-semibold text-ink-100">
+            {uploading
+              ? (progress ? `Uploading ${progress.done} of ${progress.total}…` : "Uploading…")
+              : "Drop or add documents in bulk — they'll be auto-sorted into slots below"}
+          </span>
+        </div>
+        {uploading && progress && progress.total > 0 && (
+          <div className="w-full max-w-xs h-1.5 bg-bone-300 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-accent transition-all duration-300"
+              style={{ width: `${Math.round((progress.done / progress.total) * 100)}%` }}
+            />
+          </div>
+        )}
+      </div>
       <input
         ref={bulkInputRef} type="file" multiple accept=".pdf,.jpg,.jpeg,.png" className="hidden"
         onChange={(e) => { if (e.target.files) addBulkFiles(e.target.files); e.target.value = ""; }}
@@ -311,10 +479,7 @@ export default function DocumentChecklist({
         const present = items.filter((e) => e.status === "present" || e.status === "alternative_present" || e.status === "skipped").length;
 
         return (
-          <section key={s} className={clsx(
-            "mb-4 last:mb-0 rounded-lg p-3 border",
-            isCurrent ? "border-accent bg-accent-soft/40" : "border-bone-300"
-          )}>
+          <section key={s} className="mb-4 last:mb-0 rounded-lg p-3 border border-bone-300">
             <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
               <div className="flex items-center gap-2">
                 <span className={clsx("text-xs font-bold uppercase tracking-wide", isCurrent ? "text-accent" : "text-ink-300")}>
@@ -342,6 +507,15 @@ export default function DocumentChecklist({
                   onUndoSkip={() => toggleSkip(item.doc_type, false)}
                   inputRef={(el) => { slotInputRefs.current[item.doc_type] = el; }}
                   uploading={uploading}
+                  onAddPageClick={() => addPageInputRefs.current[item.doc_type]?.click()}
+                  onAddPageFileChosen={(f) => addPageToSlot(item, f)}
+                  addPageInputRef={(el) => { addPageInputRefs.current[item.doc_type] = el; }}
+                  addingPage={addingPageTo === item.doc_type}
+                  pendingRequest={pendingByDocType.get(item.doc_type.trim().toLowerCase())}
+                  requestMode={requestMode}
+                  requestSelected={requestSelected.has(item.doc_type)}
+                  onRequestToggle={() => toggleRequestDoc(item.doc_type)}
+                  requestedHighlight={requestedHighlight}
                 />
               ))}
             </div>
@@ -396,6 +570,8 @@ function Legend({ dot, label }: { dot: string; label: string }) {
 
 function ChecklistSlot({
   item, selected, onToggle, onUploadClick, onFileChosen, onSkip, onUndoSkip, inputRef, uploading,
+  onAddPageClick, onAddPageFileChosen, addPageInputRef, addingPage,
+  pendingRequest, requestMode, requestSelected, onRequestToggle, requestedHighlight,
 }: {
   item: ChecklistEntry;
   selected: boolean;
@@ -406,7 +582,17 @@ function ChecklistSlot({
   onUndoSkip: () => void;
   inputRef: (el: HTMLInputElement | null) => void;
   uploading: boolean;
+  onAddPageClick: () => void;
+  onAddPageFileChosen: (f: File) => void;
+  addPageInputRef: (el: HTMLInputElement | null) => void;
+  addingPage: boolean;
+  pendingRequest?: { id: string; doc_type: string; note: string; status: "pending" | "fulfilled"; requested_by: string; requested_at: string };
+  requestMode: boolean;
+  requestSelected: boolean;
+  onRequestToggle: () => void;
+  requestedHighlight: { border: string; bg: string };
 }) {
+  const [showExtra, setShowExtra] = useState(false);
   const hiddenInput = (
     <input
       ref={inputRef}
@@ -421,38 +607,142 @@ function ChecklistSlot({
   if (item.doc) {
     return (
       <div>
-        <DocumentTile d={item.doc} selected={selected} onToggle={onToggle} />
+        <div className="relative">
+          <DocumentTile d={item.doc} selected={selected} onToggle={onToggle} />
+          {/* A second (or third...) file also matched this same slot — e.g.
+              pages captured as separate files, or two reports both proving
+              the same requirement. Stack badge instead of silently hiding
+              them or overwriting the primary thumbnail. */}
+          {item.extraDocs && item.extraDocs.length > 0 && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); setShowExtra((v) => !v); }}
+              title={`${item.extraDocs.length} more file${item.extraDocs.length === 1 ? "" : "s"} attached to this document`}
+              className="absolute top-2 right-8 bg-ink-100 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-sm hover:opacity-90"
+            >
+              📎 +{item.extraDocs.length}
+            </button>
+          )}
+        </div>
         {item.status === "low_confidence" && (
           <div className="text-[9px] font-bold uppercase text-warn mt-1">LOW CONFIDENCE</div>
+        )}
+        <button
+          type="button"
+          onClick={onAddPageClick}
+          disabled={addingPage}
+          title="Missed a page? Attach it to this same document."
+          className="w-full text-[10px] font-bold uppercase text-accent hover:underline mt-1 disabled:opacity-40"
+        >
+          {addingPage ? "Adding page…" : "+ Add page"}
+        </button>
+        <input
+          ref={addPageInputRef}
+          type="file"
+          accept=".pdf,.jpg,.jpeg,.png"
+          className="hidden"
+          onChange={(e) => { const f = e.target.files?.[0]; if (f) onAddPageFileChosen(f); e.target.value = ""; }}
+        />
+        {showExtra && item.extraDocs && (
+          <div className="mt-2 space-y-1 border-t border-bone-300 pt-2">
+            <div className="text-[9px] font-bold uppercase text-ink-300">Also attached:</div>
+            {item.extraDocs.map((d) => (
+              <DocumentTile key={d.id} d={d} selected={selected} onToggle={onToggle} />
+            ))}
+          </div>
         )}
       </div>
     );
   }
 
   const isSkipped = item.status === "skipped";
+  // No file was uploaded for THIS exact slot, but a sibling in the same
+  // alt_group was (e.g. PET-CT Report present satisfies Histopathology +
+  // Biopsy too — any one proves the diagnosis). Distinct from both "missing"
+  // (still needs action) and "skipped" (a human decided it's not needed) —
+  // this is already satisfied, just not via this specific document.
+  const isAlternativePresent = item.status === "alternative_present";
+  if (isAlternativePresent) {
+    return (
+      <div className="border border-good/40 bg-good-soft/40 rounded-lg p-3 flex flex-col items-center justify-center text-center gap-1.5 min-h-[160px]">
+        <div className="text-xs font-semibold text-ink-100">{item.doc_type}</div>
+        <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-good-soft text-good">
+          ✓ Satisfied — alternative on file
+        </span>
+        <button onClick={onUploadClick} disabled={uploading}
+          className="text-[10px] font-bold uppercase text-accent hover:underline mt-1 disabled:opacity-40">
+          ⬆ Upload this document too
+        </button>
+        {hiddenInput}
+      </div>
+    );
+  }
+
+  const isRequested = !isSkipped && !!pendingRequest;
+  // Selectable for a bulk staff request only while ActionButtons' "Request
+  // Missing Doc" flow is active, and only if it isn't already requested or
+  // marked not-needed — re-requesting an already-pending doc is redundant.
+  const canSelect = requestMode && !isSkipped && !isRequested;
+
   return (
-    <div className={clsx(
-      "border rounded-lg p-3 flex flex-col items-center justify-center text-center gap-1.5 min-h-[160px]",
-      isSkipped ? "border-bone-300 bg-bone-100" : "border-bad/40 bg-bad-soft/40 border-dashed"
-    )}>
+    <div
+      onClick={canSelect ? onRequestToggle : undefined}
+      style={isSkipped || canSelect ? undefined : isRequested ? { borderColor: requestedHighlight.border, backgroundColor: requestedHighlight.bg } : undefined}
+      className={clsx(
+        "border rounded-lg p-3 flex flex-col items-center justify-center text-center gap-1.5 min-h-[160px] relative",
+        isSkipped ? "border-bone-300 bg-bone-100"
+          : canSelect
+            ? (requestSelected ? "border-bad ring-2 ring-bad/50 bg-bad-soft cursor-pointer" : "border-bad/50 bg-bad-soft/40 border-dashed cursor-pointer hover:border-bad")
+            // Requested-but-not-yet-uploaded gets a modestly stronger solid
+            // border, colored to contrast with this tenant's brand color
+            // (see requestedHighlight/contrastingHighlight) rather than a
+            // hardcoded red — just enough to keep reading as outstanding
+            // until a MEDCO or the mobile app uploads into this slot.
+            : isRequested ? ""
+            : "border-bad/40 bg-bad-soft/40 border-dashed"
+      )}
+    >
+      {canSelect && (
+        <span
+          className={clsx(
+            "absolute top-2 left-2 w-4 h-4 rounded border grid place-items-center text-[10px] font-bold shadow-sm",
+            requestSelected ? "bg-bad border-bad text-white" : "bg-bone-0 border-bone-300 text-transparent"
+          )}
+        >
+          ✓
+        </span>
+      )}
       <div className={clsx("text-xs font-semibold", isSkipped ? "text-ink-300 line-through" : "text-ink-100")}>
         {item.doc_type}
       </div>
       {isSkipped ? (
         <>
           <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-bone-200 text-ink-300">NOT NEEDED</span>
-          <button onClick={onUndoSkip} className="text-[10px] font-bold uppercase text-accent hover:underline mt-1">
+          <button onClick={(e) => { e.stopPropagation(); onUndoSkip(); }} className="text-[10px] font-bold uppercase text-accent hover:underline mt-1">
             ↺ Undo — mark as required again
+          </button>
+        </>
+      ) : isRequested ? (
+        <>
+          <span className="text-[9px] font-semibold text-ink-300">Requested{pendingRequest!.requested_by ? ` · ${pendingRequest!.requested_by}` : ""}</span>
+          {pendingRequest!.note && (
+            <div className="text-[10px] text-ink-200 italic px-1" title={pendingRequest!.note}>
+              “{pendingRequest!.note}”
+            </div>
+          )}
+          <button onClick={(e) => { e.stopPropagation(); onUploadClick(); }} disabled={uploading}
+            className="text-[10px] font-bold uppercase text-accent hover:underline mt-1 disabled:opacity-40">
+            ⬆ Upload document
           </button>
         </>
       ) : (
         <>
           <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-bad-soft text-bad">MISSING</span>
-          <button onClick={onUploadClick} disabled={uploading}
+          <button onClick={(e) => { e.stopPropagation(); onUploadClick(); }} disabled={uploading}
             className="text-[10px] font-bold uppercase text-accent hover:underline mt-1 disabled:opacity-40">
             ⬆ Upload document
           </button>
-          <button onClick={onSkip} className="text-[10px] font-bold uppercase text-ink-300 hover:text-ink-100 hover:underline">
+          <button onClick={(e) => { e.stopPropagation(); onSkip(); }} className="text-[10px] font-bold uppercase text-ink-300 hover:text-ink-100 hover:underline">
             ✕ Not needed
           </button>
         </>

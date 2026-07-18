@@ -24,7 +24,1886 @@
     "rejection_appeals": true,
     "auto_rename": true
   },
-  "schemes_enabled": ["PMJAY", "CGHS", "ECHS", "CAPF", "ESI", "RAILWAY", "NDMC", "FCI", "DU"],
+  "schemes_enabled": [
+    "PMJAY",
+    "CGHS",
+    "ECHS",
+    "CAPF",
+    "ESI",
+    "Railway_UMID",
+    "NDMC",
+    "DGHS",
+    "FCI",
+    "DU",
+    "TPA"
+  ],
+  "specialties_enabled": [
+    "general_medicine",
+    "oncology"
+  ],
+  "npi": "PR123456",
   "his_webhook_secret": "action-his-demo-secret-2026",
-  "tagline": "Cancer-focused claims intelligence."
+  "tagline": "Cancer-focused claims intelligence.",
+  "latitude": "28.6292° N",
+  "longitude": "77.1065° E",
+  "address": "Action Cancer Hospital, Paschim Vihar, New Delhi",
+  "document_profiles": [
+    {
+      "doc_type": "chemo_chart",
+      "label": "Chemo Chart",
+      "specialty": "general_medicine",
+      "stage": "pre_auth",
+      "schemes": [
+        "CGHS"
+      ],
+      "anchors": [
+        "Chemo Chart"
+      ]
+    },
+    {
+      "doc_type": "stent_implant_invoice",
+      "label": "Stent / Implant Invoice",
+      "specialty": "general_medicine",
+      "stage": "pre_auth",
+      "schemes": [
+        "CGHS",
+        "ECHS"
+      ],
+      "anchors": [
+        "Stent / Implant Invoice"
+      ]
+    },
+    {
+      "doc_type": "ration_card",
+      "label": "Ration Card",
+      "specialty": "general_medicine",
+      "stage": "pre_auth",
+      "schemes": [
+        "CGHS",
+        "ECHS"
+      ],
+      "anchors": [
+        "Ration Card"
+      ]
+    },
+    {
+      "doc_type": "aadhaar",
+      "label": "Aadhaar",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU",
+        "TPA",
+        "ESI"
+      ],
+      "anchors": [
+        "Aadhaar",
+        "Patient ID",
+        "Aadhar",
+        "Aadhaar Card"
+      ]
+    },
+    {
+      "doc_type": "doctor_s_prescription",
+      "label": "Doctor's Prescription",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU",
+        "TPA",
+        "ESI"
+      ],
+      "anchors": [
+        "Doctor's Prescription",
+        "Prescription",
+        "OPD Slip",
+        "Doctor Prescription",
+        "Protocol",
+        "Chemo Protocol",
+        "Prescription / Protocol"
+      ]
+    },
+    {
+      "doc_type": "insurance_scheme_card",
+      "label": "Insurance / Scheme Card",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU",
+        "TPA",
+        "ESI"
+      ],
+      "anchors": [
+        "Insurance / Scheme Card",
+        "Insurance Card",
+        "Scheme Card",
+        "PMJAY Card",
+        "CGHS Card",
+        "ECHS Card",
+        "Ayushman Card"
+      ]
+    },
+    {
+      "doc_type": "consent_form",
+      "label": "Consent Form",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU",
+        "TPA",
+        "ESI"
+      ],
+      "anchors": [
+        "Consent Form"
+      ]
+    },
+    {
+      "doc_type": "geotag_photo",
+      "label": "Geotag Photo",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU"
+      ],
+      "anchors": [
+        "Geotag Photo",
+        "Geo Tag Photo",
+        "Geo-tag Photo"
+      ]
+    },
+    {
+      "doc_type": "referral",
+      "label": "Referral",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "FCI",
+        "DU"
+      ],
+      "anchors": [
+        "Referral",
+        "Referral Letter",
+        "Outside Hospital Referral"
+      ]
+    },
+    {
+      "doc_type": "tumor_board_certificate",
+      "label": "Tumor Board Certificate",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU"
+      ],
+      "anchors": [
+        "Tumor Board Certificate",
+        "TBC"
+      ]
+    },
+    {
+      "doc_type": "histopathology_report",
+      "label": "Histopathology Report",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU",
+        "TPA"
+      ],
+      "anchors": [
+        "Histopathology Report",
+        "Histopath",
+        "HPE",
+        "Histopathology",
+        "Latest Pathology (HPE)"
+      ]
+    },
+    {
+      "doc_type": "biopsy_report",
+      "label": "Biopsy Report",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU",
+        "TPA"
+      ],
+      "anchors": [
+        "Biopsy Report",
+        "Biopsy"
+      ]
+    },
+    {
+      "doc_type": "pet_ct_report",
+      "label": "PET-CT Report",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU",
+        "TPA"
+      ],
+      "anchors": [
+        "PET-CT Report",
+        "PET CT",
+        "PETCT"
+      ]
+    },
+    {
+      "doc_type": "apex_form",
+      "label": "Apex Form",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "ECHS"
+      ],
+      "anchors": [
+        "Apex Form"
+      ]
+    },
+    {
+      "doc_type": "pan_card",
+      "label": "PAN Card",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "TPA"
+      ],
+      "anchors": [
+        "PAN Card",
+        "PAN",
+        "Permanent Account Number"
+      ]
+    },
+    {
+      "doc_type": "kyc_form",
+      "label": "KYC Form",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "TPA"
+      ],
+      "anchors": [
+        "KYC Form",
+        "KYC",
+        "Know Your Customer"
+      ]
+    },
+    {
+      "doc_type": "pre_authorization_form",
+      "label": "Pre-Authorization Form",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "TPA"
+      ],
+      "anchors": [
+        "Pre-Authorization Form",
+        "Pre-Auth Form",
+        "Authorization Request",
+        "TPA Request Form"
+      ]
+    },
+    {
+      "doc_type": "unlisted_permission",
+      "label": "Permission for Unlisted Drugs / Injections / Tests",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "DGHS"
+      ],
+      "anchors": [
+        "permission of unlisted",
+        "unlisted drugs",
+        "unlisted injection",
+        "unlisted test",
+        "unlisted procedure"
+      ]
+    },
+    {
+      "doc_type": "du_affiliated_permission_letter",
+      "label": "DU Affiliated Permission Letter",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "DU"
+      ],
+      "anchors": [
+        "permission letter",
+        "affiliated college",
+        "DU affiliated"
+      ]
+    },
+    {
+      "doc_type": "case_enhanced_summary",
+      "label": "Case Enhanced Summary",
+      "specialty": "oncology",
+      "stage": "mid_way",
+      "anchors": [
+        "case enhanced summary",
+        "enhancement summary",
+        "case summary",
+        "enhancement request"
+      ]
+    },
+    {
+      "doc_type": "weekly_patient_photo",
+      "label": "Weekly Patient Photo",
+      "specialty": "oncology",
+      "stage": "mid_way",
+      "schemes": [
+        "CGHS",
+        "CAPF",
+        "ECHS"
+      ],
+      "anchors": [
+        "weekly photo",
+        "patient photo",
+        "weekly patient photo"
+      ]
+    },
+    {
+      "doc_type": "daily_patient_photo",
+      "label": "Daily Patient Photo",
+      "specialty": "oncology",
+      "stage": "mid_way",
+      "schemes": [
+        "PMJAY",
+        "NDMC"
+      ],
+      "anchors": [
+        "daily photo",
+        "daily patient photo",
+        "midway photo"
+      ]
+    },
+    {
+      "doc_type": "daily_ipd_file",
+      "label": "Daily IPD File",
+      "specialty": "oncology",
+      "stage": "mid_way",
+      "schemes": [
+        "PMJAY"
+      ],
+      "anchors": [
+        "daily ipd",
+        "ipd file daily",
+        "daily ipd file"
+      ]
+    },
+    {
+      "doc_type": "discharge_summary",
+      "label": "Discharge Summary",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "anchors": [
+        "Discharge Summary",
+        "discharge note"
+      ]
+    },
+    {
+      "doc_type": "feedback_form",
+      "label": "Feedback Form",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "anchors": [
+        "Feedback Form",
+        "patient feedback"
+      ]
+    },
+    {
+      "doc_type": "geotag_photo",
+      "label": "Geotag Photo",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "anchors": [
+        "Geotag Photo",
+        "Geo Tag Photo",
+        "Geo-tag Photo"
+      ]
+    },
+    {
+      "doc_type": "hospital_bill",
+      "label": "Hospital Bill",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "anchors": [
+        "Hospital Bill",
+        "final bill",
+        "itemised bill",
+        "bill"
+      ]
+    },
+    {
+      "doc_type": "ipd_file_admission",
+      "label": "IPD File (admission)",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "anchors": [
+        "IPD File",
+        "indoor case papers",
+        "IPD"
+      ]
+    },
+    {
+      "doc_type": "drug_pouch_wrapper_photo",
+      "label": "Drug Pouch / Wrapper Photo",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "chemo",
+        "radiation"
+      ],
+      "anchors": [
+        "Drug Pouch",
+        "medicine wrapper",
+        "injection box",
+        "drug pouch barcode",
+        "pouch photo",
+        "empty vial"
+      ]
+    },
+    {
+      "doc_type": "kft_report",
+      "label": "KFT Report",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "chemo"
+      ],
+      "anchors": [
+        "KFT",
+        "kidney function test",
+        "serum creatinine",
+        "renal function"
+      ]
+    },
+    {
+      "doc_type": "lft_report",
+      "label": "LFT Report",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "chemo"
+      ],
+      "anchors": [
+        "LFT",
+        "liver function test",
+        "bilirubin",
+        "SGPT",
+        "SGOT"
+      ]
+    },
+    {
+      "doc_type": "cbc_report",
+      "label": "CBC Report",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "chemo"
+      ],
+      "anchors": [
+        "CBC",
+        "complete blood count",
+        "hemoglobin",
+        "platelet count"
+      ]
+    },
+    {
+      "doc_type": "chemo_chart",
+      "label": "Chemo Chart",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "chemo"
+      ],
+      "anchors": [
+        "Chemo Chart"
+      ]
+    },
+    {
+      "doc_type": "ot_notes",
+      "label": "OT Notes",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "surgery"
+      ],
+      "anchors": [
+        "OT Notes",
+        "operation theatre notes",
+        "operative notes"
+      ]
+    },
+    {
+      "doc_type": "ot_files",
+      "label": "OT Files",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "surgery"
+      ],
+      "anchors": [
+        "OT Files",
+        "operation theatre file"
+      ]
+    },
+    {
+      "doc_type": "ipw",
+      "label": "IPW",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "surgery"
+      ],
+      "anchors": [
+        "IPW",
+        "in-patient ward"
+      ]
+    },
+    {
+      "doc_type": "prescription_protocol",
+      "label": "Prescription / Protocol",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "surgery",
+        "radiation"
+      ],
+      "anchors": [
+        "Prescription / Protocol",
+        "prescription",
+        "protocol",
+        "treatment protocol"
+      ]
+    },
+    {
+      "doc_type": "post_ot_notes",
+      "label": "Post OT Notes",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "surgery"
+      ],
+      "anchors": [
+        "Post OT Notes",
+        "post operation theatre notes"
+      ]
+    },
+    {
+      "doc_type": "anaesthesia_note",
+      "label": "Anaesthesia Note",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "surgery"
+      ],
+      "anchors": [
+        "Anaesthesia Note",
+        "anesthesia record",
+        "anaesthesia record"
+      ]
+    },
+    {
+      "doc_type": "post_op_notes",
+      "label": "Post OP Notes",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "surgery"
+      ],
+      "anchors": [
+        "Post OP Notes",
+        "post-op notes",
+        "post operative notes"
+      ]
+    },
+    {
+      "doc_type": "radiation_files",
+      "label": "Radiation Files",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "radiation"
+      ],
+      "anchors": [
+        "Radiation Files",
+        "radiotherapy files",
+        "radiation file"
+      ]
+    },
+    {
+      "doc_type": "radiation_chart",
+      "label": "Radiation Chart",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "radiation"
+      ],
+      "anchors": [
+        "Radiation Chart",
+        "radiotherapy chart",
+        "fraction log",
+        "cumulative dose"
+      ]
+    },
+    {
+      "doc_type": "tumor_board_certificate",
+      "label": "Tumor Board Certificate",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU"
+      ],
+      "anchors": [
+        "Tumor Board Certificate",
+        "TBC"
+      ]
+    },
+    {
+      "doc_type": "ihc_report",
+      "label": "IHC Report",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU",
+        "TPA"
+      ],
+      "anchors": [
+        "IHC Report",
+        "Immunohistochemistry",
+        "IHC",
+        "ER/PR/HER2"
+      ]
+    },
+    {
+      "doc_type": "molecular_genetic_report",
+      "label": "Molecular / Genetic Report",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU",
+        "TPA"
+      ],
+      "anchors": [
+        "Molecular Report",
+        "Genetic Report",
+        "EGFR",
+        "ALK",
+        "BRCA",
+        "Mutation Panel",
+        "NGS Report"
+      ]
+    },
+    {
+      "doc_type": "chemo_protocol_sheet",
+      "label": "Signed Chemotherapy Protocol Sheet",
+      "specialty": "oncology",
+      "stage": "mid_way",
+      "for_treatments": [
+        "chemo"
+      ],
+      "anchors": [
+        "Chemotherapy Protocol",
+        "Chemo Protocol Sheet",
+        "Cycle Protocol",
+        "Protocol Sheet"
+      ]
+    },
+    {
+      "doc_type": "kft_report",
+      "label": "KFT Report",
+      "specialty": "oncology",
+      "stage": "mid_way",
+      "for_treatments": [
+        "chemo"
+      ],
+      "anchors": [
+        "KFT",
+        "kidney function test",
+        "serum creatinine",
+        "renal function"
+      ]
+    },
+    {
+      "doc_type": "lft_report",
+      "label": "LFT Report",
+      "specialty": "oncology",
+      "stage": "mid_way",
+      "for_treatments": [
+        "chemo"
+      ],
+      "anchors": [
+        "LFT",
+        "liver function test",
+        "bilirubin",
+        "SGPT",
+        "SGOT"
+      ]
+    },
+    {
+      "doc_type": "cbc_report",
+      "label": "CBC Report",
+      "specialty": "oncology",
+      "stage": "mid_way",
+      "for_treatments": [
+        "chemo"
+      ],
+      "anchors": [
+        "CBC",
+        "complete blood count",
+        "hemoglobin",
+        "platelet count"
+      ]
+    },
+    {
+      "doc_type": "ct_simulation_dosimetry_plan",
+      "label": "CT Simulation & Dosimetry Plan",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "radiation"
+      ],
+      "anchors": [
+        "CT Simulation",
+        "Simulation Plan",
+        "Dosimetry Plan",
+        "Dosimetry",
+        "RT Planning"
+      ]
+    },
+    {
+      "doc_type": "radiation_prescription_order",
+      "label": "Radiation Prescription Order",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "radiation"
+      ],
+      "anchors": [
+        "Radiation Prescription",
+        "RT Prescription",
+        "Prescription Order",
+        "Dose Prescription"
+      ]
+    },
+    {
+      "doc_type": "icu_justification_letter",
+      "label": "ICU Justification Letter",
+      "specialty": "oncology",
+      "stage": "mid_way",
+      "anchors": [
+        "ICU Justification",
+        "Justification Letter",
+        "ICU Justification Letter"
+      ]
+    }
+  ],
+  "document_library": [
+    {
+      "doc_type": "chemo_chart",
+      "label": "Chemo Chart",
+      "anchors": [
+        "Chemo Chart"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "stent_implant_invoice",
+      "label": "Stent / Implant Invoice",
+      "anchors": [
+        "Stent / Implant Invoice"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "ration_card",
+      "label": "Ration Card",
+      "anchors": [
+        "Ration Card"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "aadhaar",
+      "label": "Aadhaar",
+      "anchors": [
+        "Aadhaar",
+        "Patient ID",
+        "Aadhar",
+        "Aadhaar Card"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "doctor_s_prescription",
+      "label": "Doctor's Prescription",
+      "anchors": [
+        "Doctor's Prescription",
+        "Prescription",
+        "OPD Slip",
+        "Doctor Prescription",
+        "Protocol",
+        "Chemo Protocol",
+        "Prescription / Protocol"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "insurance_scheme_card",
+      "label": "Insurance / Scheme Card",
+      "anchors": [
+        "Insurance / Scheme Card",
+        "Insurance Card",
+        "Scheme Card",
+        "PMJAY Card",
+        "CGHS Card",
+        "ECHS Card",
+        "Ayushman Card"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "consent_form",
+      "label": "Consent Form",
+      "anchors": [
+        "Consent Form"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "geotag_photo",
+      "label": "Geotag Photo",
+      "anchors": [
+        "Geotag Photo",
+        "Geo Tag Photo",
+        "Geo-tag Photo"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "referral",
+      "label": "Referral",
+      "anchors": [
+        "Referral",
+        "Referral Letter",
+        "Outside Hospital Referral"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "tumor_board_certificate",
+      "label": "Tumor Board Certificate",
+      "anchors": [
+        "Tumor Board Certificate",
+        "TBC"
+      ],
+      "catalog_linked": false
+    },
+    {
+      "doc_type": "histopathology_report",
+      "label": "Histopathology Report",
+      "anchors": [
+        "Histopathology Report",
+        "Histopath",
+        "HPE",
+        "Histopathology",
+        "Latest Pathology (HPE)"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "biopsy_report",
+      "label": "Biopsy Report",
+      "anchors": [
+        "Biopsy Report",
+        "Biopsy"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "pet_ct_report",
+      "label": "PET-CT Report",
+      "anchors": [
+        "PET-CT Report",
+        "PET CT",
+        "PETCT"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "apex_form",
+      "label": "Apex Form",
+      "anchors": [
+        "Apex Form"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "pan_card",
+      "label": "PAN Card",
+      "anchors": [
+        "PAN Card",
+        "PAN",
+        "Permanent Account Number"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "kyc_form",
+      "label": "KYC Form",
+      "anchors": [
+        "KYC Form",
+        "KYC",
+        "Know Your Customer"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "pre_authorization_form",
+      "label": "Pre-Authorization Form",
+      "anchors": [
+        "Pre-Authorization Form",
+        "Pre-Auth Form",
+        "Authorization Request",
+        "TPA Request Form"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "unlisted_permission",
+      "label": "Permission for Unlisted Drugs / Injections / Tests",
+      "anchors": [
+        "permission of unlisted",
+        "unlisted drugs",
+        "unlisted injection",
+        "unlisted test",
+        "unlisted procedure"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "du_affiliated_permission_letter",
+      "label": "DU Affiliated Permission Letter",
+      "anchors": [
+        "permission letter",
+        "affiliated college",
+        "DU affiliated"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "case_enhanced_summary",
+      "label": "Case Enhanced Summary",
+      "anchors": [
+        "case enhanced summary",
+        "enhancement summary",
+        "case summary",
+        "enhancement request"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "weekly_patient_photo",
+      "label": "Weekly Patient Photo",
+      "anchors": [
+        "weekly photo",
+        "patient photo",
+        "weekly patient photo"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "daily_patient_photo",
+      "label": "Daily Patient Photo",
+      "anchors": [
+        "daily photo",
+        "daily patient photo",
+        "midway photo"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "daily_ipd_file",
+      "label": "Daily IPD File",
+      "anchors": [
+        "daily ipd",
+        "ipd file daily",
+        "daily ipd file"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "discharge_summary",
+      "label": "Discharge Summary",
+      "anchors": [
+        "Discharge Summary",
+        "discharge note"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "feedback_form",
+      "label": "Feedback Form",
+      "anchors": [
+        "Feedback Form",
+        "patient feedback"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "hospital_bill",
+      "label": "Hospital Bill",
+      "anchors": [
+        "Hospital Bill",
+        "final bill",
+        "itemised bill",
+        "bill"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "ipd_file_admission",
+      "label": "IPD File (admission)",
+      "anchors": [
+        "IPD File",
+        "indoor case papers",
+        "IPD"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "drug_pouch_wrapper_photo",
+      "label": "Drug Pouch / Wrapper Photo",
+      "anchors": [
+        "Drug Pouch",
+        "medicine wrapper",
+        "injection box",
+        "drug pouch barcode",
+        "pouch photo",
+        "empty vial"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "kft_report",
+      "label": "KFT Report",
+      "anchors": [
+        "KFT",
+        "kidney function test",
+        "serum creatinine",
+        "renal function"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "lft_report",
+      "label": "LFT Report",
+      "anchors": [
+        "LFT",
+        "liver function test",
+        "bilirubin",
+        "SGPT",
+        "SGOT"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "cbc_report",
+      "label": "CBC Report",
+      "anchors": [
+        "CBC",
+        "complete blood count",
+        "hemoglobin",
+        "platelet count"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "ot_notes",
+      "label": "OT Notes",
+      "anchors": [
+        "OT Notes",
+        "operation theatre notes",
+        "operative notes"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "ot_files",
+      "label": "OT Files",
+      "anchors": [
+        "OT Files",
+        "operation theatre file"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "ipw",
+      "label": "IPW",
+      "anchors": [
+        "IPW",
+        "in-patient ward"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "prescription_protocol",
+      "label": "Prescription / Protocol",
+      "anchors": [
+        "Prescription / Protocol",
+        "prescription",
+        "protocol",
+        "treatment protocol"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "post_ot_notes",
+      "label": "Post OT Notes",
+      "anchors": [
+        "Post OT Notes",
+        "post operation theatre notes"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "anaesthesia_note",
+      "label": "Anaesthesia Note",
+      "anchors": [
+        "Anaesthesia Note",
+        "anesthesia record",
+        "anaesthesia record"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "post_op_notes",
+      "label": "Post OP Notes",
+      "anchors": [
+        "Post OP Notes",
+        "post-op notes",
+        "post operative notes"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "radiation_files",
+      "label": "Radiation Files",
+      "anchors": [
+        "Radiation Files",
+        "radiotherapy files",
+        "radiation file"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "radiation_chart",
+      "label": "Radiation Chart",
+      "anchors": [
+        "Radiation Chart",
+        "radiotherapy chart",
+        "fraction log",
+        "cumulative dose"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "ihc_report",
+      "label": "IHC Report",
+      "anchors": [
+        "IHC Report",
+        "Immunohistochemistry",
+        "IHC",
+        "ER/PR/HER2"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "molecular_genetic_report",
+      "label": "Molecular / Genetic Report",
+      "anchors": [
+        "Molecular Report",
+        "Genetic Report",
+        "EGFR",
+        "ALK",
+        "BRCA",
+        "Mutation Panel",
+        "NGS Report"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "chemo_protocol_sheet",
+      "label": "Signed Chemotherapy Protocol Sheet",
+      "anchors": [
+        "Chemotherapy Protocol",
+        "Chemo Protocol Sheet",
+        "Cycle Protocol",
+        "Protocol Sheet"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "ct_simulation_dosimetry_plan",
+      "label": "CT Simulation & Dosimetry Plan",
+      "anchors": [
+        "CT Simulation",
+        "Simulation Plan",
+        "Dosimetry Plan",
+        "Dosimetry",
+        "RT Planning"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "radiation_prescription_order",
+      "label": "Radiation Prescription Order",
+      "anchors": [
+        "Radiation Prescription",
+        "RT Prescription",
+        "Prescription Order",
+        "Dose Prescription"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "icu_justification_letter",
+      "label": "ICU Justification Letter",
+      "anchors": [
+        "ICU Justification",
+        "Justification Letter",
+        "ICU Justification Letter"
+      ],
+      "catalog_linked": true
+    },
+    {
+      "doc_type": "cbc_lft_kft_profile",
+      "label": "CBC / LFT / KFT Profile",
+      "anchors": [
+        "CBC / LFT / KFT Profile"
+      ],
+      "catalog_linked": true
+    }
+  ],
+  "document_requirements": [
+    {
+      "doc_type": "chemo_chart",
+      "specialty": "general_medicine",
+      "stage": "pre_auth",
+      "schemes": [
+        "CGHS"
+      ]
+    },
+    {
+      "doc_type": "stent_implant_invoice",
+      "specialty": "general_medicine",
+      "stage": "pre_auth",
+      "schemes": [
+        "CGHS",
+        "ECHS"
+      ]
+    },
+    {
+      "doc_type": "ration_card",
+      "specialty": "general_medicine",
+      "stage": "pre_auth",
+      "schemes": [
+        "CGHS",
+        "ECHS"
+      ]
+    },
+    {
+      "doc_type": "aadhaar",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU",
+        "TPA",
+        "ESI"
+      ]
+    },
+    {
+      "doc_type": "doctor_s_prescription",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU",
+        "TPA",
+        "ESI"
+      ]
+    },
+    {
+      "doc_type": "insurance_scheme_card",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU",
+        "TPA",
+        "ESI"
+      ]
+    },
+    {
+      "doc_type": "consent_form",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU",
+        "TPA",
+        "ESI"
+      ]
+    },
+    {
+      "doc_type": "geotag_photo",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU"
+      ]
+    },
+    {
+      "doc_type": "referral",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "FCI",
+        "DU"
+      ]
+    },
+    {
+      "doc_type": "tumor_board_certificate",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU"
+      ]
+    },
+    {
+      "doc_type": "histopathology_report",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU",
+        "TPA"
+      ],
+      "alt_group": "report"
+    },
+    {
+      "doc_type": "biopsy_report",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU",
+        "TPA"
+      ],
+      "alt_group": "report"
+    },
+    {
+      "doc_type": "pet_ct_report",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU",
+        "TPA"
+      ],
+      "alt_group": "report"
+    },
+    {
+      "doc_type": "apex_form",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "ECHS"
+      ]
+    },
+    {
+      "doc_type": "pan_card",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "TPA"
+      ]
+    },
+    {
+      "doc_type": "kyc_form",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "TPA"
+      ]
+    },
+    {
+      "doc_type": "pre_authorization_form",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "TPA"
+      ]
+    },
+    {
+      "doc_type": "unlisted_permission",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "DGHS"
+      ]
+    },
+    {
+      "doc_type": "du_affiliated_permission_letter",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "DU"
+      ]
+    },
+    {
+      "doc_type": "case_enhanced_summary",
+      "specialty": "oncology",
+      "stage": "mid_way"
+    },
+    {
+      "doc_type": "weekly_patient_photo",
+      "specialty": "oncology",
+      "stage": "mid_way",
+      "schemes": [
+        "CGHS",
+        "CAPF",
+        "ECHS"
+      ]
+    },
+    {
+      "doc_type": "daily_patient_photo",
+      "specialty": "oncology",
+      "stage": "mid_way",
+      "schemes": [
+        "PMJAY",
+        "NDMC"
+      ]
+    },
+    {
+      "doc_type": "daily_ipd_file",
+      "specialty": "oncology",
+      "stage": "mid_way",
+      "schemes": [
+        "PMJAY"
+      ]
+    },
+    {
+      "doc_type": "discharge_summary",
+      "specialty": "oncology",
+      "stage": "discharge"
+    },
+    {
+      "doc_type": "feedback_form",
+      "specialty": "oncology",
+      "stage": "discharge"
+    },
+    {
+      "doc_type": "geotag_photo",
+      "specialty": "oncology",
+      "stage": "discharge"
+    },
+    {
+      "doc_type": "hospital_bill",
+      "specialty": "oncology",
+      "stage": "discharge"
+    },
+    {
+      "doc_type": "ipd_file_admission",
+      "specialty": "oncology",
+      "stage": "discharge"
+    },
+    {
+      "doc_type": "drug_pouch_wrapper_photo",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "chemo",
+        "radiation"
+      ]
+    },
+    {
+      "doc_type": "kft_report",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "chemo"
+      ]
+    },
+    {
+      "doc_type": "lft_report",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "chemo"
+      ]
+    },
+    {
+      "doc_type": "cbc_report",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "chemo"
+      ]
+    },
+    {
+      "doc_type": "chemo_chart",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "chemo"
+      ]
+    },
+    {
+      "doc_type": "ot_notes",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "surgery"
+      ]
+    },
+    {
+      "doc_type": "ot_files",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "surgery"
+      ]
+    },
+    {
+      "doc_type": "ipw",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "surgery"
+      ]
+    },
+    {
+      "doc_type": "prescription_protocol",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "surgery",
+        "radiation"
+      ]
+    },
+    {
+      "doc_type": "post_ot_notes",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "surgery"
+      ]
+    },
+    {
+      "doc_type": "anaesthesia_note",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "surgery"
+      ]
+    },
+    {
+      "doc_type": "post_op_notes",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "surgery"
+      ]
+    },
+    {
+      "doc_type": "radiation_files",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "radiation"
+      ]
+    },
+    {
+      "doc_type": "radiation_chart",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "radiation"
+      ]
+    },
+    {
+      "doc_type": "tumor_board_certificate",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU"
+      ]
+    },
+    {
+      "doc_type": "ihc_report",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU",
+        "TPA"
+      ]
+    },
+    {
+      "doc_type": "molecular_genetic_report",
+      "specialty": "oncology",
+      "stage": "pre_auth",
+      "schemes": [
+        "PMJAY",
+        "CGHS",
+        "CAPF",
+        "ECHS",
+        "Railway_UMID",
+        "NDMC",
+        "DGHS",
+        "FCI",
+        "DU",
+        "TPA"
+      ]
+    },
+    {
+      "doc_type": "chemo_protocol_sheet",
+      "specialty": "oncology",
+      "stage": "mid_way",
+      "for_treatments": [
+        "chemo"
+      ]
+    },
+    {
+      "doc_type": "kft_report",
+      "specialty": "oncology",
+      "stage": "mid_way",
+      "for_treatments": [
+        "chemo"
+      ]
+    },
+    {
+      "doc_type": "lft_report",
+      "specialty": "oncology",
+      "stage": "mid_way",
+      "for_treatments": [
+        "chemo"
+      ]
+    },
+    {
+      "doc_type": "cbc_report",
+      "specialty": "oncology",
+      "stage": "mid_way",
+      "for_treatments": [
+        "chemo"
+      ]
+    },
+    {
+      "doc_type": "ct_simulation_dosimetry_plan",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "radiation"
+      ]
+    },
+    {
+      "doc_type": "radiation_prescription_order",
+      "specialty": "oncology",
+      "stage": "discharge",
+      "for_treatments": [
+        "radiation"
+      ]
+    },
+    {
+      "doc_type": "icu_justification_letter",
+      "specialty": "oncology",
+      "stage": "mid_way"
+    }
+  ],
+  "state": "Karnataka"
 }

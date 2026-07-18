@@ -37,7 +37,13 @@ interface Slot {
 
 let pool: Slot[] = [];
 let requestCounter = 0;
-const queue: { filePath: string; docTypeHint: string; forceDocType?: string; resolve: (result: any) => void }[] = [];
+// payload is whatever worker.py's handle() expects for its cmd — "land" and
+// "explode" both look like {cmd, path, doc_type_hint, force_doc_type,
+// hospital_id}; "extract_page" is just {cmd, path}; "finish_parallel" is
+// {cmd, page_results, page_paths, compressed_path, doc_type_hint,
+// force_doc_type, hospital_id}. Kept as a bag of fields (not a union type)
+// since it's serialized straight to JSON either way.
+const queue: { payload: Record<string, any>; resolve: (result: any) => void }[] = [];
 
 function spawnSlot(): Slot {
   const child = spawn(PYTHON, [WORKER_SCRIPT], {
@@ -99,12 +105,7 @@ function dispatchNext() {
   free.busy = true;
   const id = String(++requestCounter);
   free.pending.set(id, job.resolve);
-  const line = JSON.stringify({
-    _id: id,
-    path: job.filePath,
-    doc_type_hint: job.docTypeHint,
-    force_doc_type: job.forceDocType,
-  }) + "\n";
+  const line = JSON.stringify({ _id: id, ...job.payload }) + "\n";
   free.child.stdin.write(line, (err) => {
     if (err) {
       free.busy = false;
@@ -115,15 +116,55 @@ function dispatchNext() {
   });
 }
 
-/** Runs land_document.py's logic for one file via the worker pool. Same
- * result shape as the old single-worker call — callers don't need to know
- * whether their job ran on worker 1 or worker 3. Resolves with
- * {error: "..."} rather than throwing if something goes wrong, so existing
- * `if (landed.error) retry...` logic in callers keeps working unchanged. */
-export function landViaWorker(filePath: string, docTypeHint: string, forceDocType?: string): Promise<any> {
+function runJob(payload: Record<string, any>): Promise<any> {
   ensurePool();
   return new Promise((resolve) => {
-    queue.push({ filePath, docTypeHint, forceDocType, resolve });
+    queue.push({ payload, resolve });
     dispatchNext();
+  });
+}
+
+/** Runs land_document.py's full land_file() pipeline for one file via the
+ * worker pool. Same result shape as the old single-worker call — callers
+ * don't need to know whether their job ran on worker 1 or worker 3.
+ * Resolves with {error: "..."} rather than throwing if something goes
+ * wrong, so existing `if (landed.error) retry...` logic keeps working. */
+export function landViaWorker(filePath: string, docTypeHint: string, forceDocType?: string, hospitalId?: string): Promise<any> {
+  return runJob({ cmd: "land", path: filePath, doc_type_hint: docTypeHint, force_doc_type: forceDocType, hospital_id: hospitalId });
+}
+
+/** land_file()'s front half. For a scanned multi-page PDF, returns
+ * {parallel: true, page_paths: [...]} with NO OCR done yet, so the caller
+ * can fan those pages out across the whole pool via extractPageViaWorker()
+ * instead of OCR'ing them one at a time inside a single worker. Every other
+ * case (single page, text-PDF, image, visual-only) just runs the full
+ * pipeline and returns {parallel: false, ...normal land result}. */
+export function explodeViaWorker(filePath: string, docTypeHint: string, forceDocType?: string, hospitalId?: string): Promise<any> {
+  return runJob({ cmd: "explode", path: filePath, doc_type_hint: docTypeHint, force_doc_type: forceDocType, hospital_id: hospitalId });
+}
+
+/** OCRs one rasterized page image. This is the actual parallelizable unit —
+ * call it once per page from explodeViaWorker()'s page_paths and Promise.all
+ * them; each call queues independently and gets handed to whichever pool
+ * worker frees up next, so up to POOL_SIZE pages genuinely OCR at once. */
+export function extractPageViaWorker(pagePath: string): Promise<any> {
+  return runJob({ cmd: "extract_page", path: pagePath });
+}
+
+/** Reassembles extractPageViaWorker() results (gathered by the caller, in
+ * original page order) back into one document result — the parallel-path
+ * equivalent of what land_file() does internally for a scanned PDF. */
+export function finishParallelViaWorker(
+  pageResults: any[], pagePaths: string[], compressedPath: string,
+  docTypeHint: string, forceDocType?: string, hospitalId?: string
+): Promise<any> {
+  return runJob({
+    cmd: "finish_parallel",
+    page_results: pageResults,
+    page_paths: pagePaths,
+    compressed_path: compressedPath,
+    doc_type_hint: docTypeHint,
+    force_doc_type: forceDocType,
+    hospital_id: hospitalId,
   });
 }

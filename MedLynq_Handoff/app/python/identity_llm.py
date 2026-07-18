@@ -41,13 +41,32 @@ except ImportError:
 
 from dotenv import load_dotenv
 
+from tenant_config import document_profiles_for
+import api_settings
+
 APP_ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(APP_ROOT / ".env.local")
 
-SARVAM_KEY = os.getenv("SARVAM_API_KEY", "")
-MODEL = os.getenv("SARVAM_CHAT_MODEL", "sarvam-30b")
+SARVAM_KEY = api_settings.get("sarvam_api_key", "SARVAM_API_KEY")
+MODEL = api_settings.get("sarvam_chat_model", "SARVAM_CHAT_MODEL", "sarvam-30b")
 
-SYSTEM_PROMPT = """You extract patient identity fields from Indian hospital \
+# Generic doc types every hospital produces regardless of specialty — always
+# offered, same as content_classifier.py's GLOBAL_RULES. A hospital's
+# tenant-config document_profiles (see tenant_config.py) ADD to this list
+# rather than replace it, so a brand-new specialty's document types (e.g.
+# Fever_Chart, Malaria_Smear for a general-medicine hospital) become
+# something the model can classify into without editing this file — just a
+# config entry in db/tenants/{hospital_id}.json.
+_BASE_DOC_TYPES = [
+    "Discharge_Summary", "Hospital_Bill", "Lab_Report", "Consent_Form",
+    "Prescription", "Referral_Letter", "OPD_Slip", "OT_Notes", "Aadhaar_Card",
+    "Feedback_Form", "Other",
+]
+# Oncology stays a built-in default (not tenant config) so hospitals with no
+# tenant config at all — today's Action/Fortis behavior — see no change.
+_ONCOLOGY_DOC_TYPES = ["Chemo_Chart", "HPE_Report", "Tumor_Board_Certificate"]
+
+_PROMPT_HEADER = """You extract patient identity fields from Indian hospital \
 document text (OCR'd, so it may have typos, garbled words, or unusual \
 separators like ";" instead of ":"). Read the text and use your judgment to \
 recover what a human would recognize, even if a fixed keyword pattern \
@@ -66,15 +85,52 @@ printed if present (e.g. "100096731 (25/69)") — don't invent or strip \
 digits you're not sure about. If absent, use null.
 - age: integer years if stated, else null.
 - gender: "M" or "F" if stated, else null.
-- doc_type: one of Discharge_Summary, Chemo_Chart, HPE_Report, Lab_Report, \
-Hospital_Bill, Feedback_Form, Consent_Form, Prescription, Aadhaar_Card, \
-Other — based on structural content (biopsy/histopathology -> HPE_Report, \
-cycle/BSA/chemo drugs -> Chemo_Chart, gross/net/payer amounts -> \
-Hospital_Bill, etc).
+"""
 
+_PROMPT_FOOTER = """
 Return ONLY a JSON object, no other text:
 {"patient_name": ..., "mrn": ..., "age": ..., "gender": ..., "doc_type": ...}
 """
+
+
+def build_system_prompt(hospital_id: str | None) -> str:
+    """Builds the doc_type classification rules dynamically from this
+    hospital's tenant config instead of a hardcoded enum string — this is
+    the piece that lets a brand-new specialty (with no compiled regex rules
+    yet, see content_classifier.py) still get recognized on day one, purely
+    from a config file, no code change."""
+    doc_types = list(_BASE_DOC_TYPES)
+    doc_types[len(doc_types) - 1:len(doc_types) - 1] = _ONCOLOGY_DOC_TYPES  # insert before "Other"
+
+    hints = ""
+    tenant_profiles = document_profiles_for(hospital_id)
+    if tenant_profiles:
+        extra_types = []
+        hint_lines = []
+        for p in tenant_profiles:
+            label = p.get("label", p["doc_type"])
+            enum_name = re.sub(r"[^A-Za-z0-9]+", "_", label.strip()).strip("_")
+            extra_types.append(enum_name)
+            anchors = p.get("anchors") or []
+            if anchors:
+                hint_lines.append(f"  {enum_name}: look for {', '.join(anchors)}")
+        doc_types[len(doc_types) - 1:len(doc_types) - 1] = extra_types
+        if hint_lines:
+            hints = "\nHints for this hospital's document types:\n" + "\n".join(hint_lines) + "\n"
+
+    doc_type_rule = (
+        f"- doc_type: one of {', '.join(doc_types)} — based on structural "
+        "content (biopsy/histopathology -> HPE_Report, cycle/BSA/chemo drugs "
+        "-> Chemo_Chart, gross/net/payer amounts -> Hospital_Bill, etc).\n"
+        f"{hints}"
+    )
+    return _PROMPT_HEADER + doc_type_rule + _PROMPT_FOOTER
+
+
+# Kept for any caller that imports SYSTEM_PROMPT directly and for the
+# __main__ smoke test below — equivalent to build_system_prompt(None), i.e.
+# the original oncology-only default with no tenant config.
+SYSTEM_PROMPT = build_system_prompt(None)
 
 
 # Sarvam's cached text is the markdown content followed by a large raw JSON
@@ -121,7 +177,7 @@ def _audit_llm_call(cache_key: str, status: str, err: str | None = None) -> None
 _CACHE_DIR = Path(__file__).resolve().parents[1] / "PatientLog" / "_index" / "identity_llm_cache"
 
 
-def extract_identity_llm(text: str) -> dict[str, Any] | None:
+def extract_identity_llm(text: str, hospital_id: str | None = None) -> dict[str, Any] | None:
     """Returns {"patient_name", "mrn", "age", "gender", "doc_type"} or None
     on any failure (missing key, API error, unparseable response) — callers
     should fall back to md_parser.py's regex-based _patient_identity() when
@@ -131,7 +187,12 @@ def extract_identity_llm(text: str) -> dict[str, Any] | None:
         return None
 
     cleaned = _strip_layout_json(text)[:6000]
-    cache_key = hashlib.sha256(cleaned.encode("utf-8")).hexdigest()
+    # hospital_id folded into the cache key (not just the text) — two
+    # hospitals with different tenant-config doc types get different
+    # SYSTEM_PROMPTs, so a cached result for one must never leak to the
+    # other, and if a hospital's config changes later (new document type
+    # added), that's a fresh key so no stale classification lingers forever.
+    cache_key = hashlib.sha256(f"{hospital_id or ''}:{cleaned}".encode("utf-8")).hexdigest()
     cache_path = _CACHE_DIR / f"{cache_key}.json"
     if cache_path.is_file():
         try:
@@ -149,7 +210,7 @@ def extract_identity_llm(text: str) -> dict[str, Any] | None:
         resp = client.chat.completions(
             model=MODEL,
             messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "system", "content": build_system_prompt(hospital_id)},
                 {"role": "user", "content": cleaned},
             ],
             temperature=0.0,

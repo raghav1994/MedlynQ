@@ -24,7 +24,6 @@ export const cases: Case[] = [
   {
     id: "PRE-2026-0118",
     patient_id: "P0009",
-    hospital_id: ACTION,
     registration_id: "PRE-2026-0118",
     scheme: "PMJAY", payer: "NHA / SHA Delhi",
     procedure_code: "SG075B", procedure_name: "Modified radical mastectomy",
@@ -39,7 +38,6 @@ export const cases: Case[] = [
   {
     id: "ADM-2026-0204",
     patient_id: "P0010",
-    hospital_id: ACTION,
     registration_id: "REG-2026-9701",
     scheme: "PMJAY", payer: "NHA / SHA Delhi",
     procedure_code: "MO001F", procedure_name: "Trastuzumab cycle 3",
@@ -55,7 +53,6 @@ export const cases: Case[] = [
   {
     id: "2026061510020413",
     patient_id: "P0001",
-    hospital_id: ACTION,
     registration_id: "REG-2026-9598",
     scheme: "PMJAY", payer: "NHA / SHA Delhi",
     procedure_code: "MO001F", procedure_name: "Trastuzumab cycle 4",
@@ -71,7 +68,6 @@ export const cases: Case[] = [
   {
     id: "2026051410041450",
     patient_id: "P0008",
-    hospital_id: ACTION,
     registration_id: "REG-2026-8810",
     scheme: "Railway_UMID", payer: "Railway UMID",
     procedure_code: "SC068B", procedure_name: "Chemotherapy administration",
@@ -87,7 +83,6 @@ export const cases: Case[] = [
   {
     id: "2026051810066828",
     patient_id: "P0003",
-    hospital_id: ACTION,
     registration_id: "REG-2026-9088",
     scheme: "CGHS", payer: "CGHS Central",
     procedure_code: "SC061A", procedure_name: "CABG + valve repair",
@@ -102,7 +97,6 @@ export const cases: Case[] = [
   {
     id: "2026051610039147",
     patient_id: "P0007",
-    hospital_id: ACTION,
     registration_id: "REG-2026-8901",
     scheme: "PMJAY", payer: "NHA / SHA Delhi",
     procedure_code: "SC068B", procedure_name: "Chemotherapy administration",
@@ -114,7 +108,7 @@ export const cases: Case[] = [
     claimed_amount: 42500, approved_amount: 42500,
     tat_days: 14, age_days: 1, missing_docs: 0, open_queries: 0,
   },
-];
+] as any;
 
 // S1 — backfill hospital_id on all Action-seeded cases (existing seeds predate multi-tenancy)
 cases.forEach((c) => { if (!c.hospital_id) c.hospital_id = "HOSP-BLR-49"; });
@@ -201,6 +195,21 @@ export function loadDynamicData() {
           const idx = cases.findIndex((x) => x.id === cid);
           if (idx >= 0) {
             const { last_transition, updated_at, ...rest } = patch as any;
+            cases[idx] = { ...cases[idx], ...rest };
+          }
+        }
+      }
+
+      // Manual corrections from the pre-send NHCX review screen (diagnosis,
+      // ICD-10 override, procedure, claimed amount) — applied last so a
+      // human's explicit fix always wins over anything auto-generated above.
+      const caseOverridePath = path2.join(process.cwd(), "db", "case_overrides.json");
+      if (fs2.existsSync(caseOverridePath)) {
+        const covr = JSON.parse(fs2.readFileSync(caseOverridePath, "utf8")) as Record<string, any>;
+        for (const [cid, patch] of Object.entries(covr)) {
+          const idx = cases.findIndex((x) => x.id === cid);
+          if (idx >= 0) {
+            const { updated_at, ...rest } = patch as any;
             cases[idx] = { ...cases[idx], ...rest };
           }
         }

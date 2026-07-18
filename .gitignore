@@ -12,24 +12,45 @@ Paddle_OCR_Local/
 *.docx
 *.xlsx
 
-# App-level ignores (also in app/.gitignore)
-app/node_modules/
-app/.next/
-app/.env*.local
-app/python/__pycache__/
+# App-level ignores (also in app/.gitignore) — ** so these match under any
+# app/ location (repo-root app/, MedLynq_Handoff/app/, etc.), not just root
+**/app/node_modules/
+**/app/.next/
+**/app/*.tsbuildinfo
+**/app/.env
+**/app/.env*.local
+**/app/python/__pycache__/
 
 # Processed patient documents — DPDP: never commit
-app/public/_compressed/
-app/public/_merged/
-app/public/_thumbs/
-app/public/redacted/
-!app/public/_compressed/.gitkeep
-!app/public/_merged/.gitkeep
-!app/public/_thumbs/.gitkeep
+**/app/public/_compressed/
+**/app/public/_merged/
+**/app/public/_thumbs/
+**/app/public/redacted/
+!**/app/public/_compressed/.gitkeep
+!**/app/public/_merged/.gitkeep
+!**/app/public/_thumbs/.gitkeep
 
 # Runtime patient/state JSON — DPDP: never commit
-app/db/dynamic_patients.json
-app/db/mobile_connection.json
+**/app/db/dynamic_patients.json
+**/app/db/mobile_connection.json
+**/app/db/case_overrides.json
+**/app/db/patient_overrides.json
+**/app/db/document_requests.json
+**/app/db/doc_attachments.json
+**/app/db/document_deletions.json
+**/app/db/checklist_skips.json
+**/app/db/query_rounds.json
+**/app/db/query_overrides.json
+**/app/db/undo_tokens.json
+**/app/db/events.json
+**/app/db/audit_sync_cursor.json
+**/app/db/mobile_sessions.json
+**/app/db/mobile_staff.json
+**/app/db/mobile_staff_logs.json
+**/app/db/backend_admin_audit.json
+
+# Synthetic/dev test corpus — not needed at runtime, keep zip lean
+**/app/PatientLog/
 
 # medlynq-rx
 medlynq-rx/node_modules/

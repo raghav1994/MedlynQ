@@ -28,11 +28,11 @@ export type PatientHints = {
   dob?: string;
 };
 
-function norm(s: string | undefined | null): string {
+export function norm(s: string | undefined | null): string {
   return (s ?? "").toString().trim().toLowerCase().replace(/\s+/g, " ");
 }
 
-function jaroWinkler(a: string, b: string): number {
+export function jaroWinkler(a: string, b: string): number {
   if (!a || !b) return 0;
   if (a === b) return 1;
   const aLen = a.length, bLen = b.length;

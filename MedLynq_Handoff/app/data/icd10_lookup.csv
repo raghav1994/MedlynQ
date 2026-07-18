@@ -1,0 +1,27 @@
+keyword,icd10_code,icd10_display
+atherosclerotic heart,I25.10,Atherosclerotic heart disease of native coronary artery without angina pectoris
+multiple myeloma,C90.00,Multiple myeloma not having achieved remission
+head and neck,C14.0,Malignant neoplasm of pharynx unspecified
+non-hodgkin lymphoma,C85.90,Non-Hodgkin lymphoma unspecified
+hodgkin lymphoma,C81.90,Hodgkin lymphoma unspecified
+breast,C50.9,Malignant neoplasm of breast unspecified
+prostate,C61,Malignant neoplasm of prostate
+lung,C34.90,Malignant neoplasm of unspecified part of unspecified bronchus or lung
+colorectal,C18.9,Malignant neoplasm of colon unspecified
+colon,C18.9,Malignant neoplasm of colon unspecified
+rectal,C20,Malignant neoplasm of rectum
+cervical,C53.9,Malignant neoplasm of cervix uteri unspecified
+ovarian,C56.9,Malignant neoplasm of unspecified ovary
+oral,C06.9,Malignant neoplasm of mouth unspecified
+lymphoma,C85.90,Non-Hodgkin lymphoma unspecified
+leukemia,C95.90,Leukemia unspecified
+gastric,C16.9,Malignant neoplasm of stomach unspecified
+pancreatic,C25.9,Malignant neoplasm of pancreas unspecified
+hepatic,C22.9,Malignant neoplasm of liver unspecified
+thyroid,C73,Malignant neoplasm of thyroid gland
+bladder,C67.9,Malignant neoplasm of bladder unspecified
+kidney,C64.9,Malignant neoplasm of kidney except renal pelvis
+esophageal,C15.9,Malignant neoplasm of esophagus unspecified
+diabetes,E11.9,Type 2 diabetes mellitus without complications
+hypertension,I10,Essential (primary) hypertension
+pneumonia,J18.9,Pneumonia unspecified organism

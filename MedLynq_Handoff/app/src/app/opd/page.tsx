@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import { matchPatient } from "@/lib/patientMatch";
 import { SPECIALTY_META, ALL_SCHEMES } from "@/lib/types";
 import type { Specialty, Treatment } from "@/lib/types";
+import { useRoleGate } from "@/lib/useRoleGate";
 
 // All Indian states + union territories, for the State field's suggestion list.
 const INDIA_STATES_UTS = [
@@ -29,7 +31,24 @@ type HandoverEntry = {
   status: "pending" | "consumed";
 };
 
-export default function OPDRegistrationPage() {
+function OPDRegistrationContent() {
+  useRoleGate(["ADMIN"], "/patients");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Edit mode: PatientHeader's ✎ edit icon links here with
+  // ?edit=1&patient_id=&case_id=&<current field values>. Core identity/
+  // registration fields (MRN, name, scheme, treatment type, ...) live here
+  // and only here — the patient-detail page and the NHCX review screen both
+  // intentionally route corrections back to this one screen rather than
+  // letting them be edited in three different places with three different
+  // validation rules.
+  const isEdit = searchParams.get("edit") === "1";
+  const editPatientId = searchParams.get("patient_id") || "";
+  const editCaseId = searchParams.get("case_id") || "";
+  const [editSaving, setEditSaving] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
+
   const [phase, setPhase] = useState<"register" | "review">("register");
   const [hasHis, setHasHis] = useState<"yes" | "no" | null>(null);
 
@@ -54,9 +73,62 @@ export default function OPDRegistrationPage() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
+  // Prefill from the query params PatientHeader's edit link supplies —
+  // this only runs once (edit mode never re-triggers a re-prefill mid-edit).
+  useEffect(() => {
+    if (!isEdit) return;
+    const g = searchParams.get("name"); if (g) setName(g);
+    const m = searchParams.get("mrn"); if (m) setMrn(m);
+    const a = searchParams.get("age"); if (a) setAge(a);
+    const gd = searchParams.get("gender"); if (gd) setGender(gd);
+    const st = searchParams.get("state"); if (st) setStateF(st);
+    const sc = searchParams.get("scheme"); if (sc) setScheme(sc);
+    const sp = searchParams.get("specialty") as Specialty | null;
+    const resolvedSpecialty = sp && SPECIALTY_META[sp] ? sp : specialty;
+    if (sp && SPECIALTY_META[sp]) setSpecialty(sp);
+    // A stale/invalid treatment value (e.g. the "pending" sentinel written
+    // at auto-create, before any human picked a real treatment) must not be
+    // written into state — the <select> below silently falls back to
+    // displaying its first option when the controlled value matches no
+    // <option>, which desyncs the visible dropdown from `treatment` and
+    // makes Save silently resubmit the stale value. Skipping keeps the two
+    // in sync (state already defaults to the same first option).
+    const tr = searchParams.get("treatment") as Treatment | null;
+    if (tr && SPECIALTY_META[resolvedSpecialty].treatments.includes(tr)) setTreatment(tr);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const saveEdit = async () => {
+    if (!editPatientId || !editCaseId) return;
+    setEditSaving(true);
+    setEditError(null);
+    try {
+      const patientRes = await fetch(`/api/patients/${encodeURIComponent(editPatientId)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, mrn, age, gender }),
+      }).then((r) => r.json());
+      if (!patientRes.ok) { setEditError(patientRes.error ?? "Couldn't save patient details"); return; }
+
+      const caseRes = await fetch(`/api/cases/${encodeURIComponent(editCaseId)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ scheme, specialty, treatment_type: treatment }),
+      }).then((r) => r.json());
+      if (!caseRes.ok) { setEditError(caseRes.error ?? "Couldn't save case details"); return; }
+
+      router.push(`/patient/${encodeURIComponent(editPatientId)}?case=${encodeURIComponent(editCaseId)}`);
+    } catch (e: any) {
+      setEditError(e?.message ?? "Couldn't save changes");
+    } finally {
+      setEditSaving(false);
+    }
+  };
+
   // Handover queue polling
   const [queue, setQueue] = useState<HandoverEntry[]>([]);
   useEffect(() => {
+    if (isEdit) return; // editing an existing patient — the handover queue is for new registrations only
     let stopped = false;
     const fetchQueue = async () => {
       try {
@@ -122,16 +194,20 @@ export default function OPDRegistrationPage() {
       <div className="space-y-6 max-w-5xl">
         <div className="flex items-end justify-between flex-wrap gap-3">
           <div>
-            <h1 className="text-xl font-bold text-ink-100">OPD Registration · Doctor Consult</h1>
+            <h1 className="text-xl font-bold text-ink-100">
+              {isEdit ? "Edit Patient & Case Details" : "OPD Registration · Doctor Consult"}
+            </h1>
             <p className="text-sm text-ink-300 mt-1">
-              Register the patient and capture the reason for visit and treatment plan in one go — the doctor records the diagnosis separately during consult. Output: a case the rest of MedLynq tracks.
+              {isEdit
+                ? "Correct name, MRN, scheme, or treatment type. Saving takes you back to this patient's page."
+                : "Register the patient and capture the reason for visit and treatment plan in one go — the doctor records the diagnosis separately during consult. Output: a case the rest of MedLynq tracks."}
             </p>
           </div>
-          <PhasePill phase={phase} />
+          {!isEdit && <PhasePill phase={phase} />}
         </div>
 
         {/* Handover notification banner */}
-        {queue.length > 0 && phase === "register" && (
+        {!isEdit && queue.length > 0 && phase === "register" && (
           <div className="bg-accent-soft border border-accent/40 rounded-lg p-3 space-y-2">
             <div className="flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-accent text-white grid place-items-center text-xs">📨</span>
@@ -188,18 +264,20 @@ export default function OPDRegistrationPage() {
               </div>
             )}
 
-            <div className={`rounded p-3 border text-sm ${
-              matched ? "bg-good-soft border-good/40" : (name || mrn) ? "bg-warn-soft border-warn/40" : "bg-bone-100 border-bone-300 text-ink-300 italic"
-            }`}>
-              {matched ? (
-                <>
-                  <div className="font-bold text-good">✓ Matched existing patient</div>
-                  <div className="text-ink-100">{matched.name} · MRN {matched.mrn} · age {matched.age}</div>
-                </>
-              ) : (name || mrn) ? (
-                <div className="font-bold text-warn">No existing patient — will register as new</div>
-              ) : "Type to search or load from the handover banner above."}
-            </div>
+            {!isEdit && (
+              <div className={`rounded p-3 border text-sm ${
+                matched ? "bg-good-soft border-good/40" : (name || mrn) ? "bg-warn-soft border-warn/40" : "bg-bone-100 border-bone-300 text-ink-300 italic"
+              }`}>
+                {matched ? (
+                  <>
+                    <div className="font-bold text-good">✓ Matched existing patient</div>
+                    <div className="text-ink-100">{matched.name} · MRN {matched.mrn} · age {matched.age}</div>
+                  </>
+                ) : (name || mrn) ? (
+                  <div className="font-bold text-warn">No existing patient — will register as new</div>
+                ) : "Type to search or load from the handover banner above."}
+              </div>
+            )}
 
             <div className="grid md:grid-cols-3 gap-3">
               <div>
@@ -210,7 +288,7 @@ export default function OPDRegistrationPage() {
                   setTreatment(SPECIALTY_META[sp].treatments[0]);
                 }} className={selectCls}>
                   {(Object.keys(SPECIALTY_META) as Specialty[]).map((s) => (
-                    <option key={s} value={s}>{SPECIALTY_META[s].icon} {SPECIALTY_META[s].label}</option>
+                    <option key={s} value={s}>{SPECIALTY_META[s].label}</option>
                   ))}
                 </select>
               </div>
@@ -220,27 +298,48 @@ export default function OPDRegistrationPage() {
                   {SPECIALTY_META[specialty].treatments.map((t) => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
-              <Input label="Consulting doctor" value={doctor} onChange={setDoctor} placeholder="Dr. ..." />
+              {!isEdit && <Input label="Consulting doctor" value={doctor} onChange={setDoctor} placeholder="Dr. ..." />}
             </div>
 
-            <div>
-              <Label>Reason for Visit</Label>
-              <textarea value={reasonForVisit} onChange={(e) => setReasonForVisit(e.target.value)}
-                placeholder="E.g. Lump in left breast, ongoing 3 months. (The doctor records the diagnosis separately during consult.)"
-                rows={2} className={textAreaCls} />
-            </div>
+            {!isEdit && (
+              <div>
+                <Label>Reason for Visit</Label>
+                <textarea value={reasonForVisit} onChange={(e) => setReasonForVisit(e.target.value)}
+                  placeholder="E.g. Lump in left breast, ongoing 3 months. (The doctor records the diagnosis separately during consult.)"
+                  rows={2} className={textAreaCls} />
+              </div>
+            )}
 
-            <div className="flex justify-end">
-              <button
-                onClick={review}
-                disabled={!canReview}
-                className="text-xs font-semibold px-4 py-2 bg-accent text-white rounded hover:opacity-90 disabled:opacity-40"
-              >Review & create case →</button>
-            </div>
+            {isEdit ? (
+              <div className="space-y-2">
+                {editError && (
+                  <div className="text-xs text-bad bg-bad-soft border border-bad/40 rounded px-3 py-2">{editError}</div>
+                )}
+                <div className="flex justify-end gap-2">
+                  <a href={`/patient/${encodeURIComponent(editPatientId)}?case=${encodeURIComponent(editCaseId)}`}
+                    className="text-xs px-3 py-1.5 border border-bone-300 rounded hover:bg-bone-200">
+                    ← Cancel
+                  </a>
+                  <button
+                    onClick={saveEdit}
+                    disabled={editSaving || !name.trim() || !mrn.trim()}
+                    className="text-xs font-semibold px-4 py-2 bg-accent text-white rounded hover:opacity-90 disabled:opacity-40"
+                  >{editSaving ? "Saving…" : "💾 Save changes"}</button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex justify-end">
+                <button
+                  onClick={review}
+                  disabled={!canReview}
+                  className="text-xs font-semibold px-4 py-2 bg-accent text-white rounded hover:opacity-90 disabled:opacity-40"
+                >Review & create case →</button>
+              </div>
+            )}
           </div>
         )}
 
-        {phase === "review" && (
+        {!isEdit && phase === "review" && (
           <div className="bg-bone-0 border border-bone-300 rounded-lg p-5 space-y-4">
             <h2 className="text-sm font-bold text-ink-100">Review & create case</h2>
 
@@ -349,6 +448,18 @@ export default function OPDRegistrationPage() {
         )}
       </div>
     </AppShell>
+  );
+}
+
+export default function OPDRegistrationPage() {
+  return (
+    <Suspense fallback={
+      <AppShell>
+        <div className="p-4 text-sm text-ink-300">Loading OPD registration...</div>
+      </AppShell>
+    }>
+      <OPDRegistrationContent />
+    </Suspense>
   );
 }
 

@@ -64,6 +64,19 @@ except ImportError:
 # restore full redaction.
 SKIP_TEXT_OCR = os.getenv("MEDLYNQ_SKIP_TEXT_OCR", "").strip().lower() in ("1", "true", "yes")
 
+# Reversible speed toggle — when set, skips OnnxTR and runs RapidOCR alone
+# for PII detection (roughly halves local redaction time: one engine pass
+# instead of two). Originally both engines ran unconditionally because an
+# older RapidOCR was found to confidently misread a handwritten phone
+# number. Re-tested 2026-07-12 across 20 real documents (3 real Aadhaar
+# cards, a phone-number-heavy report, multiple prescriptions) after RapidOCR's
+# underlying models were upgraded to PP-OCRv6: RapidOCR alone caught every
+# Aadhaar number (3/3) and every phone number (5/5) in that set; OnnxTR
+# missed all of them and consistently reported lower confidence. Default is
+# RapidOCR-only; set MEDLYNQ_USE_ONNXTR=true in .env.local to bring back the
+# second engine (e.g. if a future document type turns out to need it).
+USE_ONNXTR = os.getenv("MEDLYNQ_USE_ONNXTR", "").strip().lower() in ("1", "true", "yes")
+
 # Same crash we found with PaddleOCR: running Paddle-based models (this
 # orientation classifier included) with mkldnn enabled across more than one
 # concurrent process crashes reliably. Single warm worker is unaffected;
@@ -210,29 +223,28 @@ def _run_onnxtr(img: np.ndarray) -> list[list]:
 
 
 def _run_ocr(img: np.ndarray) -> tuple[list[list], str]:
-    """Runs BOTH engines on every document and unions their lines for PII
-    classification — whichever engine actually reads a given Aadhaar/phone/
-    PAN/DOB correctly, that reading gets burned, regardless of which engine
-    it came from.
+    """RapidOCR-only by default (MEDLYNQ_USE_ONNXTR unset) — see the
+    USE_ONNXTR toggle above for why. Set MEDLYNQ_USE_ONNXTR=true to restore
+    the original dual-engine union: both engines run, whichever actually
+    reads a given Aadhaar/phone/PAN/DOB correctly, that reading gets burned,
+    regardless of which engine it came from.
 
-    We tried being smarter about this first: escalating to the handwriting
-    engine only when the fast pass's own confidence looked low, or only on
-    keyword-triggered regions. Both failed in real testing — RapidOCR came
-    back confidently WRONG on a real handwritten phone number (0.80
-    confidence on a garbled read), so no confidence threshold would have
-    caught it; and cropping just the flagged region and re-reading it with
-    the handwriting engine made the reading WORSE, not better (the
-    recognition model appears to depend on full-page context). Keyword-
-    triggered escalation also turned out to fire on nearly every real
-    hospital document anyway (they almost all have a name/age/address/phone
-    field somewhere), so it saved little real time while adding a fragile
-    dependency on the fast pass correctly reading the trigger keyword itself.
-
-    Running both unconditionally costs ~3-6s/document (vs ~1-2s for the fast
-    path alone) — still roughly 5-8x faster than the original ~25-30s
-    PaddleOCR baseline, with no missed-detection risk from a heuristic that
-    guessed wrong."""
+    History, kept for context if OnnxTR ever needs to come back: we tried
+    being smarter about escalation first — only running the handwriting
+    engine when the fast pass's own confidence looked low, or only on
+    keyword-triggered regions. Both failed in real testing — RapidOCR (at
+    the time) came back confidently WRONG on a real handwritten phone number
+    (0.80 confidence on a garbled read), so no confidence threshold would
+    have caught it; and cropping just the flagged region and re-reading it
+    with the handwriting engine made the reading WORSE, not better. Keyword-
+    triggered escalation fired on nearly every real hospital document anyway,
+    saving little time. That's why both engines ran unconditionally for a
+    while — until RapidOCR's underlying models were upgraded and a
+    re-test (see USE_ONNXTR comment) showed the original finding no longer
+    held."""
     rapid_lines = _run_rapid(img)
+    if not USE_ONNXTR:
+        return rapid_lines, "rapid"
     onnxtr_lines = _run_onnxtr(img)
     return rapid_lines + onnxtr_lines, "rapid+onnxtr"
 
@@ -325,6 +337,13 @@ def redact_image(in_path: str, out_path: str, keep_signature: bool = True) -> di
         "max_face_area_ratio": round(max_face_area_ratio, 4),
         "has_geotag_stamp": has_geotag_stamp,
         "text_ocr_skipped": SKIP_TEXT_OCR,
+        # The actual local OCR reading (RapidOCR, or +OnnxTR if enabled),
+        # already computed here for redaction — exposed so callers can
+        # cross-check it against Sarvam's returned text and catch Sarvam
+        # coming back garbled despite a non-empty response (see
+        # ocr_quality.py). Free: no extra OCR pass, just not discarding text
+        # we already read.
+        "local_ocr_text": all_text.strip(),
         # How much the page needed rotating to become upright (0/90/180/270).
         # This only ever got applied to the REDACTED copy sent to Sarvam —
         # the actual file saved in PatientLog/{mrn}/originals/ (what the

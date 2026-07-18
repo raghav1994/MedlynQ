@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import AppShell from "@/components/AppShell";
 import type { AuditEvent } from "@/lib/auditLog";
+import { useRoleGate } from "@/lib/useRoleGate";
 
 type StatsResp = {
   ok: boolean;
@@ -42,6 +43,7 @@ function timeAgo(iso: string | null) {
 }
 
 export default function AdminPage() {
+  useRoleGate(["ADMIN"], "/patients");
   const [data, setData] = useState<StatsResp | null>(null);
   const [days, setDays] = useState(30);
   const [busy, setBusy] = useState(false);

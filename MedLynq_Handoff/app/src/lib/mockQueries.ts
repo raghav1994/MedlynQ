@@ -185,10 +185,43 @@ function readQueryOverrides(): Record<string, Partial<QueryRound>> {
   return {};
 }
 
+// Dynamically-created rounds — additive, unlike query_overrides.json (which
+// only patches existing fixture rounds). Written by the NHCX send route when
+// a real "queried" outcome comes back, so a payer rejection actually shows
+// up here instead of only bumping the case's open_queries counter.
+function readDynamicRounds(): Record<string, QueryRound[]> {
+  if (typeof window !== "undefined") return {};
+  try {
+    const fs = require("fs");
+    const path = require("path");
+    const p = path.join(process.cwd(), "db", "query_rounds.json");
+    if (fs.existsSync(p)) return JSON.parse(fs.readFileSync(p, "utf8"));
+  } catch {}
+  return {};
+}
+
+export function appendQueryRound(case_id: string, round: QueryRound) {
+  if (typeof window !== "undefined") return;
+  try {
+    const fs = require("fs");
+    const path = require("path");
+    const p = path.join(process.cwd(), "db", "query_rounds.json");
+    let store: Record<string, QueryRound[]> = {};
+    if (fs.existsSync(p)) store = JSON.parse(fs.readFileSync(p, "utf8"));
+    store[case_id] = [...(store[case_id] ?? []), round];
+    fs.mkdirSync(path.dirname(p), { recursive: true });
+    fs.writeFileSync(p, JSON.stringify(store, null, 2));
+  } catch {
+    // never break the NHCX send response on a query-store write failure
+  }
+}
+
 export function queriesForCase(case_id: string): QueryRound[] {
-  const base = QUERIES_BY_CASE[case_id] ?? [];
   const overrides = readQueryOverrides();
-  return base.map((r) => (overrides[r.id] ? { ...r, ...overrides[r.id] } : r));
+  const applyOverride = (r: QueryRound) => (overrides[r.id] ? { ...r, ...overrides[r.id] } : r);
+  const base = (QUERIES_BY_CASE[case_id] ?? []).map(applyOverride);
+  const dynamic = (readDynamicRounds()[case_id] ?? []).map(applyOverride);
+  return [...base, ...dynamic].sort((a, b) => a.round - b.round);
 }
 
 // All open queries across cases with deadlines — for dashboard nudges

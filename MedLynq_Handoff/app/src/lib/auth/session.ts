@@ -7,7 +7,11 @@ import { getIronSession, IronSession, SessionOptions } from "iron-session";
 import { cookies } from "next/headers";
 import type { NextRequest, NextResponse } from "next/server";
 
-export type Role = "ADMIN" | "MEDCO" | "CFO" | "DOCTOR";
+// SUPERADMIN is MedLynq's own internal staff, not a hospital role — deliberately
+// separate from the hospital-facing roles below. Same auth mechanism (session,
+// hashing, rate limiting) as everyone else — see the backend-admin dashboard
+// handoff discussion for why this is a role, not a second login codebase.
+export type Role = "ADMIN" | "MEDCO" | "CFO" | "DOCTOR" | "SUPERADMIN";
 
 export type SessionUser = {
   id: string;
@@ -18,6 +22,16 @@ export type SessionUser = {
   hospital_name: string;
   designation: string;
   bis_enabled: boolean;
+  // Only meaningful for SUPERADMIN — the one account that can create/disable
+  // other internal (SUPERADMIN) logins. Every other internal staffer runs
+  // the hospitals themselves but can't touch who else has that access.
+  is_owner?: boolean;
+  // false for a "Floor Admin" ADMIN-role account — same role/permissions as
+  // an HOD everywhere else (mobile Add-Staff QR panel, etc.), but blocked
+  // from the desktop dashboard entirely (see middleware.ts). Absent/true for
+  // every other account — a Floor Admin is the deliberate exception, not the
+  // default, so existing users don't need a migration to keep working.
+  desktop_access?: boolean;
 };
 
 export type AppSession = {

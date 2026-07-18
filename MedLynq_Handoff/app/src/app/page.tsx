@@ -34,6 +34,7 @@ function timeAgo(iso: string): string {
 export default async function DashboardPage() {
   const session = await getSession();
   if (session.user?.role === "CFO") redirect("/finance");
+  if (session.user?.role === "ADMIN") redirect("/patients");
   loadDynamicData();
   const tiles = morningTiles();
   const groups = workQueueGroups();

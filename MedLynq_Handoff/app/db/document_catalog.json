@@ -1,0 +1,975 @@
+[
+  {
+    "doc_type": "aadhaar",
+    "label": "Aadhaar",
+    "anchors": [
+      "Aadhaar",
+      "Patient ID",
+      "Aadhar",
+      "Aadhaar Card"
+    ],
+    "category": "Identity & Scheme"
+  },
+  {
+    "doc_type": "ayushman_pmjay_card",
+    "label": "Ayushman / PMJAY Card",
+    "anchors": [
+      "Ayushman / PMJAY Card"
+    ],
+    "category": "Identity & Scheme"
+  },
+  {
+    "doc_type": "bank_passbook_cancelled_cheque",
+    "label": "Bank Passbook / Cancelled Cheque",
+    "anchors": [
+      "Bank Passbook / Cancelled Cheque"
+    ],
+    "category": "Identity & Scheme"
+  },
+  {
+    "doc_type": "beneficiary_verification_slip",
+    "label": "Beneficiary Verification Slip",
+    "anchors": [
+      "Beneficiary Verification Slip"
+    ],
+    "category": "Identity & Scheme"
+  },
+  {
+    "doc_type": "cghs_card",
+    "label": "CGHS Card",
+    "anchors": [
+      "CGHS Card"
+    ],
+    "category": "Identity & Scheme"
+  },
+  {
+    "doc_type": "echs_card",
+    "label": "ECHS Card",
+    "anchors": [
+      "ECHS Card"
+    ],
+    "category": "Identity & Scheme"
+  },
+  {
+    "doc_type": "employer_id_card",
+    "label": "Employer ID Card",
+    "anchors": [
+      "Employer ID Card"
+    ],
+    "category": "Identity & Scheme"
+  },
+  {
+    "doc_type": "esi_card",
+    "label": "ESI Card",
+    "anchors": [
+      "ESI Card"
+    ],
+    "category": "Identity & Scheme"
+  },
+  {
+    "doc_type": "insurance_scheme_card",
+    "label": "Insurance / Scheme Card",
+    "anchors": [
+      "Insurance / Scheme Card",
+      "Insurance Card",
+      "Scheme Card",
+      "PMJAY Card",
+      "CGHS Card",
+      "ECHS Card",
+      "Ayushman Card"
+    ],
+    "category": "Identity & Scheme"
+  },
+  {
+    "doc_type": "kyc_form",
+    "label": "KYC Form",
+    "anchors": [
+      "KYC Form",
+      "KYC",
+      "Know Your Customer"
+    ],
+    "category": "Identity & Scheme"
+  },
+  {
+    "doc_type": "pan_card",
+    "label": "PAN Card",
+    "anchors": [
+      "PAN Card",
+      "PAN",
+      "Permanent Account Number"
+    ],
+    "category": "Identity & Scheme"
+  },
+  {
+    "doc_type": "patient_id",
+    "label": "Patient ID",
+    "anchors": [
+      "Patient ID"
+    ],
+    "category": "Identity & Scheme"
+  },
+  {
+    "doc_type": "ration_card",
+    "label": "Ration Card",
+    "anchors": [
+      "Ration Card"
+    ],
+    "category": "Identity & Scheme"
+  },
+  {
+    "doc_type": "registration_copy",
+    "label": "Registration Copy",
+    "anchors": [
+      "Registration Copy"
+    ],
+    "category": "Identity & Scheme"
+  },
+  {
+    "doc_type": "voter_id",
+    "label": "Voter ID",
+    "anchors": [
+      "Voter ID"
+    ],
+    "category": "Identity & Scheme"
+  },
+  {
+    "doc_type": "admission_note",
+    "label": "Admission Note",
+    "anchors": [
+      "Admission Note"
+    ],
+    "category": "Intake & OPD"
+  },
+  {
+    "doc_type": "consent_form",
+    "label": "Consent Form",
+    "anchors": [
+      "Consent Form"
+    ],
+    "category": "Intake & OPD"
+  },
+  {
+    "doc_type": "doctor_s_prescription",
+    "label": "Doctor's Prescription",
+    "anchors": [
+      "Doctor's Prescription",
+      "Prescription",
+      "OPD Slip",
+      "Doctor Prescription",
+      "Protocol",
+      "Chemo Protocol",
+      "Prescription / Protocol"
+    ],
+    "category": "Intake & OPD"
+  },
+  {
+    "doc_type": "ipd_case_sheet",
+    "label": "IPD Case Sheet",
+    "anchors": [
+      "IPD Case Sheet"
+    ],
+    "category": "Intake & OPD"
+  },
+  {
+    "doc_type": "opd_slip",
+    "label": "OPD Slip",
+    "anchors": [
+      "OPD Slip"
+    ],
+    "category": "Intake & OPD"
+  },
+  {
+    "doc_type": "prescription_protocol",
+    "label": "Prescription / Protocol",
+    "anchors": [
+      "Prescription / Protocol",
+      "prescription",
+      "protocol",
+      "treatment protocol"
+    ],
+    "category": "Intake & OPD"
+  },
+  {
+    "doc_type": "referral",
+    "label": "Referral",
+    "anchors": [
+      "Referral",
+      "Referral Letter",
+      "Outside Hospital Referral"
+    ],
+    "category": "Intake & OPD"
+  },
+  {
+    "doc_type": "treating_doctor_s_certificate",
+    "label": "Treating Doctor's Certificate",
+    "anchors": [
+      "Treating Doctor's Certificate"
+    ],
+    "category": "Intake & OPD"
+  },
+  {
+    "doc_type": "blood_group_report",
+    "label": "Blood Group Report",
+    "anchors": [
+      "Blood Group Report"
+    ],
+    "category": "Labs"
+  },
+  {
+    "doc_type": "blood_sugar_report",
+    "label": "Blood Sugar Report",
+    "anchors": [
+      "Blood Sugar Report"
+    ],
+    "category": "Labs"
+  },
+  {
+    "doc_type": "cbc_lft_kft_profile",
+    "label": "CBC / LFT / KFT Profile",
+    "anchors": [
+      "CBC / LFT / KFT Profile"
+    ],
+    "category": "Labs"
+  },
+  {
+    "doc_type": "cbc_report",
+    "label": "CBC Report",
+    "anchors": [
+      "CBC",
+      "complete blood count",
+      "hemoglobin",
+      "platelet count"
+    ],
+    "category": "Labs"
+  },
+  {
+    "doc_type": "coagulation_profile_report",
+    "label": "Coagulation Profile Report",
+    "anchors": [
+      "Coagulation Profile Report"
+    ],
+    "category": "Labs"
+  },
+  {
+    "doc_type": "culture_sensitivity_report",
+    "label": "Culture & Sensitivity Report",
+    "anchors": [
+      "Culture & Sensitivity Report"
+    ],
+    "category": "Labs"
+  },
+  {
+    "doc_type": "hiv_hbsag_vdrl_report",
+    "label": "HIV / HBsAg / VDRL Report",
+    "anchors": [
+      "HIV / HBsAg / VDRL Report"
+    ],
+    "category": "Labs"
+  },
+  {
+    "doc_type": "kft_report",
+    "label": "KFT Report",
+    "anchors": [
+      "KFT",
+      "kidney function test",
+      "serum creatinine",
+      "renal function"
+    ],
+    "category": "Labs"
+  },
+  {
+    "doc_type": "lft_report",
+    "label": "LFT Report",
+    "anchors": [
+      "LFT",
+      "liver function test",
+      "bilirubin",
+      "SGPT",
+      "SGOT"
+    ],
+    "category": "Labs"
+  },
+  {
+    "doc_type": "lipid_profile_report",
+    "label": "Lipid Profile Report",
+    "anchors": [
+      "Lipid Profile Report"
+    ],
+    "category": "Labs"
+  },
+  {
+    "doc_type": "thyroid_profile_report",
+    "label": "Thyroid Profile Report",
+    "anchors": [
+      "Thyroid Profile Report"
+    ],
+    "category": "Labs"
+  },
+  {
+    "doc_type": "urine_routine_report",
+    "label": "Urine Routine Report",
+    "anchors": [
+      "Urine Routine Report"
+    ],
+    "category": "Labs"
+  },
+  {
+    "doc_type": "coronary_angiography_report",
+    "label": "Coronary Angiography Report",
+    "anchors": [
+      "Coronary Angiography Report"
+    ],
+    "category": "Imaging"
+  },
+  {
+    "doc_type": "ct_scan_report",
+    "label": "CT Scan Report",
+    "anchors": [
+      "CT Scan Report"
+    ],
+    "category": "Imaging"
+  },
+  {
+    "doc_type": "ecg_report",
+    "label": "ECG Report",
+    "anchors": [
+      "ECG Report"
+    ],
+    "category": "Imaging"
+  },
+  {
+    "doc_type": "echo_report",
+    "label": "ECHO Report",
+    "anchors": [
+      "ECHO Report"
+    ],
+    "category": "Imaging"
+  },
+  {
+    "doc_type": "mri_ct_joint_report",
+    "label": "MRI / CT Joint Report",
+    "anchors": [
+      "MRI / CT Joint Report"
+    ],
+    "category": "Imaging"
+  },
+  {
+    "doc_type": "prior_imaging_ct_mri_x_ray",
+    "label": "Prior Imaging (CT/MRI/X-ray)",
+    "anchors": [
+      "Prior Imaging (CT/MRI/X-ray)"
+    ],
+    "category": "Imaging"
+  },
+  {
+    "doc_type": "usg_reports",
+    "label": "USG Reports",
+    "anchors": [
+      "USG Reports"
+    ],
+    "category": "Imaging"
+  },
+  {
+    "doc_type": "x_ray_report",
+    "label": "X-Ray Report",
+    "anchors": [
+      "X-Ray Report"
+    ],
+    "category": "Imaging"
+  },
+  {
+    "doc_type": "biopsy_report",
+    "label": "Biopsy Report",
+    "anchors": [
+      "Biopsy Report",
+      "Biopsy"
+    ],
+    "category": "Pathology & Oncology"
+  },
+  {
+    "doc_type": "chemo_chart",
+    "label": "Chemo Chart",
+    "anchors": [
+      "Chemo Chart"
+    ],
+    "category": "Pathology & Oncology"
+  },
+  {
+    "doc_type": "cytology_report",
+    "label": "Cytology Report",
+    "anchors": [
+      "Cytology Report"
+    ],
+    "category": "Pathology & Oncology"
+  },
+  {
+    "doc_type": "drug_pouch_wrapper_photo",
+    "label": "Drug Pouch / Wrapper Photo",
+    "anchors": [
+      "Drug Pouch",
+      "medicine wrapper",
+      "injection box",
+      "drug pouch barcode",
+      "pouch photo",
+      "empty vial"
+    ],
+    "category": "Pathology & Oncology"
+  },
+  {
+    "doc_type": "histopathology_report",
+    "label": "Histopathology Report",
+    "anchors": [
+      "Histopathology Report",
+      "Histopath",
+      "HPE",
+      "Histopathology",
+      "Latest Pathology (HPE)"
+    ],
+    "category": "Pathology & Oncology"
+  },
+  {
+    "doc_type": "ipd_file_day_care",
+    "label": "IPD File (day care)",
+    "anchors": [
+      "IPD File (day care)"
+    ],
+    "category": "Pathology & Oncology"
+  },
+  {
+    "doc_type": "latest_pathology_hpe",
+    "label": "Latest Pathology (HPE)",
+    "anchors": [
+      "Latest Pathology (HPE)"
+    ],
+    "category": "Pathology & Oncology"
+  },
+  {
+    "doc_type": "pet_ct_report",
+    "label": "PET-CT Report",
+    "anchors": [
+      "PET-CT Report",
+      "PET CT",
+      "PETCT"
+    ],
+    "category": "Pathology & Oncology"
+  },
+  {
+    "doc_type": "tumor_board_certificate",
+    "label": "Tumor Board Certificate",
+    "anchors": [
+      "Tumor Board Certificate",
+      "TBC"
+    ],
+    "category": "Pathology & Oncology"
+  },
+  {
+    "doc_type": "radiation_chart",
+    "label": "Radiation Chart",
+    "anchors": [
+      "Radiation Chart",
+      "radiotherapy chart",
+      "fraction log",
+      "cumulative dose"
+    ],
+    "category": "Radiation"
+  },
+  {
+    "doc_type": "radiation_files",
+    "label": "Radiation Files",
+    "anchors": [
+      "Radiation Files",
+      "radiotherapy files",
+      "radiation file"
+    ],
+    "category": "Radiation"
+  },
+  {
+    "doc_type": "anaesthesia_note",
+    "label": "Anaesthesia Note",
+    "anchors": [
+      "Anaesthesia Note",
+      "anesthesia record",
+      "anaesthesia record"
+    ],
+    "category": "Surgery"
+  },
+  {
+    "doc_type": "implant_sticker_barcode",
+    "label": "Implant Sticker / Barcode",
+    "anchors": [
+      "Implant Sticker / Barcode"
+    ],
+    "category": "Surgery"
+  },
+  {
+    "doc_type": "ipw",
+    "label": "IPW",
+    "anchors": [
+      "IPW",
+      "in-patient ward"
+    ],
+    "category": "Surgery"
+  },
+  {
+    "doc_type": "ot_files",
+    "label": "OT Files",
+    "anchors": [
+      "OT Files",
+      "operation theatre file"
+    ],
+    "category": "Surgery"
+  },
+  {
+    "doc_type": "ot_notes",
+    "label": "OT Notes",
+    "anchors": [
+      "OT Notes",
+      "operation theatre notes",
+      "operative notes"
+    ],
+    "category": "Surgery"
+  },
+  {
+    "doc_type": "post_op_notes",
+    "label": "Post OP Notes",
+    "anchors": [
+      "Post OP Notes",
+      "post-op notes",
+      "post operative notes"
+    ],
+    "category": "Surgery"
+  },
+  {
+    "doc_type": "post_ot_notes",
+    "label": "Post OT Notes",
+    "anchors": [
+      "Post OT Notes",
+      "post operation theatre notes"
+    ],
+    "category": "Surgery"
+  },
+  {
+    "doc_type": "post_surgery_photo",
+    "label": "Post Surgery Photo",
+    "anchors": [
+      "Post Surgery Photo"
+    ],
+    "category": "Surgery"
+  },
+  {
+    "doc_type": "post_op_hpe_report",
+    "label": "Post-op HPE Report",
+    "anchors": [
+      "Post-op HPE Report"
+    ],
+    "category": "Surgery"
+  },
+  {
+    "doc_type": "stent_implant_invoice",
+    "label": "Stent / Implant Invoice",
+    "anchors": [
+      "Stent / Implant Invoice"
+    ],
+    "category": "Surgery"
+  },
+  {
+    "doc_type": "apache_sofa_score_sheet",
+    "label": "APACHE / SOFA Score Sheet",
+    "anchors": [
+      "APACHE / SOFA Score Sheet"
+    ],
+    "category": "ICU / Critical Care"
+  },
+  {
+    "doc_type": "daily_progress_notes",
+    "label": "Daily Progress Notes",
+    "anchors": [
+      "Daily Progress Notes"
+    ],
+    "category": "ICU / Critical Care"
+  },
+  {
+    "doc_type": "icu_admission_note",
+    "label": "ICU Admission Note",
+    "anchors": [
+      "ICU Admission Note"
+    ],
+    "category": "ICU / Critical Care"
+  },
+  {
+    "doc_type": "ventilator_vitals_chart",
+    "label": "Ventilator / Vitals Chart",
+    "anchors": [
+      "Ventilator / Vitals Chart"
+    ],
+    "category": "ICU / Critical Care"
+  },
+  {
+    "doc_type": "antenatal_card",
+    "label": "Antenatal Card",
+    "anchors": [
+      "Antenatal Card"
+    ],
+    "category": "Maternity"
+  },
+  {
+    "doc_type": "delivery_note",
+    "label": "Delivery Note",
+    "anchors": [
+      "Delivery Note"
+    ],
+    "category": "Maternity"
+  },
+  {
+    "doc_type": "maternal_blood_group_vdrl_hiv",
+    "label": "Maternal Blood Group / VDRL / HIV",
+    "anchors": [
+      "Maternal Blood Group / VDRL / HIV"
+    ],
+    "category": "Maternity"
+  },
+  {
+    "doc_type": "nicu_chart",
+    "label": "NICU Chart",
+    "anchors": [
+      "NICU Chart"
+    ],
+    "category": "Maternity"
+  },
+  {
+    "doc_type": "partograph",
+    "label": "Partograph",
+    "anchors": [
+      "Partograph"
+    ],
+    "category": "Maternity"
+  },
+  {
+    "doc_type": "av_fistula_access_note",
+    "label": "AV Fistula / Access Note",
+    "anchors": [
+      "AV Fistula / Access Note"
+    ],
+    "category": "Dialysis"
+  },
+  {
+    "doc_type": "dialysis_frequency_log",
+    "label": "Dialysis Frequency Log",
+    "anchors": [
+      "Dialysis Frequency Log"
+    ],
+    "category": "Dialysis"
+  },
+  {
+    "doc_type": "kt_v_or_urr_note",
+    "label": "KT/V or URR Note",
+    "anchors": [
+      "KT/V or URR Note"
+    ],
+    "category": "Dialysis"
+  },
+  {
+    "doc_type": "renal_function_panel",
+    "label": "Renal Function Panel",
+    "anchors": [
+      "Renal Function Panel"
+    ],
+    "category": "Dialysis"
+  },
+  {
+    "doc_type": "ortho_surgeon_note",
+    "label": "Ortho Surgeon Note",
+    "anchors": [
+      "Ortho Surgeon Note"
+    ],
+    "category": "Ortho"
+  },
+  {
+    "doc_type": "post_op_x_ray",
+    "label": "Post-Op X-Ray",
+    "anchors": [
+      "Post-Op X-Ray"
+    ],
+    "category": "Ortho"
+  },
+  {
+    "doc_type": "pre_op_x_ray",
+    "label": "Pre-Op X-Ray",
+    "anchors": [
+      "Pre-Op X-Ray"
+    ],
+    "category": "Ortho"
+  },
+  {
+    "doc_type": "cardiac_ot_notes",
+    "label": "Cardiac OT Notes",
+    "anchors": [
+      "Cardiac OT Notes"
+    ],
+    "category": "Cardiac"
+  },
+  {
+    "doc_type": "cardiac_pre_op_workup",
+    "label": "Cardiac Pre-Op Workup",
+    "anchors": [
+      "Cardiac Pre-Op Workup"
+    ],
+    "category": "Cardiac"
+  },
+  {
+    "doc_type": "cath_lab_note",
+    "label": "Cath Lab Note",
+    "anchors": [
+      "Cath Lab Note"
+    ],
+    "category": "Cardiac"
+  },
+  {
+    "doc_type": "apex_form",
+    "label": "Apex Form",
+    "anchors": [
+      "Apex Form"
+    ],
+    "category": "Approval & Authorization"
+  },
+  {
+    "doc_type": "approval_letter",
+    "label": "Approval Letter",
+    "anchors": [
+      "Approval Letter"
+    ],
+    "category": "Approval & Authorization"
+  },
+  {
+    "doc_type": "du_affiliated_permission_letter",
+    "label": "DU Affiliated Permission Letter",
+    "anchors": [
+      "permission letter",
+      "affiliated college",
+      "DU affiliated"
+    ],
+    "category": "Approval & Authorization"
+  },
+  {
+    "doc_type": "unlisted_permission",
+    "label": "Permission for Unlisted Drugs / Injections / Tests",
+    "anchors": [
+      "permission of unlisted",
+      "unlisted drugs",
+      "unlisted injection",
+      "unlisted test",
+      "unlisted procedure"
+    ],
+    "category": "Approval & Authorization"
+  },
+  {
+    "doc_type": "pre_authorization_form",
+    "label": "Pre-Authorization Form",
+    "anchors": [
+      "Pre-Authorization Form",
+      "Pre-Auth Form",
+      "Authorization Request",
+      "TPA Request Form"
+    ],
+    "category": "Approval & Authorization"
+  },
+  {
+    "doc_type": "query_response_letter",
+    "label": "Query Response Letter",
+    "anchors": [
+      "Query Response Letter"
+    ],
+    "category": "Approval & Authorization"
+  },
+  {
+    "doc_type": "case_enhanced_summary",
+    "label": "Case Enhanced Summary",
+    "anchors": [
+      "case enhanced summary",
+      "enhancement summary",
+      "case summary",
+      "enhancement request"
+    ],
+    "category": "Mid-Way / Enhancement"
+  },
+  {
+    "doc_type": "daily_ipd_file",
+    "label": "Daily IPD File",
+    "anchors": [
+      "daily ipd",
+      "ipd file daily",
+      "daily ipd file"
+    ],
+    "category": "Mid-Way / Enhancement"
+  },
+  {
+    "doc_type": "daily_patient_photo",
+    "label": "Daily Patient Photo",
+    "anchors": [
+      "daily photo",
+      "daily patient photo",
+      "midway photo"
+    ],
+    "category": "Mid-Way / Enhancement"
+  },
+  {
+    "doc_type": "weekly_patient_photo",
+    "label": "Weekly Patient Photo",
+    "anchors": [
+      "weekly photo",
+      "patient photo",
+      "weekly patient photo"
+    ],
+    "category": "Mid-Way / Enhancement"
+  },
+  {
+    "doc_type": "clinical_vitals_log",
+    "label": "Clinical Vitals Log",
+    "anchors": [
+      "Clinical Vitals Log"
+    ],
+    "category": "Discharge & Billing"
+  },
+  {
+    "doc_type": "discharge_photo",
+    "label": "Discharge Photo",
+    "anchors": [
+      "Discharge Photo"
+    ],
+    "category": "Discharge & Billing"
+  },
+  {
+    "doc_type": "discharge_summary",
+    "label": "Discharge Summary",
+    "anchors": [
+      "Discharge Summary",
+      "discharge note"
+    ],
+    "category": "Discharge & Billing"
+  },
+  {
+    "doc_type": "feedback_form",
+    "label": "Feedback Form",
+    "anchors": [
+      "Feedback Form",
+      "patient feedback"
+    ],
+    "category": "Discharge & Billing"
+  },
+  {
+    "doc_type": "final_bill",
+    "label": "Final Bill",
+    "anchors": [
+      "Final Bill"
+    ],
+    "category": "Discharge & Billing"
+  },
+  {
+    "doc_type": "geotag_photo",
+    "label": "Geotag Photo",
+    "anchors": [
+      "Geotag Photo",
+      "Geo Tag Photo",
+      "Geo-tag Photo"
+    ],
+    "category": "Discharge & Billing"
+  },
+  {
+    "doc_type": "hospital_bill",
+    "label": "Hospital Bill",
+    "anchors": [
+      "Hospital Bill",
+      "final bill",
+      "itemised bill",
+      "bill"
+    ],
+    "category": "Discharge & Billing"
+  },
+  {
+    "doc_type": "ipd_file_admission",
+    "label": "IPD File (admission)",
+    "anchors": [
+      "IPD File",
+      "indoor case papers",
+      "IPD"
+    ],
+    "category": "Discharge & Billing"
+  },
+  {
+    "doc_type": "pharmacy_bill",
+    "label": "Pharmacy Bill",
+    "anchors": [
+      "Pharmacy Bill"
+    ],
+    "category": "Discharge & Billing"
+  },
+  {
+    "doc_type": "ihc_report",
+    "label": "IHC Report",
+    "anchors": [
+      "IHC Report",
+      "Immunohistochemistry",
+      "IHC",
+      "ER/PR/HER2"
+    ],
+    "category": "Pathology & Oncology"
+  },
+  {
+    "doc_type": "molecular_genetic_report",
+    "label": "Molecular / Genetic Report",
+    "anchors": [
+      "Molecular Report",
+      "Genetic Report",
+      "EGFR",
+      "ALK",
+      "BRCA",
+      "Mutation Panel",
+      "NGS Report"
+    ],
+    "category": "Pathology & Oncology"
+  },
+  {
+    "doc_type": "chemo_protocol_sheet",
+    "label": "Signed Chemotherapy Protocol Sheet",
+    "anchors": [
+      "Chemotherapy Protocol",
+      "Chemo Protocol Sheet",
+      "Cycle Protocol",
+      "Protocol Sheet"
+    ],
+    "category": "Pathology & Oncology"
+  },
+  {
+    "doc_type": "ct_simulation_dosimetry_plan",
+    "label": "CT Simulation & Dosimetry Plan",
+    "anchors": [
+      "CT Simulation",
+      "Simulation Plan",
+      "Dosimetry Plan",
+      "Dosimetry",
+      "RT Planning"
+    ],
+    "category": "Radiation"
+  },
+  {
+    "doc_type": "radiation_prescription_order",
+    "label": "Radiation Prescription Order",
+    "anchors": [
+      "Radiation Prescription",
+      "RT Prescription",
+      "Prescription Order",
+      "Dose Prescription"
+    ],
+    "category": "Radiation"
+  },
+  {
+    "doc_type": "icu_justification_letter",
+    "label": "ICU Justification Letter",
+    "anchors": [
+      "ICU Justification",
+      "Justification Letter",
+      "ICU Justification Letter"
+    ],
+    "category": "ICU / Critical Care"
+  }
+]

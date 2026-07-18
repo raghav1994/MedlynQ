@@ -44,7 +44,8 @@ async function loadData(): Promise<BenchmarkFile> {
 export default async function BenchmarksPage() {
   const session = await getSession();
   if (!session.user) redirect("/login?next=/benchmarks");
-  if (session.user.role !== "ADMIN" && session.user.role !== "CFO") redirect("/");
+  // Other Hospitals is CFO-only now — ADMIN is scoped to Patient List + Team Performance.
+  if (session.user.role !== "CFO") redirect(session.user.role === "ADMIN" ? "/patients" : "/");
 
   const data = await loadData();
   // Rank by approved amount, descending

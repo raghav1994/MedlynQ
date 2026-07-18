@@ -9,13 +9,22 @@ const nextConfig = {
     // That code path never actually runs in the browser (hydrateFromSupabase
     // is only ever called from server components/API routes), so it's safe
     // to stub `pg` out of the client build rather than restructure the
-    // import graph. `resolve.fallback` only polyfills/no-ops Node CORE
-    // modules (fs, tls, net, ...) — it doesn't apply to real npm packages
-    // like `pg`, so it silently did nothing and `pg` (and its `tls`
-    // requirement) still got traced into the client bundle. `resolve.alias`
-    // is the correct mechanism for excluding an actual package.
+    // import graph.
+    // Disable webpack cache to prevent stale chunk errors on Windows dev servers
+    config.cache = false;
+
     if (!isServer) {
-      config.resolve.alias = { ...config.resolve.alias, pg: false };
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        pg: false,
+        "pg-connection-string": false,
+        fs: false,
+        dns: false,
+        net: false,
+        tls: false,
+        "util/types": false,
+        util: false,
+      };
     }
     return config;
   },

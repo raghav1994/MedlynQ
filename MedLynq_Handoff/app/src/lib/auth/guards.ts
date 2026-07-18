@@ -39,6 +39,25 @@ export async function requireRole(allowed: Role[]): Promise<GuardResult> {
   return auth;
 }
 
+// Narrower than requireRole(["SUPERADMIN"]) — most internal staff can run
+// every hospital's backend admin, but only the owner account can create or
+// disable OTHER internal logins. Being SUPERADMIN is necessary but not
+// sufficient here.
+export async function requireOwner(): Promise<GuardResult> {
+  const auth = await requireRole(["SUPERADMIN"]);
+  if (!auth.ok) return auth;
+  if (!auth.session.user.is_owner) {
+    return {
+      ok: false,
+      response: NextResponse.json(
+        { ok: false, error: "Only the owner account can manage internal staff logins" },
+        { status: 403 }
+      ),
+    };
+  }
+  return auth;
+}
+
 // Hospital-tenancy check — call when a route receives a case_id / mrn from the client.
 // For now we only have one hospital, so this is a stub that always passes for ADMIN/MEDCO/CFO
 // of HOSP-BLR-49. When multi-tenancy lands (#5), this expands.

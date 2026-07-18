@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
 
     const zipBuf = await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" });
     const ts = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-    return new NextResponse(zipBuf as unknown as BodyInit, {
+    return new NextResponse(zipBuf as any, {
       status: 200,
       headers: {
         "Content-Type": "application/zip",

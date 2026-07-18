@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   const thumbPath = path.join(process.cwd(), "public", "_thumbs", safe);
   try {
     const buf = await readFile(thumbPath);
-    return new NextResponse(buf as unknown as BodyInit, {
+    return new NextResponse(buf, {
       status: 200,
       headers: {
         "Content-Type": "image/png",

@@ -20,18 +20,10 @@ import {
   type DetectedFile, type DetectedGroup, type DetectResult,
   type CommitStatus, type CommittedGroup,
 } from "@/lib/intakeStore";
+import { useRoleGate } from "@/lib/useRoleGate";
 
-// useSearchParams() opts this page out of static generation unless wrapped
-// in Suspense — Next.js App Router requirement.
-export default function IntakePage() {
-  return (
-    <Suspense fallback={null}>
-      <IntakePageInner />
-    </Suspense>
-  );
-}
-
-function IntakePageInner() {
+function IntakeContent() {
+  useRoleGate(["ADMIN"], "/patients");
   const searchParams = useSearchParams();
   const deepLinkMrn = searchParams.get("mrn");
   const deepLinkPatientId = searchParams.get("patient_id");
@@ -843,6 +835,18 @@ function CommitPanel({ commit, onDone }: { commit: CommittedGroup[]; onDone: () 
         ))}
       </ul>
     </div>
+  );
+}
+
+export default function IntakePage() {
+  return (
+    <Suspense fallback={
+      <AppShell>
+        <div className="p-4 text-sm text-ink-300">Loading intake...</div>
+      </AppShell>
+    }>
+      <IntakeContent />
+    </Suspense>
   );
 }
 

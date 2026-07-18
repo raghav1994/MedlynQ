@@ -12,12 +12,13 @@ import QueryBoard from "./QueryBoard";
 type TabKey = "checklist" | "fin" | "query";
 
 export default function Tabs({
-  c, docs, checklist, mrn,
+  c, docs, checklist, mrn, tenantAccentColor,
 }: {
   c: Case;
   docs: CaseDocument[];
   checklist: ChecklistEntry[];
   mrn: string;
+  tenantAccentColor: string;
 }) {
   const [tab, setTab] = useState<TabKey>("checklist");
   const [downloadingAll, setDownloadingAll] = useState(false);
@@ -104,9 +105,9 @@ export default function Tabs({
       </div>
 
       <div className="p-4">
-        {tab === "checklist" && <DocumentChecklist entries={entries} onEntriesChange={setEntries} docs={docs} caseId={c.id} mrn={mrn} treatment={c.treatment_type} />}
+        {tab === "checklist" && <DocumentChecklist entries={entries} onEntriesChange={setEntries} docs={docs} caseId={c.id} patientId={c.patient_id} mrn={mrn} treatment={c.treatment_type} tenantAccentColor={tenantAccentColor} />}
         {tab === "fin"       && <FinancialsTab c={c} />}
-        {tab === "query"     && <QueryBoard c={c} docs={docs} />}
+        {tab === "query"     && <QueryBoard c={c} docs={docs} entries={entries} mrn={mrn} />}
       </div>
     </div>
   );

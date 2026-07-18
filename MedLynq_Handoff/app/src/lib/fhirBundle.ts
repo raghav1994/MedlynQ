@@ -19,6 +19,7 @@
 // names + DOB are NOT sent. DPDP-clean by construction.
 
 import type { Case, Patient, Scheme } from "./types";
+import { resolveIcd10Codes } from "./icd10";
 
 // ---------- FHIR resource shapes (minimal, only what NHCX cares about) ----------
 
@@ -36,6 +37,8 @@ export type FHIRResource =
   | FHIRCoverage
   | FHIRPractitioner
   | FHIROrganization
+  | FHIRCondition
+  | FHIREncounter
   | FHIRClaim
   | FHIRDocumentReference;
 
@@ -85,6 +88,34 @@ export type FHIROrganization = {
   type?: FHIRCodeableConcept[];
 };
 
+// verifiedIcd10 — the FHIR-standard way to flag data quality is a
+// dataAbsentReason/extension, not a custom field on the resource itself.
+// We use a simple extension so downstream consumers (or our own audit UI)
+// can tell "hospital-coded" apart from "LLM guessed, needs review" without
+// parsing free text.
+const UNVERIFIED_CODE_EXTENSION_URL = "https://medlynq.app/fhir/StructureDefinition/unverified-code-source";
+
+export type FHIRCondition = {
+  resourceType: "Condition";
+  id: string;
+  clinicalStatus?: FHIRCodeableConcept;
+  code: FHIRCodeableConcept;
+  subject: FHIRReference;
+  encounter?: FHIRReference;
+  recordedDate?: string;
+  extension?: Array<{ url: string; valueString?: string; valueBoolean?: boolean }>;
+};
+
+export type FHIREncounter = {
+  resourceType: "Encounter";
+  id: string;
+  status: "in-progress" | "finished";
+  class: { system?: string; code: string; display?: string };
+  subject: FHIRReference;
+  serviceProvider?: FHIRReference;
+  period?: FHIRPeriod;
+};
+
 export type FHIRClaim = {
   resourceType: "Claim";
   id: string;
@@ -97,10 +128,19 @@ export type FHIRClaim = {
   provider: FHIRReference;
   priority: FHIRCodeableConcept;
   insurance: Array<{ sequence: number; focal: boolean; coverage: FHIRReference }>;
-  diagnosis?: Array<{ sequence: number; diagnosisCodeableConcept: FHIRCodeableConcept }>;
+  // A coded diagnosis (Condition resource, preferred — has a real ICD-10
+  // code) uses diagnosisReference; a diagnosis we couldn't code at all
+  // falls back to free-text diagnosisCodeableConcept so the claim still
+  // carries SOME diagnosis info rather than dropping it silently.
+  diagnosis?: Array<{
+    sequence: number;
+    diagnosisCodeableConcept?: FHIRCodeableConcept;
+    diagnosisReference?: FHIRReference;
+  }>;
   item: Array<{
     sequence: number;
     productOrService: FHIRCodeableConcept;
+    encounter?: FHIRReference[];
     unitPrice?: { value: number; currency: "INR" };
     net?: { value: number; currency: "INR" };
   }>;
@@ -139,6 +179,7 @@ const PAYER_CODES: Record<Scheme, { code: string; display: string }> = {
   ESI:          { code: "ESIC-MOL",      display: "ESIC" },
   Railway_UMID: { code: "RAIL-UMID",     display: "Railway UMID" },
   NDMC:         { code: "NDMC-MED",      display: "NDMC Medical" },
+  DGHS:         { code: "DGHS-MED",      display: "DGHS" },
   FCI:          { code: "FCI-HR",        display: "FCI" },
   DU:           { code: "DU-HEALTH",     display: "DU Health Centre" },
   TPA:          { code: "TPA",           display: "Private TPA" },
@@ -185,8 +226,13 @@ export async function buildFhirBundle(input: BuildBundleInput): Promise<FHIRBund
   const provider_org_id = `org-provider-${hospital.id}`;
   const insurer_org_id = `org-insurer-${c.scheme}`;
   const claim_id = `claim-${c.id}`;
+  const encounter_id = `enc-${c.id}`;
 
   const payerInfo = PAYER_CODES[c.scheme];
+  // A real claim can carry more than one diagnosis (primary + comorbidity) —
+  // one Condition resource per code, each with its own stable id so the
+  // Claim.diagnosis array can reference them all by sequence.
+  const icd10Codes = await resolveIcd10Codes(c.diagnosis, c.icd10_codes_override);
 
   // === Resources ===
   const patientRes: FHIRPatient = {
@@ -230,6 +276,38 @@ export async function buildFhirBundle(input: BuildBundleInput): Promise<FHIRBund
     type: [{ coding: [{ system: "http://terminology.hl7.org/CodeSystem/organization-type", code: "ins", display: "Insurance Company" }] }],
   };
 
+  // Every claim needs an Encounter — this is the "which admission does this
+  // claim belong to" resource NHCX expects. class "IMP" (inpatient) is the
+  // right default for a hospital claims workflow; day-care chemo cycles are
+  // still technically inpatient encounters even at a few hours' stay.
+  const encounterRes: FHIREncounter = {
+    resourceType: "Encounter",
+    id: encounter_id,
+    status: c.discharge_date ? "finished" : "in-progress",
+    class: { system: "http://terminology.hl7.org/CodeSystem/v3-ActCode", code: "IMP", display: "inpatient encounter" },
+    subject: { reference: `Patient/${patient_id}` },
+    serviceProvider: { reference: `Organization/${provider_org_id}` },
+    period: c.admission_date ? { start: c.admission_date, end: c.discharge_date ?? undefined } : undefined,
+  };
+
+  // One Condition resource per resolved code — empty when nothing could be
+  // coded at all, in which case the Claim falls back to a free-text
+  // diagnosisCodeableConcept instead of shipping a fake/empty code.
+  const conditionResources: FHIRCondition[] = icd10Codes.map((icd10, i) => ({
+    resourceType: "Condition",
+    id: `cond-${c.id}-${i + 1}`,
+    clinicalStatus: { coding: [{ system: "http://terminology.hl7.org/CodeSystem/condition-clinical", code: "active", display: "Active" }] },
+    code: { coding: [{ system: "http://hl7.org/fhir/sid/icd-10", code: icd10.code, display: icd10.display }], text: icd10.display },
+    subject: { reference: `Patient/${patient_id}` },
+    encounter: { reference: `Encounter/${encounter_id}` },
+    recordedDate: now,
+    extension: icd10.verified ? undefined : [{
+      url: UNVERIFIED_CODE_EXTENSION_URL,
+      valueBoolean: true,
+      valueString: `LLM-guessed ICD-10 (source: ${icd10.source}) — confirm before a real submission`,
+    }],
+  }));
+
   const claimRes: FHIRClaim = {
     resourceType: "Claim",
     id: claim_id,
@@ -242,10 +320,9 @@ export async function buildFhirBundle(input: BuildBundleInput): Promise<FHIRBund
     provider: { reference: `Organization/${provider_org_id}` },
     priority: { coding: [{ code: "normal" }] },
     insurance: [{ sequence: 1, focal: true, coverage: { reference: `Coverage/${coverage_id}` } }],
-    diagnosis: c.diagnosis ? [{
-      sequence: 1,
-      diagnosisCodeableConcept: { text: c.diagnosis },
-    }] : undefined,
+    diagnosis: conditionResources.length > 0
+      ? conditionResources.map((cond, i) => ({ sequence: i + 1, diagnosisReference: { reference: `Condition/${cond.id}` } }))
+      : c.diagnosis ? [{ sequence: 1, diagnosisCodeableConcept: { text: c.diagnosis } }] : undefined,
     item: [{
       sequence: 1,
       productOrService: {
@@ -255,6 +332,7 @@ export async function buildFhirBundle(input: BuildBundleInput): Promise<FHIRBund
           display: c.procedure_name,
         }],
       },
+      encounter: [{ reference: `Encounter/${encounter_id}` }],
       unitPrice:  { value: c.claimed_amount, currency: "INR" },
       net:        { value: c.claimed_amount, currency: "INR" },
     }],
@@ -297,6 +375,8 @@ export async function buildFhirBundle(input: BuildBundleInput): Promise<FHIRBund
       { fullUrl: `urn:uuid:${practitioner_id}`, resource: practitionerRes },
       { fullUrl: `urn:uuid:${provider_org_id}`, resource: providerOrgRes },
       { fullUrl: `urn:uuid:${insurer_org_id}`,  resource: insurerOrgRes },
+      { fullUrl: `urn:uuid:${encounter_id}`,    resource: encounterRes },
+      ...conditionResources.map((cond) => ({ fullUrl: `urn:uuid:${cond.id}`, resource: cond })),
       { fullUrl: `urn:uuid:${claim_id}`,        resource: claimRes },
       ...docRefs.map((d) => ({ fullUrl: `urn:uuid:${d.id}`, resource: d })),
     ],

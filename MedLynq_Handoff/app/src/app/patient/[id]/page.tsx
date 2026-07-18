@@ -14,12 +14,13 @@ import ApprovalBanner from "@/components/patient/ApprovalBanner";
 import CaseStateBanner from "@/components/patient/CaseStateBanner";
 import DoctorsPlanCard from "@/components/patient/DoctorsPlan";
 import NHCXBridge from "@/components/patient/NHCXBridge";
+import { RequestMissingProvider } from "@/components/patient/RequestMissingContext";
 import IfFeature from "@/components/IfFeature";
 import { getTenant } from "@/lib/tenant/server";
 import { decodePrescription } from "@/lib/prescription";
 import { scopedData } from "@/lib/dataScope";
 import { docsForCase } from "@/lib/mockDocuments";
-import { buildChecklist, summaryByStage, deriveCurrentStage } from "@/lib/checklist";
+import { buildChecklist, summaryByStage, deriveCurrentStage, rulesFromDocumentRequirements } from "@/lib/checklist";
 import { getSkippedDocTypes } from "@/lib/checklistSkips";
 import { caseSynopsisFor, fetchCaseSynopsisFromPipeline } from "@/lib/synopsis";
 import { scoreCase } from "@/lib/queryProof";
@@ -57,7 +58,7 @@ export default async function PatientDetailPage({
 
   const docs = docsForCase(activeCase.id);
   const skippedDocTypes = await getSkippedDocTypes(activeCase.id);
-  const checklist = buildChecklist(docs, activeCase.treatment_type, activeCase.specialty ?? "oncology", skippedDocTypes);
+  const checklist = buildChecklist(docs, activeCase.treatment_type, activeCase.specialty ?? "oncology", skippedDocTypes, rulesFromDocumentRequirements(tenant.document_library, tenant.document_requirements), activeCase.scheme);
   // Derived from actual doc completion (not the raw ClaimStatus) so the
   // stage tracker auto-advances the moment a stage's checklist is done.
   const currentStage = deriveCurrentStage(summaryByStage(checklist));
@@ -69,7 +70,7 @@ export default async function PatientDetailPage({
   const pipeline = await fetchCaseSynopsisFromPipeline(p.mrn, baseUrl);
   const caseSyn = pipeline.case ?? caseSynopsisFor(activeCase.id);
   const synopsisSource = pipeline.source === "pipeline" ? "live" : (caseSyn ? "mock" : "none");
-  const qpScore = scoreCase(activeCase, docs);
+  const qpScore = scoreCase(activeCase, docs, rulesFromDocumentRequirements(tenant.document_library, tenant.document_requirements), activeCase.scheme);
 
   // Real vitals only — from a landed "Clinical Vitals Log" doc's extracted
   // fields (md_parser.py's _parse_vitals). No such doc yet → ClinicalVitals
@@ -102,7 +103,7 @@ export default async function PatientDetailPage({
     <AppShell>
       <CaseStateBanner c={activeCase} />
       <ApprovalBanner c={activeCase} patientName={p.name} />
-      <PatientHeader c={activeCase} patient_id={p.id} stage={currentStage} />
+      <PatientHeader c={activeCase} patient={p} stage={currentStage} />
 
       {pcases.length > 1 && (
         <div className="-mt-2 mb-4 flex items-center gap-2 flex-wrap">
@@ -121,40 +122,42 @@ export default async function PatientDetailPage({
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
-        <aside className="space-y-4">
-          <PatientIdentity p={p} hospital={tenant.name} />
-          <ClinicalVitals admission_date={activeCase.admission_date} vitals={vitals} />
-          <ActionButtons />
-          <IfFeature flag="whatsapp"><WhatsAppShare
-            caseCode={activeCase.registration_id}
-            kind={
-              activeCase.status === "query" ? "query_received" :
-              activeCase.status === "discharged" ? "discharge_done" :
-              activeCase.status === "submitted" ? "claim_submitted" :
-              activeCase.status === "preauth_pending" ? "preauth_submitted" :
-              "docs_uploaded"
-            }
-            detail={`Specialty: ${activeCase.treatment_type}`}
-            deepLink={`${baseUrl}/patient/${p.id}?case=${activeCase.id}`}
-          /></IfFeature>
-          <QueryProofBadge score={qpScore} />
-          <AuditPill mrn={p.mrn} />
-          <CaseTimeline c={activeCase} />
-        </aside>
+      <RequestMissingProvider patientId={p.id} caseId={activeCase.id}>
+        <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
+          <aside className="space-y-4">
+            <PatientIdentity p={p} hospital={tenant.name} />
+            <ClinicalVitals admission_date={activeCase.admission_date} vitals={vitals} />
+            <ActionButtons />
+            <IfFeature flag="whatsapp"><WhatsAppShare
+              caseCode={activeCase.registration_id}
+              kind={
+                activeCase.status === "query" ? "query_received" :
+                activeCase.status === "discharged" ? "discharge_done" :
+                activeCase.status === "submitted" ? "claim_submitted" :
+                activeCase.status === "preauth_pending" ? "preauth_submitted" :
+                "docs_uploaded"
+              }
+              detail={`Specialty: ${activeCase.treatment_type}`}
+              deepLink={`${baseUrl}/patient/${p.id}?case=${activeCase.id}`}
+            /></IfFeature>
+            <QueryProofBadge score={qpScore} />
+            <AuditPill mrn={p.mrn} />
+            <CaseTimeline c={activeCase} />
+          </aside>
 
-        <main className="space-y-4">
-          {synopsisSource === "live" && (
-            <div className="text-[10px] uppercase tracking-wide font-semibold text-good">● Synopsis from live pipeline</div>
-          )}
-          {doctorsPlan && (
-            <DoctorsPlanCard plan={doctorsPlan} schemeForCheck={activeCase.scheme} billTotal={activeCase.claimed_amount} />
-          )}
-          {caseSyn && <CaseSynopsis synopsis={caseSyn} />}
-          <IfFeature flag="nhcx_send"><NHCXBridge c={activeCase} /></IfFeature>
-          <Tabs c={activeCase} docs={docs} checklist={checklist} mrn={p.mrn} />
-        </main>
-      </div>
+          <main className="space-y-4">
+            {synopsisSource === "live" && (
+              <div className="text-[10px] uppercase tracking-wide font-semibold text-good">● Synopsis from live pipeline</div>
+            )}
+            {doctorsPlan && (
+              <DoctorsPlanCard plan={doctorsPlan} schemeForCheck={activeCase.scheme} billTotal={activeCase.claimed_amount} />
+            )}
+            {caseSyn && <CaseSynopsis synopsis={caseSyn} />}
+            <IfFeature flag="nhcx_send"><NHCXBridge c={activeCase} /></IfFeature>
+            <Tabs c={activeCase} docs={docs} checklist={checklist} mrn={p.mrn} tenantAccentColor={tenant.accent_color} />
+          </main>
+        </div>
+      </RequestMissingProvider>
     </AppShell>
   );
 }

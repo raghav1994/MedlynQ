@@ -3,7 +3,7 @@
 
 import type { Case } from "./types";
 import type { CaseDocument } from "./mockDocuments";
-import { buildChecklist } from "./checklist";
+import { buildChecklist, type ChecklistRule } from "./checklist";
 import { caseSynopsisFor, synopsisFor } from "./synopsis";
 import { queriesForCase } from "./mockQueries";
 
@@ -23,12 +23,12 @@ export type QueryProofScore = {
 
 const TOTAL_CHECKS = 6;
 
-export function scoreCase(c: Case, docs: CaseDocument[]): QueryProofScore {
+export function scoreCase(c: Case, docs: CaseDocument[], extraRules: ChecklistRule[] = [], scheme?: string): QueryProofScore {
   const issues: QueryProofIssue[] = [];
   let passed = 0;
 
   // 1. All required docs present (stage + treatment aware)
-  const checklist = buildChecklist(docs, c.treatment_type);
+  const checklist = buildChecklist(docs, c.treatment_type, c.specialty ?? "oncology", [], extraRules, scheme ?? c.scheme);
   const missingRequired = checklist.filter((r) => r.status === "missing");
   if (missingRequired.length === 0) {
     passed++;

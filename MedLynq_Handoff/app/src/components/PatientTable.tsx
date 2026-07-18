@@ -8,7 +8,7 @@ import NewPreAuthModal from "./NewPreAuthModal";
 import type { Case } from "@/lib/types";
 import { patientName, folderKey } from "@/lib/mockData";
 
-type ResolvedCase = Case & { _patient_name?: string; _folder_key?: string };
+type ResolvedCase = Case & { _patient_name?: string; _folder_key?: string; _has_pending_request?: boolean };
 
 function rupees(n: number | null) {
   if (n == null) return "—";
@@ -128,6 +128,11 @@ export default function PatientTable({ cases }: { cases: ResolvedCase[] }) {
                 <td className="px-4 py-3 text-center"><AgingPill days={c.age_days} /></td>
                 <td className="px-4 py-3 text-center">
                   <div className="flex justify-center gap-1">
+                    {c._has_pending_request && (
+                      <span className="bg-bad text-white text-[10px] font-semibold px-2 py-0.5 rounded-full" title="Document requested from staff — awaiting upload">
+                        🚩 Requested
+                      </span>
+                    )}
                     {c.missing_docs > 0 && (
                       <span className="bg-bad-soft text-bad text-[10px] font-semibold px-2 py-0.5 rounded-full" title="missing documents">
                         {c.missing_docs} miss

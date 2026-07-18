@@ -3,16 +3,58 @@
 
 import type { CaseDocument } from "./mockDocuments";
 import type { Case, Treatment, Stage, Specialty } from "./types";
+import type { DocumentLibraryEntry, DocumentRequirement } from "./tenant/loader";
 
 export type ChecklistRule = {
   doc_type: string;
   stage: Stage;
   for_treatments?: Treatment[];
-  for_specialties?: Specialty[]; // omitted = applies to all (universal docs)
+  // string[], not Specialty[] — a hospital's tenant-config document_profiles
+  // (see rulesFromDocumentProfiles below) can name a specialty that only
+  // exists in that hospital's config, not (yet) in the Specialty union.
+  // Omitted = applies to all (universal docs).
+  for_specialties?: string[];
+  // Which schemes require this doc — e.g. Ayushman needs 8 pre-auth docs,
+  // private insurance needs 5, CGHS needs 9. Omitted/empty = universal
+  // (required regardless of scheme), matching every rule's behavior before
+  // schemes existed. Matching is automatic: a landed document's doc_type
+  // either satisfies a scheme's requirement or it doesn't — the case's own
+  // `scheme` field (set at intake) drives this, no manual per-document
+  // tagging needed.
+  for_schemes?: string[];
   // alt_group: items in the same group are alternatives — any one satisfies.
   // e.g. Histopath | Biopsy | PET-CT all in group "report" → only one needed.
   alt_group?: string;
 };
+
+// Converts a hospital's tenant-config document library + requirements into
+// the same ChecklistRule shape the hardcoded RULES below use, so a brand-new
+// specialty's document requirements come from JSON config instead of a code
+// change here. Passed into buildChecklist() as extraRules. A requirement
+// whose doc_type has no matching library entry is dropped rather than
+// crashing the checklist (config self-heals from stray/orphaned edits
+// instead of breaking the whole patient page).
+export function rulesFromDocumentRequirements(
+  library: DocumentLibraryEntry[] | undefined,
+  requirements: DocumentRequirement[] | undefined,
+): ChecklistRule[] {
+  if (!requirements || requirements.length === 0) return [];
+  const byDocType = new Map((library ?? []).map((l) => [l.doc_type, l]));
+  const rules: ChecklistRule[] = [];
+  for (const r of requirements) {
+    const entry = byDocType.get(r.doc_type);
+    if (!entry) continue;
+    rules.push({
+      doc_type: entry.label,
+      stage: r.stage,
+      for_treatments: r.for_treatments as Treatment[] | undefined,
+      for_specialties: [r.specialty],
+      for_schemes: r.schemes,
+      alt_group: r.alt_group,
+    });
+  }
+  return rules;
+}
 
 export const RULES: ChecklistRule[] = [
   // ============ OPD ============
@@ -120,18 +162,34 @@ export type ChecklistEntry = {
   // The actual landed document matched to this slot, if any — lets the UI
   // render its thumbnail inline instead of just a present/missing dot.
   doc?: CaseDocument;
+  // Any FURTHER documents that also matched this same slot (e.g. a
+  // multi-page consent form uploaded as separate files, or several docs
+  // that all carry the same label) — `doc` above stays the primary/first
+  // one so existing single-doc consumers (QueryBoard, etc.) don't need to
+  // change; the UI shows a "+N more" stack when this is non-empty.
+  extraDocs?: CaseDocument[];
 };
 
-const DOC_TYPE_ALIASES: Record<string, string[]> = {
+export const DOC_TYPE_ALIASES: Record<string, string[]> = {
   "Doctor's Prescription":   ["Prescription", "OPD Slip", "Doctor Prescription", "Protocol", "Chemo Protocol", "Prescription / Protocol"],
   "Aadhaar":                  ["Patient ID", "Aadhar", "Aadhaar Card"],
   "Insurance / Scheme Card":  ["Insurance Card", "Scheme Card", "PMJAY Card", "CGHS Card", "ECHS Card", "Ayushman Card"],
   "Histopathology Report":    ["Histopath", "HPE", "Histopathology", "Latest Pathology (HPE)"],
   "Biopsy Report":            ["Biopsy"],
   "CBC / LFT / KFT Profile":  ["CBC Report", "LFT Report", "KFT Report", "Baseline Labs"],
+  // Deliberately NOT aliasing the classifier's generic "Lab Report" fallback
+  // here — a document only proven to contain a CBC panel shouldn't silently
+  // satisfy LFT/KFT too just because the classifier couldn't tell them
+  // apart (false-positive compliance risk). Panel-specific detection
+  // (content_classifier.py) is what should emit the correct specific
+  // label(s) — see satisfied_labels on CaseDocument for the case where one
+  // combined report genuinely covers more than one panel.
+  "CBC Report":               ["CBC", "Blood Report", "Complete Blood Count"],
+  "LFT Report":               ["LFT", "Liver Function Test"],
+  "KFT Report":               ["KFT", "Kidney Function Test", "RFT Report", "RFT"],
   "IPD File (admission)":     ["IPD File"],
   "IPD File (day care)":      ["IPD File"],
-  "Drug Pouch / Wrapper Photo": ["Drug Pouch Barcode", "Pouch Photo"],
+  "Drug Pouch / Wrapper Photo": ["Drug Pouch Barcode", "Pouch Photo", "Drug Pouch"],
   "Prior Imaging (CT/MRI/X-ray)": ["Prior Imaging"],
   "Discharge Photo":          ["DSP", "Dis Pic"],
   "Tumor Board Certificate":  ["TBC"],
@@ -142,31 +200,81 @@ const DOC_TYPE_ALIASES: Record<string, string[]> = {
   "Approval Letter":          ["Approval", "Pre-Approval Letter", "Sanction Letter"],
 };
 
-function matchDocument(uploaded: CaseDocument[], targetType: string): CaseDocument | undefined {
+// Strips separators/punctuation down to bare words for the fuzzy tier below.
+function normalizeLabel(s: string): string[] {
+  return s.toLowerCase().replace(/[/\\,()]/g, " ").split(/\s+/).filter(Boolean);
+}
+
+// Returns EVERY uploaded doc that matches this slot, in upload order —
+// callers take [0] as the primary/thumbnail doc and the rest as extraDocs
+// (e.g. a multi-page document uploaded as separate files, or two lab
+// reports for different dates that both satisfy the same requirement).
+function matchDocuments(uploaded: CaseDocument[], targetType: string): CaseDocument[] {
   const aliases = [targetType, ...(DOC_TYPE_ALIASES[targetType] ?? [])];
-  for (const a of aliases) {
-    const hit = uploaded.find((d) => d.doc_type.toLowerCase() === a.toLowerCase());
-    if (hit) return hit;
-  }
-  return undefined;
+  const aliasSet = new Set(aliases.map((a) => a.toLowerCase()));
+
+  // Tier 1: exact label match (existing behavior) — also checks a combined
+  // document's satisfied_labels, so a single report that genuinely covers
+  // several panels (e.g. a "CBC / LFT / KFT Profile" upload) can flip more
+  // than one slot without needing 3 separate files.
+  const exact = uploaded.filter(
+    (d) => aliasSet.has(d.doc_type.toLowerCase()) || d.satisfied_labels?.some((s) => aliasSet.has(s.toLowerCase()))
+  );
+  if (exact.length > 0) return exact;
+
+  // Tier 2: deterministic word-containment fallback — catches a short-form
+  // label a classifier emits (e.g. "Drug Pouch") against a longer
+  // configured slot name ("Drug Pouch / Wrapper Photo") without needing a
+  // hand-typed alias for every possible short form. Kept intentionally
+  // narrow (every word of the shorter label must appear in the longer one,
+  // and only fires when exactly one uploaded doc qualifies) rather than a
+  // fuzzy/similarity score, so a low-confidence guess never silently
+  // misfiles a document into the wrong slot — ambiguous cases fall through
+  // to Unsorted for a human to assign instead.
+  const targetWords = new Set(normalizeLabel(targetType));
+  const candidates = uploaded.filter((d) => {
+    const docWords = normalizeLabel(d.doc_type);
+    return docWords.length > 0 && docWords.length < targetWords.size && docWords.every((w) => targetWords.has(w));
+  });
+  return candidates.length === 1 ? candidates : [];
 }
 
 export function buildChecklist(
   uploaded: CaseDocument[],
   treatment: Treatment,
-  specialty: Specialty = "oncology",
+  specialty: Specialty | string = "oncology",
   skippedDocTypes: string[] = [],
+  extraRules: ChecklistRule[] = [],
+  scheme?: string,
 ): ChecklistEntry[] {
   const skipped = new Set(skippedDocTypes.map((s) => s.toLowerCase()));
-  const applicable = RULES.filter((r) => {
+  // Config replaces built-ins per specialty, it doesn't stack on them: once
+  // a hospital has ANY config-driven requirement for this case's specialty,
+  // that config is the complete checklist for the specialty and the
+  // hardcoded RULES are skipped entirely. Merging instead would duplicate
+  // every doc the config re-declares (built-in "Aadhaar" + config "Aadhaar")
+  // and clash on stages (built-in Chemo Chart is mid-way; a hospital's flow
+  // may collect it at discharge). Built-ins remain the fallback for
+  // hospitals/specialties with no config yet.
+  const configCoversSpecialty = extraRules.some((r) => r.for_specialties?.includes(specialty));
+  const allRules = configCoversSpecialty
+    ? extraRules
+    : extraRules.length > 0 ? [...RULES, ...extraRules] : RULES;
+  const applicable = allRules.filter((r) => {
     const treatOk = !r.for_treatments || r.for_treatments.includes(treatment);
     const specOk = !r.for_specialties || r.for_specialties.includes(specialty);
-    return treatOk && specOk;
+    // Universal (no for_schemes) always applies. Otherwise the case's own
+    // scheme must be in the rule's list — an Ayushman-only requirement
+    // never shows as "missing" on a private-insurance case, and vice versa.
+    const schemeOk = !r.for_schemes || r.for_schemes.length === 0 || (scheme != null && r.for_schemes.includes(scheme));
+    return treatOk && specOk && schemeOk;
   });
 
   // First pass: resolve each rule independently.
   const raw = applicable.map((rule) => {
-    const found = matchDocument(uploaded, rule.doc_type);
+    const matches = matchDocuments(uploaded, rule.doc_type);
+    const found = matches[0];
+    const extraDocs = matches.length > 1 ? matches.slice(1) : undefined;
     const status: ChecklistEntry["status"] = !found
       ? (skipped.has(rule.doc_type.toLowerCase()) ? "skipped" : "missing")
       : found.confidence !== undefined && found.confidence < 0.7
@@ -180,6 +288,7 @@ export function buildChecklist(
       updated: found?.uploaded_at,
       alt_group: rule.alt_group,
       doc: found,
+      extraDocs,
     } as ChecklistEntry & { alt_group?: string };
   });
 
@@ -204,7 +313,11 @@ export function buildChecklist(
 // or a real doc_type that just isn't on this case's required list. Surfaced
 // as an "Unsorted" tray so nothing silently disappears from the merged view.
 export function unmatchedDocuments(uploaded: CaseDocument[], entries: ChecklistEntry[]): CaseDocument[] {
-  const matchedIds = new Set(entries.map((e) => e.doc?.id).filter(Boolean));
+  const matchedIds = new Set<string>();
+  for (const e of entries) {
+    if (e.doc) matchedIds.add(e.doc.id);
+    e.extraDocs?.forEach((d) => matchedIds.add(d.id));
+  }
   return uploaded.filter((d) => !matchedIds.has(d.id));
 }
 

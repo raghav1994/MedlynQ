@@ -26,7 +26,10 @@ import crypto from "crypto";
 import { spawn } from "child_process";
 import { requireRole } from "@/lib/auth/guards";
 import { rateLimit } from "@/lib/auth/rateLimit";
-import { landViaWorker } from "@/lib/pythonWorker";
+import { explodeViaWorker, extractPageViaWorker, finishParallelViaWorker } from "@/lib/pythonWorker";
+import { patients } from "@/lib/mockData";
+import { fulfillMatching } from "@/lib/documentRequests";
+import { norm, jaroWinkler } from "@/lib/patientMatch";
 
 export const runtime = "nodejs";
 
@@ -53,6 +56,35 @@ function generateThumbnail(pdfPath: string, filename: string) {
 
 function safeMrn(mrn: string): string {
   return mrn.replace(/[^A-Za-z0-9_-]/g, "_");
+}
+
+// The Sushila Gupta / ICU Justification Letter and Mohan Singh / "ms. XYZ"
+// incidents were both real documents belonging to a different person than
+// the patient record they landed under — a MEDCO has to notice a name buried
+// in a checklist tile to catch that, and usually doesn't. This flags it right
+// at land time, when the OCR identity is freshest and cheapest to compare.
+// Best-effort only: any of these fields can be legitimately missing (visual-
+// only docs have no OCR text at all), so absence is never itself a mismatch.
+function stripTitle(name: string): string {
+  return name.replace(/^\s*(mr|mrs|ms|miss|dr|master)\.?\s+/i, "");
+}
+function detectIdentityMismatch(
+  identity: { patient_name?: string | null; mrn?: string | null } | undefined,
+  patient: { name: string; mrn: string },
+): { doc_name?: string; doc_mrn?: string; patient_name: string; patient_mrn: string; reason: string } | null {
+  if (!identity) return null;
+  const docMrn = identity.mrn ? String(identity.mrn).trim() : "";
+  if (docMrn && norm(docMrn) !== norm(patient.mrn)) {
+    return { doc_mrn: docMrn, doc_name: identity.patient_name ?? undefined, patient_name: patient.name, patient_mrn: patient.mrn, reason: "mrn" };
+  }
+  const docName = identity.patient_name ? stripTitle(String(identity.patient_name).trim()) : "";
+  if (docName) {
+    const score = jaroWinkler(norm(docName), norm(stripTitle(patient.name)));
+    if (score < 0.75) {
+      return { doc_name: docName, patient_name: patient.name, patient_mrn: patient.mrn, reason: "name" };
+    }
+  }
+  return null;
 }
 
 // Picks a preview snippet for the Unsorted tray. A page with a hospital
@@ -85,10 +117,21 @@ function buildTextSnippet(fullText: string | undefined | null): string | undefin
   return candidates[0]?.slice(0, 200) || undefined;
 }
 
-// Runs through the persistent worker (pythonWorker.ts) so PaddleOCR's model
-// stays loaded across every landed file instead of reloading it each time.
-async function runLander(filePath: string, docTypeHint: string, forceDocType?: string): Promise<any> {
-  return landViaWorker(filePath, docTypeHint, forceDocType);
+// Runs through the persistent worker POOL (pythonWorker.ts) so PaddleOCR's
+// model stays loaded across every landed file instead of reloading it each
+// time. For a scanned multi-page PDF, explodeViaWorker() stops before OCR
+// and hands back per-page image paths instead of processing them serially —
+// those get fanned out across every worker in the pool via Promise.all
+// (naturally bounded by pool size, since idle jobs just queue), then
+// reassembled by finishParallelViaWorker(). Everything else (single page,
+// text-PDF, image, visual-only) comes back already finished in one call.
+async function runLander(filePath: string, docTypeHint: string, forceDocType?: string, hospitalId?: string): Promise<any> {
+  const exploded = await explodeViaWorker(filePath, docTypeHint, forceDocType, hospitalId);
+  if (exploded?.error || !exploded?.parallel) return exploded;
+
+  const pagePaths: string[] = exploded.page_paths;
+  const pageResults = await Promise.all(pagePaths.map((p) => extractPageViaWorker(p)));
+  return finishParallelViaWorker(pageResults, pagePaths, exploded.compressed_path, docTypeHint, forceDocType, hospitalId);
 }
 
 export async function POST(req: NextRequest) {
@@ -133,7 +176,7 @@ export async function POST(req: NextRequest) {
   const tmpPath = path.join(TMP_DIR, `${sha}${ext}`);
   await writeFile(tmpPath, buf);
 
-  const result = await runLander(tmpPath, docTypeHint, forceDocType);
+  const result = await runLander(tmpPath, docTypeHint, forceDocType, guard.session.user.hospital_id);
   unlink(tmpPath).catch(() => {});
 
   if (result?.error) {
@@ -168,6 +211,13 @@ export async function POST(req: NextRequest) {
     confidence: result.confidence,
     processed_at: new Date().toISOString(),
     method: result.method,
+    // hospital_id — lets the promote-to-regex-rules tool (see
+    // python/tools/promote_rules.py) tally which doc types a given
+    // hospital's specialty has been classifying via the slower LLM
+    // fallback (method: "llm_fallback"), so a human can decide when
+    // there's enough real volume to graduate a doc type to a compiled
+    // regex rule in content_classifier.py.
+    hospital_id: guard.session.user.hospital_id,
     skipped_ocr: result.skipped_ocr,
     fields: result.fields,
     identity: result.identity,
@@ -183,8 +233,28 @@ export async function POST(req: NextRequest) {
     // the full file. Visual-only docs (photos, Aadhaar) have no text; that's
     // expected and fine, the thumbnail alone is usually enough for those.
     text_snippet: buildTextSnippet(result.text),
+    // The full extracted text (up to land_document.py's own 12,000-char
+    // cap) — from whichever engine actually ran: PyMuPDF's direct text
+    // layer for already-text-readable PDFs, or Sarvam OCR for scans/photos.
+    // Previously only the short text_snippet above was kept and this was
+    // discarded after classification, which meant there was no real text to
+    // train anything on later. Absent/empty for visual-only docs (Aadhaar,
+    // geotag photos) — there's genuinely no text on those.
+    full_text: result.text || undefined,
+    // Present only for a combined multi-panel report (e.g. one file that
+    // genuinely contains CBC + LFT + KFT) — see checklist.ts's matchDocument,
+    // which flips every slot listed here in addition to doc_type's primary one.
+    satisfied_labels: Array.isArray(result.satisfied_labels) && result.satisfied_labels.length > 0 ? result.satisfied_labels : undefined,
   };
   await writeFile(path.join(extractedDir, `${finalName}.json`), JSON.stringify(manifest, null, 2));
+
+  const landedPatient = patients.find(
+    (p) => p.hospital_id === guard.session.user.hospital_id && safeMrn(p.mrn) === mrnDir
+  );
+  if (landedPatient && result.doc_type) {
+    fulfillMatching(landedPatient.id, String(result.doc_type)).catch(() => {});
+  }
+  const identity_mismatch = landedPatient ? detectIdentityMismatch(result.identity, landedPatient) : null;
 
   return NextResponse.json({
     ok: true,
@@ -194,5 +264,6 @@ export async function POST(req: NextRequest) {
     method: result.method,
     redact: result.redact,
     fields: result.fields,
+    identity_mismatch,
   });
 }

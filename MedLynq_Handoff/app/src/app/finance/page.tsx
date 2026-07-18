@@ -7,9 +7,9 @@ export const dynamic = "force-dynamic";
 export default async function FinancePage() {
   const session = await getSession();
   if (!session.user) redirect("/login?next=/finance");
-  // ADMIN sees finance too. MEDCO does not — block here.
-  if (session.user.role !== "ADMIN" && session.user.role !== "CFO") {
-    redirect("/");
+  // Finance is CFO-only now — ADMIN is scoped to Patient List + Team Performance.
+  if (session.user.role !== "CFO") {
+    redirect(session.user.role === "ADMIN" ? "/patients" : "/");
   }
 
   return (

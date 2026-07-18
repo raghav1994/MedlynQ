@@ -1,6 +1,6 @@
 import StatusBadge from "../StatusBadge";
 import StageTracker from "./StageTracker";
-import type { Case, Stage } from "@/lib/types";
+import type { Case, Patient, Stage } from "@/lib/types";
 import { folderKey } from "@/lib/mockData";
 import Link from "next/link";
 
@@ -9,16 +9,27 @@ function rupees(n: number | null) {
   return "₹" + n.toLocaleString("en-IN");
 }
 
-const treatmentLabels: Record<string, { icon: string; label: string }> = {
-  chemo:     { icon: "💊", label: "Chemotherapy" },
-  surgery:   { icon: "🔪", label: "Surgery" },
-  radiation: { icon: "☢️", label: "Radiation" },
-  medicine:  { icon: "💊", label: "Medication only" },
+const treatmentLabels: Record<string, { label: string }> = {
+  chemo:     { label: "Chemotherapy" },
+  surgery:   { label: "Surgery" },
+  radiation: { label: "Radiation" },
+  medicine:  { label: "Medication only" },
 };
-const FALLBACK_TX = { icon: "•", label: "Treatment pending" };
+const FALLBACK_TX = { label: "Treatment pending" };
 
-export default function PatientHeader({ c, patient_id, stage }: { c: Case; patient_id: string; stage: Stage }) {
+export default function PatientHeader({ c, patient, stage }: { c: Case; patient: Patient; stage: Stage }) {
   const tx = treatmentLabels[c.treatment_type] ?? FALLBACK_TX;
+  const editHref =
+    `/opd?edit=1&patient_id=${encodeURIComponent(patient.id)}&case_id=${encodeURIComponent(c.id)}` +
+    `&name=${encodeURIComponent(patient.name)}&mrn=${encodeURIComponent(patient.mrn)}` +
+    `&age=${encodeURIComponent(String(patient.age))}&gender=${encodeURIComponent(patient.gender)}` +
+    `&state=${encodeURIComponent(patient.state)}&scheme=${encodeURIComponent(c.scheme)}` +
+    // Cases created before specialty was tracked (or via the doc-router's
+    // auto-create path) can have it unset — default to "oncology" here too,
+    // matching buildChecklist()'s own fallback, so the edit form's Specialty
+    // dropdown shows a real selection instead of silently landing on
+    // whatever its first <option> happens to be.
+    `&specialty=${encodeURIComponent(c.specialty ?? "oncology")}&treatment=${encodeURIComponent(c.treatment_type)}`;
   return (
     <div className="bg-bone-0 border-b border-bone-300 -mx-6 px-6 py-4 mb-6">
       <Link href="/patients" className="text-xs text-accent hover:underline">
@@ -28,10 +39,16 @@ export default function PatientHeader({ c, patient_id, stage }: { c: Case; patie
       <div className="flex items-end justify-between mt-2 flex-wrap gap-4">
         <div>
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-ink-100 font-mono">{folderKey(patient_id)}</h1>
+            <h1 className="text-2xl font-bold text-ink-100 font-mono">{folderKey(patient.id)}</h1>
+            <Link
+              href={editHref}
+              title="Edit name, MRN, scheme, or treatment type — via OPD Registration"
+              className="text-ink-300 hover:text-accent text-base leading-none"
+            >
+              ✎
+            </Link>
             <StatusBadge status={c.status} />
             <span className="inline-flex items-center gap-1 text-xs font-semibold bg-accent-soft text-accent px-2 py-0.5 rounded-full">
-              <span>{tx.icon}</span>
               {tx.label}
               {c.cycle && <span className="ml-1 font-normal text-ink-300">· cycle {c.cycle.current} of {c.cycle.total}</span>}
             </span>

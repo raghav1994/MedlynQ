@@ -23,25 +23,28 @@ import re
 from datetime import datetime
 from typing import Any
 
+from tenant_config import document_profiles_for, specialties_enabled
+
 # Each rule fires when ≥1 phrase + ≥0 field tokens are matched in the text.
 # `weight` × matched_phrases / required_phrases = rule's contribution to confidence.
+#
+# Split into two layers:
+#   GLOBAL_RULES    — doc types every hospital produces regardless of
+#                      specialty (bill, discharge summary, lab report,
+#                      consent, referral, OPD slip, prescription, ID proof).
+#                      Always active, every hospital, every request.
+#   ONCOLOGY_RULES   — doc types specific to cancer treatment (chemo chart,
+#                      histopathology, tumor board cert). Only active when
+#                      "oncology" is in the hospital's specialties_enabled
+#                      (default, preserving today's behavior for hospitals
+#                      with no tenant config at all).
+#
+# A brand-new specialty (e.g. general_medicine) with no built-in Python rule
+# set gets its rules built dynamically from the hospital's tenant config
+# document_profiles (see _tenant_rules below) — anchors typed into a config
+# file, not a new hardcoded rule block in this file.
 
-CLASSIFIER_RULES = [
-    {
-        "doc_type": "hpe_report",
-        "label": "Histopathology Report",
-        "strong_phrases": [
-            r"HISTOPATHOLOGY",
-            r"TUMOR\s+HISTOLOGIC\s+TYPE",
-            r"\bMARGINS\b.{0,40}(?:CLEAR|FREE\s+OF)",
-            r"\bOPINION\b\s*:",
-            r"INVASIVE.+CARCINOMA",
-            r"BIOPSY\s*NO\.?",
-            r"GROSS\s+EXAMINATION",
-            r"MICROSCOPIC\s+EXAMINATION",
-        ],
-        "weak_phrases": [r"\bDCIS\b", r"\bgrade\s+[I-V]+\b", r"pSTAGE", r"lymph\s+node"],
-    },
+GLOBAL_RULES = [
     {
         "doc_type": "lab_report",
         "label": "Lab Report",
@@ -94,20 +97,6 @@ CLASSIFIER_RULES = [
         "weak_phrases": [r"discharged", r"clinical\s+course"],
     },
     {
-        "doc_type": "chemo_chart",
-        "label": "Chemo Chart",
-        "strong_phrases": [
-            r"Chemoplan",
-            r"\bBSA\b",
-            r"Cycle\s+\d+",
-            r"q\d+\s*w(?:eekly|eeks)?",
-            r"mg/m[²2]",
-            r"premedication",
-            r"\bER[\s\-:][\s\-:]*\d",
-        ],
-        "weak_phrases": [r"Trastuzumab", r"Paclitaxel", r"Docetaxel", r"HER[\s\-]?2"],
-    },
-    {
         "doc_type": "doctors_prescription",
         "label": "Doctor's Prescription",
         "strong_phrases": [
@@ -120,17 +109,23 @@ CLASSIFIER_RULES = [
         "weak_phrases": [r"\bOD\b", r"\bBD\b", r"\bTDS\b", r"\bQID\b", r"\bSOS\b"],
     },
     {
-        "doc_type": "tumor_board_cert",
-        "label": "Tumor Board Certificate",
+        # Catalog already declares this as a distinct doc type from a plain
+        # outpatient Rx slip, but nothing implemented it — so same-day IV
+        # drug/pre-medication administration orders (infusion route + timing,
+        # no BSA/cycle tracking so not a full Chemo Chart either) always fell
+        # through to "Doctor's Prescription" purely on the generic Inj [A-Z]
+        # phrase. Real example that triggered this: an IV order for Emeset +
+        # Dexa + Avil premedication, then Cisplatin 60mg, then KCl+MgSO4 —
+        # correctly scores here now instead of the OD/BD/TDS-oriented rule.
+        "doc_type": "prescription_protocol",
+        "label": "Prescription / Protocol",
         "strong_phrases": [
-            r"TUMOR\s+BOARD",
-            r"TUMOUR\s+BOARD",
-            r"MULTIDISCIPLINARY",
-            r"BOARD\s+DECISION",
-            r"BOARD\s+CERTIFICATE",
-            r"TBC\b",
+            r"\bIN\s+\d+\s*M?L\s*NS\b",                    # "IN 500 ML NS"
+            r"\bOVER\s+\d+\s*(?:MIN(?:UTE)?S?|HOUR?S?)\b",  # "OVER 1 HOURS" / "over 90 mins"
+            r"\bIV\b",
+            r"\b(?:Cisplatin|Carboplatin|Oxaliplatin|Cyclophosphamide|Doxorubicin|Etoposide|Gemcitabine|Vincristine|Vinorelbine|Bleomycin|Methotrexate|Ifosfamide|5-?FU|Fluorouracil|Emeset|Ondansetron|Dexamethasone)\b",
         ],
-        "weak_phrases": [r"recommend", r"surgeon", r"oncologist", r"radiologist"],
+        "weak_phrases": [r"\bAMP\b", r"\bIV\s+INFUSION\b", r"premedication", r"\bNS\b"],
     },
     {
         "doc_type": "feedback_form",
@@ -213,6 +208,97 @@ CLASSIFIER_RULES = [
     },
 ]
 
+ONCOLOGY_RULES = [
+    {
+        "doc_type": "hpe_report",
+        "label": "Histopathology Report",
+        "strong_phrases": [
+            r"HISTOPATHOLOGY",
+            r"TUMOR\s+HISTOLOGIC\s+TYPE",
+            r"\bMARGINS\b.{0,40}(?:CLEAR|FREE\s+OF)",
+            r"\bOPINION\b\s*:",
+            r"INVASIVE.+CARCINOMA",
+            r"BIOPSY\s*NO\.?",
+            r"GROSS\s+EXAMINATION",
+            r"MICROSCOPIC\s+EXAMINATION",
+        ],
+        "weak_phrases": [r"\bDCIS\b", r"\bgrade\s+[I-V]+\b", r"pSTAGE", r"lymph\s+node"],
+    },
+    {
+        "doc_type": "chemo_chart",
+        "label": "Chemo Chart",
+        "strong_phrases": [
+            r"Chemoplan",
+            r"\bBSA\b",
+            r"Cycle\s+\d+",
+            r"q\d+\s*w(?:eekly|eeks)?",
+            r"mg/m[²2]",
+            r"premedication",
+            r"\bER[\s\-:][\s\-:]*\d",
+        ],
+        "weak_phrases": [r"Trastuzumab", r"Paclitaxel", r"Docetaxel", r"HER[\s\-]?2"],
+    },
+    {
+        "doc_type": "tumor_board_cert",
+        "label": "Tumor Board Certificate",
+        "strong_phrases": [
+            r"TUMOR\s+BOARD",
+            r"TUMOUR\s+BOARD",
+            r"MULTIDISCIPLINARY",
+            r"BOARD\s+DECISION",
+            r"BOARD\s+CERTIFICATE",
+            r"TBC\b",
+        ],
+        "weak_phrases": [r"recommend", r"surgeon", r"oncologist", r"radiologist"],
+    },
+]
+
+# Built-in rule sets per specialty. Every specialty NOT listed here (a
+# brand-new one added purely via tenant config) has no compiled fast-path
+# yet — it runs on _tenant_rules() below until someone tunes real rules
+# from that hospital's document history (see promote-to-regex workflow).
+SPECIALTY_RULES: dict[str, list[dict[str, Any]]] = {
+    "oncology": ONCOLOGY_RULES,
+}
+
+
+def _tenant_rules(hospital_id: str | None) -> list[dict[str, Any]]:
+    """Build classifier rules on the fly from a hospital's tenant-config
+    document_profiles. Each anchor phrase becomes a literal, case-insensitive,
+    word-boundary-safe strong_phrase — a single tier, not tuned to the
+    strong/weak split the hand-curated rule sets above use, since a handful
+    of admin-typed anchor words isn't the same evidence quality as a rule
+    tuned against thousands of real documents. Good enough as an initial
+    day-one signal; see the promote-to-regex-rules workflow for graduating
+    a specialty to a hand-tuned rule block once real volume exists."""
+    profiles = document_profiles_for(hospital_id)
+    rules = []
+    for p in profiles:
+        anchors = p.get("anchors") or []
+        if not anchors:
+            continue
+        rules.append({
+            "doc_type": p["doc_type"],
+            "label": p.get("label", p["doc_type"]),
+            "strong_phrases": [re.escape(a) for a in anchors],
+            "weak_phrases": [],
+        })
+    return rules
+
+
+def _rules_for(hospital_id: str | None) -> list[dict[str, Any]]:
+    rules = list(GLOBAL_RULES)
+    for specialty in specialties_enabled(hospital_id):
+        rules.extend(SPECIALTY_RULES.get(specialty, []))
+    rules.extend(_tenant_rules(hospital_id))
+    return rules
+
+
+# Kept for any external caller/import that still expects the old flat name
+# (e.g. `if __name__ == "__main__"` smoke test below) — equivalent to the
+# original global rule set with no tenant/specialty layering.
+CLASSIFIER_RULES = GLOBAL_RULES + ONCOLOGY_RULES
+
 
 def _count_matches(text: str, patterns: list[str]) -> tuple[int, list[str]]:
     n = 0
@@ -225,7 +311,49 @@ def _count_matches(text: str, patterns: list[str]) -> tuple[int, list[str]]:
     return n, hits
 
 
-def classify(markdown: str) -> dict[str, Any]:
+# Panel-specific markers — a document broadly recognized as "Lab Report"
+# (the generic GLOBAL_RULES rule above) might actually be a combined panel
+# covering CBC + LFT + KFT, or just one of them. This tags EXACTLY which
+# panels are present so one combined upload can satisfy multiple checklist
+# slots (CBC Report / LFT Report / KFT Report) instead of only ever
+# flipping one generic slot. Each panel needs MIN_PANEL_HITS distinct
+# markers before it counts as genuinely present — one stray word elsewhere
+# in the document shouldn't be enough to falsely claim that panel was done
+# (a false "present" here is a real compliance risk, not just cosmetic).
+LAB_PANEL_MARKERS: dict[str, list[str]] = {
+    "CBC Report": [
+        r"\bH[ae]moglobin\b", r"\bWBC\s*Count\b", r"\bTotal\s+Leucocyte\s+Count\b",
+        r"\bPlatelet\s+Count\b", r"\bRBC\s*Count\b", r"\bPCV\b", r"\bMCV\b", r"\bMCH\b",
+        r"\bComplete\s+Blood\s+Count\b", r"\bH[ae]matocrit\b",
+    ],
+    "LFT Report": [
+        r"\bSGOT\b", r"\bSGPT\b", r"\bAST\b", r"\bALT\b", r"\bBilirubin\b",
+        r"\bAlkaline\s+Phosphatase\b", r"\bLiver\s+Function\b", r"\bAlbumin\b", r"\bTotal\s+Protein\b",
+    ],
+    "KFT Report": [
+        r"\bUrea\b", r"\bCreatinine\b", r"\bUric\s+Acid\b", r"\bKidney\s+Function\b",
+        r"\bRenal\s+Function\b", r"\bSodium\b", r"\bPotassium\b", r"\beGFR\b",
+    ],
+}
+MIN_PANEL_HITS = 2
+
+
+def detect_lab_panels(text: str) -> list[str]:
+    """Returns the specific panel labels (CBC Report / LFT Report / KFT
+    Report) whose markers are clearly present in this document's text —
+    independent of whatever the main classify() call picked as the primary
+    doc_type/label. A document classified generically as "Lab Report" that
+    genuinely contains all three panels returns all three; one that only
+    has CBC markers returns just ["CBC Report"]."""
+    found = []
+    for label, patterns in LAB_PANEL_MARKERS.items():
+        hits = sum(1 for p in patterns if re.search(p, text, re.IGNORECASE))
+        if hits >= MIN_PANEL_HITS:
+            found.append(label)
+    return found
+
+
+def classify(markdown: str, hospital_id: str | None = None) -> dict[str, Any]:
     text = markdown or ""
     if not text.strip():
         return {"doc_type": "unknown", "label": "Document", "confidence": 0.0, "evidence": [], "doc_date": None}
@@ -235,7 +363,7 @@ def classify(markdown: str) -> dict[str, Any]:
         "confidence": 0.0, "evidence": [], "doc_date": None,
     }
 
-    for rule in CLASSIFIER_RULES:
+    for rule in _rules_for(hospital_id):
         strong_n, strong_hits = _count_matches(text, rule["strong_phrases"])
         weak_n,   weak_hits   = _count_matches(text, rule["weak_phrases"])
 
