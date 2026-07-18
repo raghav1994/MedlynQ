@@ -26,6 +26,9 @@ const PUBLIC_PATHS = [
   "/api/ping",
   "/api/mobile-auth",
   "/api/mobile-upload",
+  "/app-debug.apk",       // Android installer — must be downloadable by a
+                          // brand-new staff phone that has no session yet
+                          // (scanned from the onboarding QR in /mobile-sim)
   "/_next",
   "/favicon",
 ];
